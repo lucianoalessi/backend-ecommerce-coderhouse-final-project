@@ -29,10 +29,14 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // category: {
-    //     type: String,
-    //     required: true
-    // }
+    category: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: Boolean,
+        default: true // Establecemos el valor por defecto en true
+    }
 });
 
 productSchema.plugin(mongoosePaginate);

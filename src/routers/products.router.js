@@ -25,38 +25,108 @@ const pmanager = new ProductManager()
 //Ruta para manejar las solicitudes GET para obtener todos los productos. (Solo sirve para MONGO DB)
 router.get('/' , async (req, res) => {
 
-    //obetenemos el array de objetos de productos y lo guardamos en una variable productos. Como estamos obteniendo info de una base de datos sera asincronica.
-    
     try{
-        const products = await pmanager.getProducts();
-        if(products.length === 0){
-            res.send('No hay productos en la tienda')
+
+        let { limit, page, sort, category } = req.query
+        console.log(req.originalUrl);
+        console.log(req.originalUrl.includes('page'));
+
+        const options = {
+            page: Number(page) || 1, // page ? Number(page) : 1
+            limit: Number(limit) || 10, // limit ? Number(limit) : 1
+            sort: { price: Number(sort) }
+        };
+
+        if (!(options.sort.price === -1 || options.sort.price === 1)) {
+            delete options.sort
         }
 
-        //agregamos un limit
-        const limit = parseInt(req.query.limit) //convertimos el valor recibido por query a entero.
-        if(limit){
-            res.send( {Products: products.slice(0,limit)} )   //otra forma: res.send({Products: limit ? products.slice(0,limit) : products})
+        const links = (products) => {
+            let prevLink;
+            let nextLink;
+            
+            if (req.originalUrl.includes('page')) {
+                // Si la URL original contiene el parámetro 'page', entonces:
+
+                prevLink = products.hasPrevPage ? req.originalUrl.replace(`page=${products.page}`, `page=${products.prevPage}`) : null;
+                nextLink = products.hasNextPage ? req.originalUrl.replace(`page=${products.page}`, `page=${products.nextPage}`) : null;
+                return { prevLink, nextLink };
+            }
+            if (!req.originalUrl.includes('?')) {
+                // Si la URL original NO contiene el carácter '?', entonces:
+
+                prevLink = products.hasPrevPage ? req.originalUrl.concat(`?page=${products.prevPage}`) : null;
+                nextLink = products.hasNextPage ? req.originalUrl.concat(`?page=${products.nextPage}`) : null;
+                return { prevLink, nextLink };
+            }
+            // Si la URL original contiene el carácter '?' (otros parámetros), entonces:
+
+            prevLink = products.hasPrevPage ? req.originalUrl.concat(`&page=${products.prevPage}`) : null;
+            nextLink = products.hasNextPage ? req.originalUrl.concat(`&page=${products.nextPage}`) : null;
+            console.log(prevLink)
+            console.log(nextLink)
+
+            return { prevLink, nextLink };
+
+        }
+    
+
+        // Devuelve un array con las categorias disponibles y compara con la query "category"
+        const categories = await pmanager.categories()
+
+        const result = categories.some(categ => categ === category)
+        if (result) {
+
+            const products = await pmanager.getProductsQuery({ category }, options);
+            const { prevLink, nextLink } = links(products);
+            const { totalPages, prevPage, nextPage, hasNextPage, hasPrevPage, docs } = products
+            return res.status(200).send({ status: 'success', payload: docs, totalPages, prevPage, nextPage, hasNextPage, hasPrevPage, prevLink, nextLink });
         }
 
-        //agregamos un page
-        const page = parseInt(req.query.page) //convertimos el valor recibido por query a entero.
-        if(page){
-            res.send( {Products: products.slice(0,page)} )   
-        }
+        const products = await pmanager.getProductsQuery({}, options);
+        // console.log(products, 'Product');
+        const { totalPages, prevPage, nextPage, hasNextPage, hasPrevPage, docs } = products
+        const { prevLink, nextLink } = links(products);
+        return res.status(200).send({ status: 'success', payload: docs, totalPages, prevPage, nextPage, hasNextPage, hasPrevPage, prevLink, nextLink });
 
-        //agregamos un sort
+    }catch (error) {
+        console.log(error);
+    } 
+})
 
-        const sort = parseInt(req.query.sort) //convertimos el valor recibido por query a entero.
-        if(sort){
-            res.send( {Products: products.slice(0,sort)} )  
-        }
+    
 
-        res.send({result:'success', payload: products}) 
-    }catch(error){
-        console.log('error para obtener productos');
-    }
-});
+
+//     //obetenemos el array de objetos de productos y lo guardamos en una variable productos. Como estamos obteniendo info de una base de datos sera asincronica.
+    
+//     try{
+//         const products = await pmanager.getProducts();
+//         if(products.length === 0){
+//             res.send('No hay productos en la tienda')
+//         }
+
+//         //agregamos un limit
+//         const limit = parseInt(req.query.limit) //convertimos el valor recibido por query a entero.
+//         if(limit){
+//             res.send( {Products: products.slice(0,limit)} )   //otra forma: res.send({Products: limit ? products.slice(0,limit) : products})
+//         }
+
+//         res.send({result:'success', payload: products}) 
+
+
+//     }catch(error){
+//         console.log('error para obtener productos');
+//     }
+// });
+
+
+
+
+
+
+
+
+
 
 
 //Ruta para manejar las solicitudes GET para recuperar un producto específico por su ID. (La misma sirve para mongoDB)

@@ -26,5 +26,8 @@ const cartSchema = new mongoose.Schema({
     }
 });
 
+cartSchema.pre('find', function(){
+    this.populate('products.product');
+});
 // Crea un modelo de MongoDB basado en el esquema "cartSchema" y lo asocia a la colección "Carts".
 export const cartModel = mongoose.model(cartCollection, cartSchema)

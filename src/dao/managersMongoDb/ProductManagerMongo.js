@@ -8,6 +8,39 @@ export default class ProductManager{
         //constructor vacio por ahora.
     }
 
+    //metodo para agrupar categorias Unicas. 
+    categories = async () => {
+        try {
+            const categories = await productModel.aggregate([
+                {
+                    //stage 1: 
+                    $group: {
+                        _id: null, // Creamos un grupo sin campo de agrupación específico (todos los documentos se agrupan juntos)
+                        categories: { $addToSet: "$category" } // Creamos un conjunto de categorías únicas a partir de la propiedad "category" en los documentos.addToSet no permite valores duplicados.
+                    }
+                }
+            ])
+
+            return categories[0].categories // Retornamos el arreglo de categorías únicas (en el primer elemento de "categories")
+
+        }
+        catch (err) {
+            console.log(err);
+            return err
+        }
+
+    }
+
+    //metodo para paginar.
+    getProductsQuery = async (filter, options) => {
+        try {
+            return await productModel.paginate(filter, options);
+
+        } catch (err) {
+            return err
+        }
+    };
+
     // Metodo que Utiliza el modelo "productModel" para buscar todos los productos en la base de datos y los convierte en objetos JSON.
     getProducts = async () => {
         try{

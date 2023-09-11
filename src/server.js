@@ -33,7 +33,7 @@ app.use(express.Router()); // Creando una instancia de un enrutador Express (no 
 
 //Conexion a mongo Atlas:
 
-mongoose.connect('mongodb+srv://lucianoAlessi:coder123@coderhouse-backend.xaq0czv.mongodb.net/')
+mongoose.connect('mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mongodb.net/')
 
 //Configuraciones para plantillas handlebars:
 

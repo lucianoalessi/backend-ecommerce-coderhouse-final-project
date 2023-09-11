@@ -52,9 +52,9 @@ form.addEventListener("submit", (event) => {
   let description = form.elements.description.value;
   let stock = form.elements.stock.value;
   let thumbnail = form.elements.thumbnail.value;
-  let category = form.elements.category.value;
   let price = form.elements.price.value;
   let code = form.elements.code.value;
+  let category = form.elements.category.value;
 
   // Emitir un evento "addProduct" al servidor con la información del nuevo producto
   socketCliente.emit("addProduct", {
@@ -62,9 +62,9 @@ form.addEventListener("submit", (event) => {
     description,
     stock,
     thumbnail,
-    category,
     price,
     code,
+    category,
   });
 
   form.reset(); // Restablecer los campos del formulario
