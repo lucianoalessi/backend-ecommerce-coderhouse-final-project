@@ -1,0 +1,30 @@
+<div class="contenedorPrincipal">
+    <h1>Lista de productos:</h1>
+    <div class="productContainer">
+        {{#each listaProductos}}
+            <div class="card">
+                <div class="card-content">
+                    <h4>{{title}}</h4>
+                    <div>
+                        <h5>Id: {{id}}</h5>
+                    </div>
+                    <div>
+                        <p>{{description}}</p>
+                    </div>
+                    <div>
+                        <h5>Precio: {{price}} USD</h5>
+                    </div>
+                    <div>
+                        <a href="#">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+    {{/each}}
+
+    </div>
+    
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

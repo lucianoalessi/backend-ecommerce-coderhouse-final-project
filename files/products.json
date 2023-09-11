@@ -1,0 +1,110 @@
+[
+  {
+    "title": "Monitor Asus 24",
+    "description": "Monitor led 24\" 75hz",
+    "price": 59.99,
+    "thumbnail": "path/to/image1.jpg",
+    "code": "PRD002yyyyyyffffffyy",
+    "stock": 120,
+    "id": 1
+  },
+  {
+    "title": "Samsung Galaxy S24",
+    "description": "nuevo con caja sellada",
+    "price": 800.5,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "1234565",
+    "stock": 15,
+    "id": 2
+  },
+  {
+    "title": "Iphone 14 pro max",
+    "description": "Importado desde EE.UU",
+    "price": 999.99,
+    "thumbnail": "algo",
+    "code": "12345",
+    "stock": 114,
+    "id": 3
+  },
+  {
+    "title": "Monitor samsung",
+    "description": "Monitor led 32\" 144hz",
+    "price": 59.99,
+    "thumbnail": "path/to/image1.jpg",
+    "code": "PRD004",
+    "stock": 22,
+    "id": 4
+  },
+  {
+    "title": "Samsung Galaxy S23 ultra",
+    "description": "nuevo con caja sellada",
+    "price": 100.5,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "PRD005",
+    "stock": 93,
+    "id": 5
+  },
+  {
+    "title": "Monitores kkr 10",
+    "description": "Monitores de estudio",
+    "price": 300.25,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "PRD006",
+    "stock": 82,
+    "id": 6
+  },
+  {
+    "title": "Teclado mecanico logitech",
+    "description": "teclado con switch blue",
+    "price": 25,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "PRD007",
+    "stock": 500,
+    "id": 7
+  },
+  {
+    "title": "Parlante JBL Go 4",
+    "description": "Parlante inalambrico Hi-Fi",
+    "price": 30,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "PRD008",
+    "stock": 102,
+    "id": 8
+  },
+  {
+    "title": "Go Pro Hero 9",
+    "description": "Camara de accion",
+    "price": 30,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "PRD009",
+    "stock": 12,
+    "id": 9
+  },
+  {
+    "title": "Traje neopren Oneil",
+    "description": "traje grueso neopren",
+    "price": 200,
+    "thumbnail": "path/to/image2.jpg",
+    "code": "PRD010",
+    "stock": 5,
+    "id": 10
+  },
+  {
+    "title": "Tabla Element",
+    "description": "Tabla de skate marca Element, modelo Nyjah",
+    "price": "200",
+    "thumbnail": "no hay",
+    "code": "Abc1213",
+    "stock": "20",
+    "id": 11
+  },
+  {
+    "title": "Monitor Asus 27",
+    "description": "Monitor led 24\" 75hz",
+    "price": 59.99,
+    "thumbnail": "path/to/image1.jpg",
+    "code": "PRD0028945645645",
+    "stock": 125,
+    "id": 12
+  }
+]
