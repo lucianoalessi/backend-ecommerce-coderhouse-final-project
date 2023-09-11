@@ -42,14 +42,14 @@ router.get('/' , async (req, res) => {
         //agregamos un page
         const page = parseInt(req.query.page) //convertimos el valor recibido por query a entero.
         if(page){
-            res.send( {Products: products.slice(0,page)} )   //otra forma: res.send({Products: limit ? products.slice(0,limit) : products})
+            res.send( {Products: products.slice(0,page)} )   
         }
 
         //agregamos un sort
 
         const sort = parseInt(req.query.sort) //convertimos el valor recibido por query a entero.
         if(sort){
-            res.send( {Products: products.slice(0,sort)} )   //otra forma: res.send({Products: limit ? products.slice(0,limit) : products})
+            res.send( {Products: products.slice(0,sort)} )  
         }
 
         res.send({result:'success', payload: products}) 
