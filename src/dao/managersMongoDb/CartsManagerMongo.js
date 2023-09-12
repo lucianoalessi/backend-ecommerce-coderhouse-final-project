@@ -88,10 +88,11 @@ export default class CartManager{
 		}
 	};
 
-    modStock = async (cid, pid, quantity) => {
+    modifyQuantity = async (cid, pid, quantity) => {
 		try {
 			// Filtrar por el índice del carrito y el índice del producto
-			const filter = { idx: cid, 'products.idx': pid };
+			const filter = { _id: cid, 'products.productID': pid };
+
 			// Actualizar la cantidad del producto específico
 			const update = { $set: { 'products.$.quantity': quantity } };
 
@@ -99,8 +100,8 @@ export default class CartManager{
 				new: true,
 			}); // new: true devuelve el documento actualizado
 			return updatedCart;
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log(error.message);
 		}
 	};
 
