@@ -72,26 +72,81 @@ export default class CartManager{
     }
 
 
-    deleteProductInCart = async (idCart, products) => {
-
-        try {
-            return await cartModel.findOneAndUpdate(
-                { _id: cid },
-                { products },
-                { new: true })
-
-        } catch (error) {
-            return error
-        }
-    }
-
-    updateOneProduct = async (cid, products) => {
+    //eliminar un producto en el carrito
+    deleteProdInCart = async (cid, pid) => {
+		try {
+			const cart = await cartModel.findOne({ _id: cid });
+            const product = await productModel.findOne({_id: pid})
+            const cartmap = cart.products.map((item) => console.log(item.productID))
+			const filter = cart.products.filter((item) => item.productID.toString() !== product._id.toString());
         
-        await cartModel.updateOne(
-            { _id: cid },
-            {products})
-        return await cartModel.findOne({ _id: cid })
-    }
+
+			await cartModel.updateOne({ _id: cid }, { products: filter });
+
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
+
+    modStock = async (cid, pid, quantity) => {
+		try {
+			// Filtrar por el índice del carrito y el índice del producto
+			const filter = { idx: cid, 'products.idx': pid };
+			// Actualizar la cantidad del producto específico
+			const update = { $set: { 'products.$.quantity': quantity } };
+
+			const updatedCart = await cartModel.findOneAndUpdate(filter, update, {
+				new: true,
+			}); // new: true devuelve el documento actualizado
+			return updatedCart;
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
+
+	deleteAllProductsInCart = async (cid) => {
+		try {
+			// Filtrar por el índice del carrito
+			const filter = { _id: cid };
+
+			// Actualizar la cantidad del producto específico
+			const update = { $set: { products: [] } };
+
+			const updateCart = await cartModel.findOneAndUpdate(filter, update, {
+				new: true,
+			});
+			//console.log(updateCart);
+			return updateCart;
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
+
+	insertArrayProds = async (cid, body) => {
+		try {
+			//A partir de los datos, buscar por idx los productos para obtener su _id para generar el populate
+			const arr = [];
+			for (const item of body) {
+				const object = await productManager.getProductById(item.idx);
+				arr.push({
+					idx: item.idx,
+					quantity: item.quantity,
+					product: object._id,
+				});
+			}
+			// Filtrar por el índice del carrito
+			const filter = { idx: cid };
+			// Actualizar con los nuevos datos
+			const update = { $set: { products: arr } };
+
+			const updateCart = await cartModel.findOneAndUpdate(filter, update, {
+				new: true,
+			});
+			return updateCart;
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
 
 
 }

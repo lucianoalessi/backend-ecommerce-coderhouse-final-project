@@ -65,44 +65,140 @@ router.post('/:cid/product/:pid' , async (req, res) => {
 })
 
 //ruta para eliminar un producto del carrito
-router.delete('/:cid/product/:pid' , async (req, res) => {
+router.delete('/:cid/product/:pid', async (req, res) => {
+	const { cid, pid } = req.params;
+	try {
+		//Busca el carrito
+		const getCartByID = await cmanager.getCartById(cid)
+		if (!getCartByID) {
+			return res.status(404).send({ error: 'Cart not found' });
+		}
+		//Busca el producto en el carrito
+		const exist = getCartByID.products.find((prod) => prod.productID == pid);
+		if (!exist) {
+			return res.status(404).send({ error: 'Not found prod in cart' });
+		}
 
-    try {
-        // Extraer los parámetros de la URL: cid (ID del carrito) y pid (ID del producto)
-        const { cid, pid } = req.params;
-  
-        // Verificar si el producto con el ID pid existe
-        const checkIdProduct = await pmanager.getProductById(pid);
-        if (!checkIdProduct) {
-            return res.status(404).send({ status: 'error', message: `Product with ID: ${pid} not found` });
-        }
-  
-        // Verificar si el carrito con el ID cid existe
-        const checkIdCart = await cmanager.getCartById(cid);
-        if (!checkIdCart) {
-            return res.status(404).send({ status: 'error', message: `Cart with ID: ${cid} not found` });
-        }
-  
-        // Buscar el índice del producto en la lista de productos del carrito
-        const findProductIndex = checkIdCart.products.findIndex(item => item.productID.toString() == checkIdProduct._id);
-        if (findProductIndex === -1) {
-            return res.status(404).send({ status: 'error', message: `Product with ID: ${pid} not found in cart`});
-        }
-  
-        // Eliminar el producto de la lista de productos del carrito
-        checkIdCart.products.splice(findProductIndex, 1);
-  
-        // Actualizar el carrito en la base de datos sin el producto eliminado
-        const updatedCart = await cmanager.deleteProductInCart(cid, checkIdCart.products);
-  
-        return res.status(200).send({ status: 'success', message: `Deleted product with ID: ${pid}`, cart: updatedCart });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send({ status: 'error', message: 'An error occurred while processing the request' });
-    }
-})
+		await cmanager.deleteProdInCart(cid, pid);
 
+		res.status(200).send({ status: 'success', deletedToCart: exist });
+	} catch (err) {
+		res.status(400).send({ error: err.message });
+	}
+});
+
+//Vaciar carrito
+router.delete('/:cid', async (req, res) => {
+	const { cid } = req.params;
+	try {
+		const existCart = await cmanager.getCartById(cid)
+
+		if (!existCart) {
+			return res
+				.status(404)
+				.send({ Status: 'error', message: 'Cart not found' });
+		}
+
+		const emptyCart = await cmanager.deleteAllProductsInCart(cid);
+
+		res.status(200).send({ status: 'success', emptyCart: emptyCart });
+	} catch (err) {
+		res.status(400).send({ error: err.message });
+	}
+});
+
+// //Agregar array de productos
+// router.put('/:cid', async (req, res) => {
+// 	const { body } = req;
+// 	const { cid } = req.params;
+// 	try {
+// 		const existCart = cartManager.getCartByID(+cid);
+// 		if (!existCart) {
+// 			return res
+// 				.status(404)
+// 				.send({ Status: 'error', message: 'Cart not found' });
+// 		}
+// 		body.forEach(async (item) => {
+// 			const existProd = await productManager.getProductById(+item.idx);
+// 			if (!existProd) {
+// 				return res
+// 					.status(404)
+// 					.send({ Status: 'error', message: `Prod ${item.idx} not found` });
+// 			}
+// 		});
+
+// 		const newCart = await cartManager.insertArrayProds(+cid, body);
+// 		res.status(200).send({ status: 'success', newCart: newCart });
+// 	} catch (err) {
+// 		res.status(400).send({ error: err.message });
+// 	}
+// });
+
+// //Modificar cantidad
+// router.put('/:cid/products/:pid', async (req, res) => {
+// 	const { cid, pid } = req.params;
+// 	const { quantity } = req.body;
+// 	try {
+// 		//Busca el carrito
+// 		const getCartByID = await cartManager.getCartByID(+cid);
+// 		if (!getCartByID) {
+// 			return res.status(404).send({ error: 'Cart not found' });
+// 		}
+
+// 		//Busca el producto en el carrito
+// 		const exist = getCartByID.products.find((prod) => prod.idx === +pid);
+// 		if (!exist) {
+// 			return res.status(404).send({ error: 'Not found prod in cart' });
+// 		}
+
+// 		const modStock = await cartManager.modStock(+cid, +pid, +quantity);
+// 		res.status(200).send({ status: 'success', deletedToCart: modStock });
+// 	} catch (err) {
+// 		res.status(400).send({ error: err.message });
+// 	}
+
+
+
+// });
 
 
 
 export default router;
+
+
+// router.delete('/:cid/product/:pid' , async (req, res) => {
+
+//     try {
+//         // Extraer los parámetros de la URL: cid (ID del carrito) y pid (ID del producto)
+//         const { cid, pid } = req.params;
+  
+//         // Verificar si el producto con el ID pid existe
+//         const checkIdProduct = await pmanager.getProductById(pid);
+//         if (!checkIdProduct) {
+//             return res.status(404).send({ status: 'error', message: `Product with ID: ${pid} not found` });
+//         }
+  
+//         // Verificar si el carrito con el ID cid existe
+//         const checkIdCart = await cmanager.getCartById(cid);
+//         if (!checkIdCart) {
+//             return res.status(404).send({ status: 'error', message: `Cart with ID: ${cid} not found` });
+//         }
+  
+//         // Buscar el índice del producto en la lista de productos del carrito
+//         const findProductIndex = checkIdCart.products.findIndex(item => item.productID.toString() == checkIdProduct._id);
+//         if (findProductIndex === -1) {
+//             return res.status(404).send({ status: 'error', message: `Product with ID: ${pid} not found in cart`});
+//         }
+  
+//         // Eliminar el producto de la lista de productos del carrito
+//         checkIdCart.products.splice(findProductIndex, 1);
+  
+//         // Actualizar el carrito en la base de datos sin el producto eliminado
+//         const updatedCart = await cmanager.deleteProductInCart(cid, checkIdCart.products);
+  
+//         return res.status(200).send({ status: 'success', message: `Deleted product with ID: ${pid}`, cart: updatedCart });
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).send({ status: 'error', message: 'An error occurred while processing the request' });
+//     }
+// })
