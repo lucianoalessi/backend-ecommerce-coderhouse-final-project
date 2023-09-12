@@ -14,6 +14,7 @@ export default class ProductManager{
             const categories = await productModel.aggregate([
                 {
                     //stage 1: 
+                    
                     $group: {
                         _id: null, // Creamos un grupo sin campo de agrupación específico (todos los documentos se agrupan juntos)
                         categories: { $addToSet: "$category" } // Creamos un conjunto de categorías únicas a partir de la propiedad "category" en los documentos.addToSet no permite valores duplicados.

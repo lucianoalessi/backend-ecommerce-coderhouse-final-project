@@ -34,15 +34,14 @@ export default class CartManager{
     // Método para crear un nuevo carrito con productos proporcionados (opcional).
     addCart = async (products) => {
         try{
-            let cart = {
-                products:[]
-            }
 
-            if(products && products.length > 0){
-                cart.products = products
+            let cartData = {};
+            if (products && products.length > 0) {
+                cartData.products = products;
             }
-
-            return await cartModel.create(cart);
+    
+            return await cartModel.create(cartData);
+        
         }catch(error){
             console.error('Error al crear el carrito', error.message);
             return error;
@@ -50,30 +49,49 @@ export default class CartManager{
     }
 
     // Agrega un producto a un carrito existente por sus IDs.
-    addProductToCart = async (idCart, idProduct) => {
+    addProductToCart = async (cid, pid) => {
 
         try{
-            const cart = await cartModel.findOne({_id: idCart});
-            const product = await productModel.findOne({_id: idProduct});
-            const productIndex = cart.products.findIndex(item => item._id === product._id); // Buscamos el producto en el carrito basado en el ID del producto.
-            console.log(productIndex)
-            console.log('holaaaaa',product._id)
-            console.log(cart)
-            console.log(product)
+            const cart = await cartModel.findOne({_id: cid});
+            
+            const addProduct = await productModel.findOne({_id: pid});
+            const productIndex = cart.products.findIndex(item => item.productID.toString() == addProduct._id.toString()); // Buscamos el producto en el carrito basado en el ID del producto.
             
             if(productIndex !== -1){
                 cart.products[productIndex].quantity += 1; // Si el producto ya existe en el carrito, aumentamos su cantidad.
             }else{
-                cart.products.push(product) // Si el producto no existe en el carrito, lo añadimos con cantidad 1.
+                cart.products.push({productID: pid}) // Si el producto no existe en el carrito, lo añadimos con cantidad 1.
             }
-            
-            //cart.products.push(product);
-    
-            await cartModel.updateOne({_id: idCart}, cart);
+
+            await cartModel.updateOne({_id: cid}, cart);
 
         }catch(error){
             console.error('Error al agregar el producto al carrito:' ,error.message);
             return error;
         }
     }
+
+
+    deleteProductInCart = async (idCart, products) => {
+
+        try {
+            return await cartModel.findOneAndUpdate(
+                { _id: cid },
+                { products },
+                { new: true })
+
+        } catch (error) {
+            return error
+        }
+    }
+
+    updateOneProduct = async (cid, products) => {
+        
+        await cartModel.updateOne(
+            { _id: cid },
+            {products})
+        return await cartModel.findOne({ _id: cid })
+    }
+
+
 }
