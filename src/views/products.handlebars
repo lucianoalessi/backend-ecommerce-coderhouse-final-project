@@ -1,0 +1,47 @@
+<div class='productsList'>
+	{{#products.docs}}
+		<div class='card' id='card-container'>
+			<div>
+				<small class='card-category'>Categoría: {{this.category}}</small>
+				<small class='card-id'>{{this._id}}</small>
+			</div>
+			<br />
+			{{!-- <div class='slides'>
+
+				<a href='/products/{{this.idx}}'>
+					<img
+						src='{{this.thumbnail}}'
+						alt='{{this.title}}'
+						class='thumbnail'
+					/>
+				</a>
+
+			</div> --}}
+			<br />
+			<h3 class='card-title font-bold'>{{this.title}}</h3>
+			<br />
+			<p class='card-description'>{{this.description}}</p>
+			<br />
+			<p class='card-price'> USD {{this.price}}</p>
+			<br />
+			<div class='info-container'>
+				<p class='code'>Codigo: {{this.code}}</p>
+				<p class='stock'>Stock: {{this.stock}}</p>
+			</div>
+			<button id='addToCart'>agregar al carrito</button>
+		</div>
+	{{/products.docs}}
+</div>
+
+<div class='w-full flex justify-center my-5'>
+	{{#if products.hasPrevPage}}
+		<a href={{products.prevLink}}> Anterior</a>
+	{{/if}}
+	&nbsp;
+	{{products.page}}
+	&nbsp;
+	{{#if products.hasNextPage}}
+		<a href={{products.nextLink}}>Siguiente </a>
+	{{/if}}
+</div>
+<script src='js/products.js'></script>
