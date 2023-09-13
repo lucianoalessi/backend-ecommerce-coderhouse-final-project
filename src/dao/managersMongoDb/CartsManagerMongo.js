@@ -128,15 +128,14 @@ export default class CartManager{
 			//A partir de los datos, buscar por idx los productos para obtener su _id para generar el populate
 			const arr = [];
 			for (const item of body) {
-				const object = await productManager.getProductById(item.idx);
+				const object = await productModel.findById(item.productID);
 				arr.push({
-					idx: item.idx,
-					quantity: item.quantity,
-					product: object._id,
+					productID: object._id,
+					quantity: item.quantity
 				});
 			}
 			// Filtrar por el índice del carrito
-			const filter = { idx: cid };
+			const filter = { _id: cid };
 			// Actualizar con los nuevos datos
 			const update = { $set: { products: arr } };
 
@@ -144,8 +143,8 @@ export default class CartManager{
 				new: true,
 			});
 			return updateCart;
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log(error.message);
 		}
 	};
 

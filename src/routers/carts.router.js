@@ -107,32 +107,34 @@ router.delete('/:cid', async (req, res) => {
 	}
 });
 
-// //Agregar array de productos
-// router.put('/:cid', async (req, res) => {
-// 	const { body } = req;
-// 	const { cid } = req.params;
-// 	try {
-// 		const existCart = cartManager.getCartByID(+cid);
-// 		if (!existCart) {
-// 			return res
-// 				.status(404)
-// 				.send({ Status: 'error', message: 'Cart not found' });
-// 		}
-// 		body.forEach(async (item) => {
-// 			const existProd = await productManager.getProductById(+item.idx);
-// 			if (!existProd) {
-// 				return res
-// 					.status(404)
-// 					.send({ Status: 'error', message: `Prod ${item.idx} not found` });
-// 			}
-// 		});
+//Agregar array de productos
+router.put('/:cid', async (req, res) => {
 
-// 		const newCart = await cartManager.insertArrayProds(+cid, body);
-// 		res.status(200).send({ status: 'success', newCart: newCart });
-// 	} catch (err) {
-// 		res.status(400).send({ error: err.message });
-// 	}
-// });
+	const { body } = req;
+	const { cid } = req.params;
+
+	try {
+		const existCart = cmanager.getCartById(cid);
+		if (!existCart) {
+			return res
+				.status(404)
+				.send({ Status: 'error', message: 'Cart not found' });
+		}
+		body.forEach(async (item) => {
+			const existProd = await pmanager.getProductById(item.productID);
+			if (!existProd) {
+				return res
+					.status(404)
+					.send({ Status: 'error', message: `Prod ${item.idx} not found` });
+			}
+		});
+
+		const newCart = await cmanager.insertArrayProds(cid, body);
+		res.status(200).send({ status: 'success', newCart: newCart });
+	} catch (err) {
+		res.status(400).send({ error: err.message });
+	}
+});
 
 //Modificar cantidad
 router.put('/:cid/products/:pid', async (req, res) => {
