@@ -66,6 +66,8 @@ socketServer.on('connection', async (socket) => {
 
     console.log("nuevo cliente conectado")
 
+    
+
     //websockets para Productos:
 
     const products = await pManager.getProducts()

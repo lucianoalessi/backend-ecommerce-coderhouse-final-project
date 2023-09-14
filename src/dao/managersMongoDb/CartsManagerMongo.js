@@ -9,6 +9,8 @@ export default class CartManager{
         // Constructor vacío por ahora.
     }
 
+
+
     // Método para obtener todos los carritos en la base de datos.
     getCarts = async () => {
         try{
@@ -19,7 +21,6 @@ export default class CartManager{
             return []
         }
     }
-
 
     // Método para obtener un carrito específico por su ID.
     getCartById = async (idCart) => {
@@ -83,7 +84,6 @@ export default class CartManager{
         }
     }
 
-
     //eliminar un producto en el carrito
     deleteProdInCart = async (cid, pid) => {
 		try {
@@ -97,6 +97,7 @@ export default class CartManager{
 		}
 	};
 
+    //metodo para agregar un producto a un carrito y especificar la cantidad por body. 
     modifyQuantity = async (cid, pid, quantity) => {
 		try {
 			// Filtrar por el índice del carrito y el índice del producto
@@ -114,6 +115,7 @@ export default class CartManager{
 		}
 	};
 
+    //metodo para eliminar todos los productos de un carrito
 	deleteAllProductsInCart = async (cid) => {
 		try {
 			// Filtrar por el índice del carrito
@@ -132,6 +134,7 @@ export default class CartManager{
 		}
 	};
 
+    //metodo para agregar un array de productos en un carrito
 	insertArrayProds = async (cid, body) => {
 		try {
 			//A partir de los datos, buscar por idx los productos para obtener su _id para generar el populate

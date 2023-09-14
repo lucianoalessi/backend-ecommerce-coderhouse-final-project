@@ -9,7 +9,7 @@ export default class ProductManager{
     }
 
     
-    //Get product con query
+    //Get product con query, para poder ordenar y filtrar productos. 
 	getProductsQuery = async (limit, page, sort, query) => {
 		try {
             // Si no se proporciona un límite, se establece en 10 por defecto
