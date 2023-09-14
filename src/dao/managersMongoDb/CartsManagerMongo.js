@@ -89,10 +89,7 @@ export default class CartManager{
 		try {
 			const cart = await cartModel.findOne({ _id: cid });
             const product = await productModel.findOne({_id: pid})
-            const cartmap = cart.products.map((item) => console.log(item.productID))
 			const filter = cart.products.filter((item) => item.productID.toString() !== product._id.toString());
-        
-
 			await cartModel.updateOne({ _id: cid }, { products: filter });
 
 		} catch (err) {
