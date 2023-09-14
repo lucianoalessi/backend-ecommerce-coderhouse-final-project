@@ -1,4 +1,4 @@
-# Proyecto-final-backEnd-coderHouse - Pre entrega 1
+# Proyecto-final-backEnd-coderHouse - Pre entrega 2
 
 Backend de un sistema de comercio electrónico diseñado para gestionar el Stock de productos y carros de compra en un negocio en línea. Por ahora Proporciona API endpoints para gestionar productos y carritos de compras.
 
@@ -45,7 +45,28 @@ Carts
 - POST /api/carts/: Deberá crear un nuevo carrito ( Id:Number autogenerado, products:[]).
 - GET /api/carts/:cid: Deberá listar los productos que pertenezcan al carrito con el parámetro cid proporcionados.
 - POST /api/carts/:cid/product/:pid: Agrega un producto con el id(:pid) indicado en el carro con id indicado(:cid).
+- DELETE /api/carts/:cid/products/:pid: Elimina un producto con el id(:pid) indicado en el carro con id indicado(:cid).
+- DELETE /api/carts/:cid : Elimina todos los productos en el carro con id indicado(:cid).
+- PUT /api/carts/:cid : Agrega un array de productos en el carro con id indicado(:cid).
+- PUT /api/carts/:cid/products/:pid :Agrega un producto con el id(:pid) indicado en el carro con id indicado(:cid) con la cantidad especificada.
+
+
+Chat
+
+- GET /chat
+
+Vistas:
+
+- GET /
+- GET /realtimeproducts
+- GET /products
+- GET /carts/:cartID
+- GET /chat
+
 
 ### Tecnologías Utilizadas
 - Node.js
 - Express.js
+- MongoDB
+- Sockets.io
+- Handlebars
