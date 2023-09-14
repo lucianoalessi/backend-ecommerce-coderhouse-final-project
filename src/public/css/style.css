@@ -82,5 +82,8 @@ button{
 .productsList{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     flex: 1 1; 
+    border:2px black solid;
+    width: 1400px;
 }

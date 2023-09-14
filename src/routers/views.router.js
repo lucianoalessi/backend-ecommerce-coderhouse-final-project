@@ -6,8 +6,6 @@ import ProductManager from "../dao/managersMongoDb/ProductManagerMongo.js";
 import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
 
 
-import { ObjectId } from 'mongodb';
-
 const router = Router();
 
 
@@ -61,21 +59,24 @@ router.get("/products", async (req, res) => {
 router.get('/carts/:cid', async (req, res) => {
 	const { cid } = req.params;
 	try {
-		//  const objectId = new ObjectId(cid) 
-		//  console.log(objectId)
-		const carrito = await cmanager.getCartById(cid);
+		const carrito = await cmanager.getCartById(cid); //ACA nos devuelve un objeto de MONGO, por lo cual hay que convertirlo a un objeto plano de JS con toOBJECT
+		const carritoToObj = carrito.toObject() //convertimos el objeto que devuelve mongo en su formato a un objeto plano de javaScript. la alternativa de esto es agregar .lean() en mongo
+		console.log(carritoToObj)
 		if (!carrito) {
 			return res.status(404).send({ error: 'Cart not found' });
 		}
-		res.render("cart", {carrito, style:'style.css'})
+		res.render("cart", carritoToObj ) //si paso el carrito entre llaves no funciona. tampoco puedo cargar los estilos de la vista. nose porque.  
 	} catch (error) {
 		res.status(500).send({ error: error.message });
 		console.log(error)
-		
-		
 	}
 });
 
 
-
 export default router;
+
+
+
+
+//import { ObjectId } from 'mongodb';
+//  const objectId = new ObjectId(cid) 

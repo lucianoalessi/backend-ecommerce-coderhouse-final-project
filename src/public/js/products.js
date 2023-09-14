@@ -11,7 +11,7 @@ addToCartButtons.forEach((button) => {
     // Encuentra el elemento con la clase 'card-id' dentro de la tarjeta y obtiene su contenido de texto. 
     const productID = card.querySelector('.card-id').textContent;
     console.log(productID)
-    // Realiza una solicitud (POST) a una API para agregar un producto al carrito. usamos el carrito 1 como predeterminado.
+    // Realiza una solicitud (POST) a una API para agregar un producto al carrito. usamos el carrito con id= 64ffd4e3c9a5f9185e3994d4 como predeterminado.
     fetch(`api/carts/64ffd4e3c9a5f9185e3994d4/product/${productID}`, {
       method: 'POST',
     })

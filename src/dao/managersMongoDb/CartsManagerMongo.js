@@ -20,6 +20,7 @@ export default class CartManager{
         }
     }
 
+
     // Método para obtener un carrito específico por su ID.
     getCartById = async (idCart) => {
         try{
@@ -30,6 +31,17 @@ export default class CartManager{
             return error;
         }
     }
+
+	// //otra forma mejor:
+	// getCartByID = async (idCart) => {
+    //     try{
+    //         const cart = await cartModel.findById(idCart).lean();
+    //         return cart;
+    //     }catch(error){
+    //         console.error('Carrito inexistente:',error.message);
+    //         return error;
+    //     }
+    // }
 
     // Método para crear un nuevo carrito con productos proporcionados (opcional).
     addCart = async (products) => {

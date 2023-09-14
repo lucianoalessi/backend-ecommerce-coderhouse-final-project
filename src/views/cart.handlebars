@@ -1,22 +1,21 @@
 <div class='cart-container'>
-	<div class='tittle'>
-		<h1 class='titulo'>Cart ID: {{_id}}</h1>
-		hola
+	<div class='tittle-container'>
+		<h1 class='tittle'>Cart ID: {{_id}}</h1>
 	</div>
 	<div>
 		{{#each products}}
-			<div class='detaill'>
-				<p> ID:{{this._id}}</p>
+			<div class='product-detaill'>
+				<p> ID:{{this.productID}}</p>
 				<p>Cantidad: {{this.quantity}}</p>
 			</div>
 
-			<div class='more-detail'>
+			<div class='product-detail'>
 				{{!-- <div class='w-11'>
 					<img src='{{this.product.thumbnail}}' alt='{{this.product.title}}' />
 				</div> --}}
-				<p>Categoría: {{this.product.category}}</p>
-				<p>Nombre: {{this.product.title}}</p>
-				<p>Precio: {{this.product.price}}</p>
+				<p>Categoría: {{this.category}}</p>
+				<p>Nombre: {{products.title}}</p>
+				<p>Precio: {{product.price}}</p>
 			</div>
 		{{/each}}
 	</div>
