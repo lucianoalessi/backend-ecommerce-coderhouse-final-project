@@ -40,6 +40,7 @@ router.get("/chat", async (req,res)=>{
 router.get("/products", async (req, res) => {
 
 	const { limit, page, sort, query } = req.query;
+	const user = req.session.user
 
 	try {
 		const products = await pmanager.getProductsQuery(
@@ -48,7 +49,7 @@ router.get("/products", async (req, res) => {
 			sort,
 			query
 		);
-		res.render('products', { products: products , style:'style.css' });
+		res.render('products', { products: products, user: user  , style:'style.css' });
 	} catch (error) {
 		res.status(500).send({ error: error.message });
 	}
@@ -72,6 +73,26 @@ router.get('/carts/:cid', async (req, res) => {
 	}
 });
 
+
+//vistas para el login
+
+router.get('/login', (req, res) =>{
+	res.render('login' , {style:'style.css'});
+
+})
+
+router.get('/register' , (req, res) => {
+	res.render('register' , {style:'style.css'})
+
+})
+
+router.get('/profile' , (req, res) => {
+
+	const user = req.session.user
+
+	res.render('profile' , {user: user , style:'style.css'});
+	
+})
 
 export default router;
 

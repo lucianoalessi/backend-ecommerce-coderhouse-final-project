@@ -6,6 +6,9 @@ import productsRouter from './routers/products.router.js'; // Importamos las rut
 import cartsRouter from './routers/carts.router.js';
 import viewsRouter from './routers/views.router.js';
 import mongoose, { connect } from "mongoose";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import sessionRouter from './routers/session.js';
 
 // Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB.
 
@@ -35,6 +38,24 @@ app.use(express.Router()); // Creando una instancia de un enrutador Express (no 
 
 mongoose.connect('mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mongodb.net/')
 
+
+//session para login (configuracion)
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl:'mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mongodb.net/',
+        ttl:3600
+    }),
+    secret: 'CoderSecret',
+    resave: false,
+    saveUninitialized: false
+}))
+
+
+
+
+
+
 //Configuraciones para plantillas handlebars:
 
 app.engine('handlebars' , handlebars.engine());
@@ -47,6 +68,8 @@ app.use(express.static(__dirname +'/src/public'));
 app.use('/api/products' , productsRouter); // Usando el router de productos para las rutas que comienzan con '/api/products'.
 app.use('/api/carts' , cartsRouter); // Usando el router de carritos para las rutas que comienzan con '/api/carts'.
 app.use('/', viewsRouter); //router handlebars para io con '/'.
+app.use('/api/sessions', sessionRouter); // ruta para las sessions 
+
 
 
 
