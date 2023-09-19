@@ -50,8 +50,13 @@ router.post('/', async (req, res) => {
 router.get('/:cid' , async (req, res) => {
 
 	try{
-		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro (params) de la URL.
-		const getCart = await cmanager.getCartById(+cart); // Llamando al método getCartById de la instancia de CartManager. Agregamos un + en (+cart) para convertirlo en entero y que no se pase un string como parametro. 
+		const cartID = req.params.cid; // Obteniendo el ID del carrito desde el parámetro (params) de la URL.
+		const getCart = await cmanager.getCartById(+cartID); // Llamando al método getCartById de la instancia de CartManager. Agregamos un + en (+cart) para convertirlo en entero y que no se pase un string como parametro. 
+		
+		if (!getCart) {
+			throw new Error(`Carrito con el id ${cartID} no existe`);
+		}
+		
 		const getProductsCart = getCart.products; // Obteniendo los productos del carrito recuperado.
 		res.status(200).send({status:'success' , getProductsCart }); // Enviando una respuesta con los productos recuperados.
 
