@@ -74,19 +74,67 @@ router.get('/carts/:cid', async (req, res) => {
 });
 
 
+
+
+
+
+
+
 //vistas para el login
 
-router.get('/login', (req, res) =>{
+//middlewares:
+
+//Middleware para verificar la session
+
+//si se intenta ingresar a alguna de las otras rutas te trae directamente a esta
+
+const checkSession = (req, res, next) => {
+	if (!req.session.user) {
+		// La sesión ha expirado o el usuario no ha iniciado sesión, redirige a la página de inicio de sesión
+		res.clearCookie('connect.sid');
+		return res.redirect('/login');
+	}
+
+	next(); // Continúa con la siguiente función de middleware o ruta
+}
+
+//Middleware para verificar si hay session activa y evitar acceder a login y register
+const sessionExist = (req, res, next) => {
+	if (req.session.user) {
+		// Si hay una sesión activa y el usuario intenta acceder a /login o /register,
+		// redirige automáticamente a la página de inicio (por ejemplo, /home)
+		return res.redirect('/home');
+	}
+
+	// Si la sesión no está activa, permite el acceso a /login y /register
+	next();
+}
+
+const permission = (req, res, next) => {
+	if (req.session.user.rol === 'user') {
+		const requestedUrl = req.originalUrl;
+
+		// Redirige al usuario a la página de inicio con un mensaje de error que incluye la URL
+		return res.redirect(
+			`/home?message=No%20tienes%20permisos%20para%20ingresar%20a%20${requestedUrl}.`
+		);
+	}
+	next();
+}
+
+//vistas:
+
+router.get('/login', sessionExist, (req, res) =>{
 	res.render('login' , {style:'style.css'});
 
 })
 
-router.get('/register' , (req, res) => {
+router.get('/register' ,sessionExist, (req, res) => {
 	res.render('register' , {style:'style.css'})
 
 })
 
-router.get('/profile' , (req, res) => {
+router.get('/profile' ,checkSession,  (req, res) => {
 
 	const user = req.session.user
 
@@ -97,7 +145,4 @@ router.get('/profile' , (req, res) => {
 export default router;
 
 
-
-
-//import { ObjectId } from 'mongodb';
-//  const objectId = new ObjectId(cid) 
+ 

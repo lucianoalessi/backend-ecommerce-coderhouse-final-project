@@ -9,9 +9,6 @@ router.post('/login', async (req, res) => {
     
     const {email, password} = req.body;
 
-    const user = await userModel.findOne({email, password}) //busca el usuario ingresado
-    if(!user) return res.status(400).send({status:'error', error: 'credenciales incorrectas'}) // si el usuario no existe envia un error.
-
     if (email === 'adminCoder@coder.com' && password === 'adminCoder123') { //si el usuario que quiere loguearse es coderadmin
         const newUser = {
             first_name: 'Coder',
@@ -25,10 +22,15 @@ router.post('/login', async (req, res) => {
         return res.status(200).redirect('/products');
     }
 
+    const user = await userModel.findOne({email, password}) //busca el usuario ingresado
+    if(!user) return res.status(400).send({status:'error', error: 'credenciales incorrectas'}) // si el usuario no existe envia un error.
+
+
     req.session.user = {  //si el usuario existe, crea la session. 
         name: `${user.first_name} ${user.last_name}`,
         email: user.email,
-        age: user.age
+        age: user.age,
+        rol: user.rol
     }
     res.send({status:'success', payload: req.session.user}) //si el usuario existe, devolvemos un 200 de success.(cuando es un success no hace falta poner 200)
 })
@@ -42,7 +44,12 @@ router.post('/register' , async (req, res) => {
         return res.status(400).send({ status: "error", error: "Ya existe usuario con ese email" });
     };
     const user = {
-        first_name, last_name, email, age, password
+        first_name, 
+        last_name, 
+        email, 
+        age, 
+        password,
+        rol: 'user'
     };
     let result = await userModel.create(user);
     res.send({status:"success", message: "User registered"})
