@@ -16,27 +16,31 @@ const pmanager = new ProductManager() //instancia utilizando mongoDB
 const cmanager = new CartManager() //instancia Cart Manager utilizando mongoDB
 
 
-//ruta para plantilla handlebars
-router.get('/', async (req,res)=>{
+
+//Rutas para las vistas:
+
+
+//Ruta para la vista de todos los productos (ruta para plantilla handlebars):
+router.get('/home', async (req,res)=>{
 
     const listaProductos = await pmanager.getProducts()
     res.render('home' , {listaProductos, style:'style.css'})
 })
 
 
-//ruta para handlebars + websockets (productos en tiempo real)
+//Ruta de productos con formulario para agregar mas productos (ruta para handlebars + websockets):
 router.get('/realtimeproducts' , async (req,res) => {
     const listaProductos = await pmanager.getProducts({})
     res.render('realTimeProducts', {listaProductos, style:'style.css'})
 
 })
 
-//ruta para handlebars + websockets (chat)
+//Ruta para el chat (handlebars + websockets):
 router.get("/chat", async (req,res)=>{
     res.render("chat", {style:'style.css'})
 })
 
-//vista de productos con su paginacion
+//Vista de productos con su paginacion (pagination):
 router.get("/products", async (req, res) => {
 
 	const { limit, page, sort, query } = req.query;
@@ -55,7 +59,7 @@ router.get("/products", async (req, res) => {
 	}
 });
 
-//vista del carrito
+//Ruta con vista del carrito:
 
 router.get('/carts/:cid', async (req, res) => {
 	const { cid } = req.params;
@@ -76,18 +80,10 @@ router.get('/carts/:cid', async (req, res) => {
 
 
 
+//Vistas para Sessions y Middlewares:
 
 
-
-
-//vistas para el login
-
-//middlewares:
-
-//Middleware para verificar la session
-
-//si se intenta ingresar a alguna de las otras rutas te trae directamente a esta
-
+//Middleware para verificar la session.(si se intenta ingresar a alguna de las otras rutas te trae directamente a la ruta: '/login'):
 const checkSession = (req, res, next) => {
 	if (!req.session.user) {
 		// La sesión ha expirado o el usuario no ha iniciado sesión, redirige a la página de inicio de sesión
@@ -98,18 +94,18 @@ const checkSession = (req, res, next) => {
 	next(); // Continúa con la siguiente función de middleware o ruta
 }
 
-//Middleware para verificar si hay session activa y evitar acceder a login y register
+//Middleware para verificar si hay session activa y evitar acceder a login y register:
 const sessionExist = (req, res, next) => {
 	if (req.session.user) {
 		// Si hay una sesión activa y el usuario intenta acceder a /login o /register,
 		// redirige automáticamente a la página de inicio (por ejemplo, /home)
 		return res.redirect('/home');
 	}
-
 	// Si la sesión no está activa, permite el acceso a /login y /register
 	next();
 }
 
+//Middleware para permisos de user y admin:
 const permission = (req, res, next) => {
 	if (req.session.user.rol === 'user') {
 		const requestedUrl = req.originalUrl;
@@ -122,24 +118,31 @@ const permission = (req, res, next) => {
 	next();
 }
 
-//vistas:
+//Rutas para Session: 
 
+//Redirect to '/':
+router.get('/', async (req, res) => {
+	try {
+		res.status(200).redirect('/login');
+	} catch (err) {
+		res.status(400).send({ error: err.message });
+	}
+});
+
+//Vista para logearse:
 router.get('/login', sessionExist, (req, res) =>{
 	res.render('login' , {style:'style.css'});
-
 })
 
+//Vista para registrarse:
 router.get('/register' ,sessionExist, (req, res) => {
 	res.render('register' , {style:'style.css'})
-
 })
 
+//Vista para el perfil del usuario:
 router.get('/profile' ,checkSession,  (req, res) => {
-
 	const user = req.session.user
-
 	res.render('profile' , {user: user , style:'style.css'});
-	
 })
 
 export default router;

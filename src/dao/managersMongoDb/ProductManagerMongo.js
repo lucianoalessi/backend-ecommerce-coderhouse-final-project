@@ -4,9 +4,12 @@ import { productModel } from '../models/product.model.js';
 // Definimos la clase ProductManager que gestionará las operaciones relacionadas con los productos.
 export default class ProductManager{
 
+
     constructor(){
         //constructor vacio por ahora.
     }
+
+
 
     
     //Get product con query, para poder ordenar y filtrar productos. 
@@ -31,7 +34,7 @@ export default class ProductManager{
 				queryOptions.sort = { price: sort };
 			}
 
-            //paginacion
+            //paginacion con sus propiedades para paginar:
 			const getProducts = await productModel.paginate(filter, queryOptions);
 			getProducts.isValid = !(page <= 0 || page > getProducts.totalPages); // verificamos si el número de página proporcionado es válido y dentro del rango de páginas disponibles. Si no lo es, entonces getProducts.isValid se establecerá en falso.
 			getProducts.prevLink =
@@ -44,8 +47,8 @@ export default class ProductManager{
 			getProducts.status = getProducts ? 'success' : 'error';
 
 			return getProducts;
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log(error.message);
 		}
 	};
 
@@ -61,14 +64,20 @@ export default class ProductManager{
 
     // Agrega un nuevo producto a la base de datos.
     addProduct = async (product) => {
-
-        await productModel.create(product)
+        try {
+            await productModel.create(product)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     // Obtiene un producto específico por su ID.
     getProductById = async (idProduct) => {
-
-        return await productModel.findOne({ _id: idProduct })
+        try {
+            return await productModel.findOne({ _id: idProduct })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     // Actualiza un producto existente por su ID con los datos proporcionados en el objeto "product".

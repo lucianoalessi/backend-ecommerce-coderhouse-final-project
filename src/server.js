@@ -32,7 +32,7 @@ const socketServer = new Server(httpServer);
 
 app.use(express.json()); // Configurando Express para parsear JSON en las solicitudes.
 app.use(express.urlencoded({extended:true})); // Configurando Express para parsear datos de formularios en las solicitudes.
-app.use(express.Router()); // Creando una instancia de un enrutador Express (no necesario en este caso, se podría eliminar).
+app.use(express.Router()); // Creando una instancia de un enrutador Express.
 
 //Conexion a mongo Atlas:
 
@@ -42,12 +42,18 @@ mongoose.connect('mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mo
 //session para login (configuracion)
 
 app.use(session({
+    // Creo una nueva instancia de MongoStore para almacenar las sesiones en MongoDB
     store: MongoStore.create({
+        // Especifico la URL de conexión a tu base de datos MongoDB
         mongoUrl:'mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mongodb.net/',
+        // Establezco un tiempo de vida máximo para las sesiones en segundos (3600 segundos = 1 hora)
         ttl:3600
     }),
+    // Establezco una clave secreta para firmar las cookies de sesión (debe ser una cadena segura):
     secret: 'CoderSecret',
+    // No vuelvas a guardar la sesión si no ha cambiado desde la última vez que se guardó:
     resave: false,
+    // No guardar una sesión si no se ha inicializado (para ahorrar espacio en la base de datos):
     saveUninitialized: false
 }))
 
@@ -81,6 +87,8 @@ app.use('/api/sessions', sessionRouter); // ruta para las sessions
 //const pManager = new ProductManager(__dirname +'/files/products.json');  //CON FILE SYSTEM.
 const pManager = new ProductManager();
 const mManager = new messageManager();
+
+
 
 
 // Configurar el evento de conexión de Socket.IO

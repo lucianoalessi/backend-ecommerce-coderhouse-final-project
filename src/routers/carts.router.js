@@ -24,6 +24,10 @@ const cmanager = new CartManager();
 const pmanager = new ProductManager();
 
 
+
+
+//Rutas o endpoints:
+
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
 router.get('/' , async (req, res) => {
 	try{
@@ -69,17 +73,21 @@ router.get('/:cid' , async (req, res) => {
 // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
 router.post('/:cid/product/:pid' , async (req, res) => {
 
-    const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
-    const product = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
-
-    const addProductToCart = await cmanager.addProductToCart(cart, product); // Llamando al método addProductToCart de la instancia de CartManager.
-
-    res.send({status:'susess: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
-
+	try {
+		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
+		const product = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
+	
+		const addProductToCart = await cmanager.addProductToCart(cart, product); // Llamando al método addProductToCart de la instancia de CartManager.
+	
+		res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
+		
+	} catch (error) {
+		res.status(400).send({ error: error.message });
+	}
 })
 
 //ruta para eliminar un producto de un carrito
-router.delete('/:cid/products/:pid', async (req, res) => {
+router.delete('/:cid/product/:pid', async (req, res) => {
 	const { cid, pid } = req.params;
 	try {
 		//Busca el carrito
@@ -96,8 +104,8 @@ router.delete('/:cid/products/:pid', async (req, res) => {
 		await cmanager.deleteProdInCart(cid, pid);
 
 		res.status(200).send({ status: 'success', deletedToCart: exist });
-	} catch (err) {
-		res.status(400).send({ error: err.message });
+	} catch (error) {
+		res.status(400).send({ error: error.message });
 	}
 });
 
@@ -121,7 +129,7 @@ router.delete('/:cid', async (req, res) => {
 	}
 });
 
-//Agregar array de productos
+//Agregar un array de productos
 router.put('/:cid', async (req, res) => {
 
 	const { body } = req;
@@ -130,16 +138,12 @@ router.put('/:cid', async (req, res) => {
 	try {
 		const existCart = cmanager.getCartById(cid);
 		if (!existCart) {
-			return res
-				.status(404)
-				.send({ Status: 'error', message: 'Cart not found' });
+			return res.status(404).send({ Status: 'error', message: 'Cart not found' });
 		}
 		body.forEach(async (item) => {
 			const existProd = await pmanager.getProductById(item.productID);
 			if (!existProd) {
-				return res
-					.status(404)
-					.send({ Status: 'error', message: `Prod ${item.idx} not found` });
+				return res.status(404).send({ Status: 'error', message: `Prod ${item.idx} not found` });
 			}
 		});
 
@@ -151,7 +155,7 @@ router.put('/:cid', async (req, res) => {
 });
 
 //Ruta para modificar cantidad del producto
-router.put('/:cid/products/:pid', async (req, res) => {
+router.put('/:cid/product/:pid', async (req, res) => {
 	const { cid, pid } = req.params;
 	const { quantity } = req.body;
 	try {
@@ -169,8 +173,8 @@ router.put('/:cid/products/:pid', async (req, res) => {
 
 		const modStock = await cmanager.modifyQuantity(cid, pid, +quantity);
 		res.status(200).send({ status: 'success', deletedToCart: modStock });
-	} catch (err) {
-		res.status(400).send({ error: err.message });
+	} catch (error) {
+		res.status(400).send({ error: error.message });
 	}
 });
 

@@ -12,5 +12,4 @@ form.addEventListener('submit', e => {
             'Content-Type':'application/json'
         }
     }).then(result => result.json()).then(json => console.log(json)) //convertimos a json y lo mostramos por consola. 
-
 })

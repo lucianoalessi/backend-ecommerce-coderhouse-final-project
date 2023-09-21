@@ -43,41 +43,56 @@ router.get('/' , async (req, res) => {
 router.get('/:pid' , async (req, res) => {
     try{
         //obtenemos el producto por ID
-        let {pid} = req.params
+        const {pid} = req.params
         const product = await pmanager.getProductById(pid)
-        res.send({status:'sucess', product});
+
+        res.status(200).send({status:'success', product});
     }catch(error){
-        console.error('Producto inexistente', error.message);
+        res.status(400).send('Producto inexistente', error.message);
         return error;
     }
 });
 
-// Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor. (La misma ruta sirve para mongoDB y file system)
+// Ruta para agregar un producto. (Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
 router.post('/' , async (req, res) => {
 
-    const newProduct = req.body                             // la informacion que enviara el cliente estara dentro del req.body.
-    const addProduct = await pmanager.addProduct(newProduct) //agregamos el producto enviado por el cliente.
-    res.send({status:"Sucess: Producto agregado"})          //devolvemos un estado si se agrego correctamente.
+    try {
+        const newProduct = req.body                             // la informacion que enviara el cliente estara dentro del req.body.
+        const addProduct = await pmanager.addProduct(newProduct) //agregamos el producto enviado por el cliente.
+        res.status(200).send({status:"Sucess: Producto agregado"})          //devolvemos un estado si se agrego correctamente.  
+    } catch (error) {
+        res.status(400).send('Error al agregar el producto:', error.message);
+        return error;
+    }
 })
 
-//Con put modificamos informacion del servidor.(mongoDB)
+//Ruta para modificar un producto por ID. (Con put modificamos informacion del servidor).(mongoDB)
 router.put('/:pid' , async (req, res) => {
+    try {
+        const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
+        const update = req.body     //agregamos la informacion que actualizara el cliente en una variable
+        const productUpdate = await pmanager.updateProduct(productID,update); // actualizamos el producto filtrado
 
-    const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
-    const update = req.body     //agregamos la informacion que actualizara el cliente en una variable
-    const productUpdate = await pmanager.updateProduct(productID,update); // actualizamos el producto filtrado
-
-    res.send({status:'Sucess: product updated', productUpdate});
+        res.send({status:'Sucess: product updated', productUpdate});
+    } catch (error) {
+        res.status(400).send('Error al modificar el producto:', error.message);
+        return error; 
+    }
 })
 
-//Con delete eliminamos informacion del servidor. (La misma ruta sirve para mongoDB y file system)
+//Ruta para eliminar un producto. (Con delete eliminamos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
 router.delete('/:pid', async (req, res) => {
-    let {pid} = req.params                                 //obtenemos el id de producto ingresado el cliente por paramas
-    const productDeleted = await pmanager.deleteProduct(pid);  //eliminamos el producto deseado
 
-    res.send({status:'Sucess: Producto eliminado'});                //devolvemos un estado si se elimino exitosamente
-})
-
+    try {
+        let {pid} = req.params                                 //obtenemos el id de producto ingresado el cliente por paramas
+        const productDeleted = await pmanager.deleteProduct(pid);  //eliminamos el producto deseado
+    
+        res.send({status:'Sucess: Producto eliminado'});                //devolvemos un estado si se elimino exitosamente
+    } catch (error) {
+        res.status(400).send('Error al eliminar el producto:', error.message);
+        return error; 
+    }
+});
 
 export default router; 
 

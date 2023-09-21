@@ -5,9 +5,12 @@ import { productModel } from '../models/product.model.js';
 // Definimos una clase llamada CartManager para gestionar operaciones relacionadas con los carritos.
 export default class CartManager{
 
+
     constructor(){
         // Constructor vacío por ahora.
     }
+
+
 
 
 
@@ -17,7 +20,7 @@ export default class CartManager{
             const carts = await cartModel.find();
             return carts;
         }catch(error){
-            console.error('Error al obtener los carritos',error.message);
+            console.log('Error al obtener los carritos:', error.message);
             return []
         }
     }
@@ -28,7 +31,7 @@ export default class CartManager{
             const cart = await cartModel.findOne({_id: idCart});
             return cart;
         }catch(error){
-            console.error('Carrito inexistente:',error.message);
+            console.log('Carrito inexistente:',error.message);
             return error;
         }
     }
@@ -44,6 +47,7 @@ export default class CartManager{
     //     }
     // }
 
+
     // Método para crear un nuevo carrito con productos proporcionados (opcional).
     addCart = async (products) => {
         try{
@@ -52,11 +56,10 @@ export default class CartManager{
             if (products && products.length > 0) {
                 cartData.products = products;
             }
-    
             return await cartModel.create(cartData);
-        
+
         }catch(error){
-            console.error('Error al crear el carrito', error.message);
+            console.log('Error al crear el carrito:', error.message);
             return error;
         }
     }
@@ -79,7 +82,7 @@ export default class CartManager{
             await cartModel.updateOne({_id: cid}, cart);
 
         }catch(error){
-            console.error('Error al agregar el producto al carrito:' ,error.message);
+            console.log('Error al agregar el producto al carrito:' ,error.message);
             return error;
         }
     }
@@ -92,8 +95,9 @@ export default class CartManager{
 			const filter = cart.products.filter((item) => item.productID.toString() !== product._id.toString());
 			await cartModel.updateOne({ _id: cid }, { products: filter });
 
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log('Error al eleminar un producto del carrito:', error.message);
+            return error;
 		}
 	};
 
@@ -111,7 +115,8 @@ export default class CartManager{
 			}); // new: true devuelve el documento actualizado
 			return updatedCart;
 		} catch (error) {
-			console.log(error.message);
+			console.log('Error al agregar un producto al carrito:', error.message);
+            return error;
 		}
 	};
 
@@ -129,8 +134,8 @@ export default class CartManager{
 			});
 			//console.log(updateCart);
 			return updateCart;
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log('Error al eliminar todos los productos:', error.message);
 		}
 	};
 
