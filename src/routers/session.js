@@ -1,5 +1,7 @@
 import { Router } from "express"
 import { userModel } from '../dao/models/user.js'
+import { createHash, isValidPassword } from "../../utils.js";
+import { isValidObjectId } from "mongoose";
 
 const router = Router()
 
@@ -24,9 +26,10 @@ router.post('/login', async (req, res) => {
     }
 
     //Si se quiere loguear un usuario comun:
-    const user = await userModel.findOne({email, password}) //busca el usuario ingresado
+    const user = await userModel.findOne({email: email}) //busca el usuario ingresado por su email
     if(!user) return res.status(400).send({status:'error', error: 'credenciales incorrectas'}) // si el usuario no existe envia un error.
-
+    if(!isValidPassword(user,password)) return res.status(403).send({status:"error", error:"Incorrect password"});
+    delete user.password; //retiro el password del usuario de la session, ya que es un dato sensible. 
     //si el usuario existe, crea la session:
     req.session.user = {  
         name: `${user.first_name} ${user.last_name}`,
@@ -54,7 +57,7 @@ router.post('/register' , async (req, res) => {
         last_name, 
         email, 
         age, 
-        password,
+        password: createHash(password),
         role: 'User'
     };
     let result = await userModel.create(user);
@@ -68,7 +71,7 @@ router.get('/logout', (req, res) => {
 	// Destruye la sesión actual
 	req.session.destroy((error) => {
 		if (error) {
-			console.error('Error al cerrar la sesión:', err);
+			console.error('Error al cerrar la sesión:', error);
 			res.status(500).send('Error al cerrar la sesión');
 		} else {
 			// Redirige al usuario a la página de inicio de sesión
