@@ -10,6 +10,10 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import sessionRouter from './routers/session.js';
 
+//importaciones para passport: 
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
+
 // Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB.
 
 //import ProductManager from "./ProductManager.js"; //CON FILE SYSTEM
@@ -57,9 +61,11 @@ app.use(session({
     saveUninitialized: false
 }))
 
+//passport:
 
-
-
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 //Configuraciones para plantillas handlebars:
