@@ -8,7 +8,7 @@ import viewsRouter from './routers/views.router.js';
 import mongoose, { connect } from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import sessionRouter from './routers/session.js';
+import sessionRouter from './routers/sessions.router.js';
 
 //importaciones para passport: 
 import passport from "passport";
