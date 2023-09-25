@@ -2,7 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import { userModel } from "../dao/models/user.js";
 import {createHash , isValidPassword} from '../../utils.js'
-
+import GitHubStrategy from 'passport-github2';
 
 const LocalStrategy = local.Strategy;
 const initializePassport = () => {
@@ -71,13 +71,40 @@ const initializePassport = () => {
     //serializacion y deserializacion:
 
     passport.serializeUser((user, done) => {
-        done(null, user.id);
+        done(null, user._id);
     });
     
     passport.deserializeUser( async(id, done) => {
         let user = await userModel.findById(id);
         done(null, user);
     });
+
+    //Inicio con Git Hub:
+    passport.use('github', new GitHubStrategy({
+        clientID:" ",
+        clientSecret: " ",
+        callbackURL:" "
+    }, async(accessToken, refreshToken, profile, done) => {
+        try{
+            console.log(profile); //console.log para la informacion que viene del perfil. 
+            let user = await userService.findOne({email:profile._json.email})
+            if(!user){ //El usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
+                let newUser = {
+                    first_name: profile._json.name,
+                    last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
+                    age: 18, ////rellenamos los datos que no vienen desde el perfil.
+                    email: profile._json.email,
+                    password: '' //al ser una autenticacion de terceros, no podemos asignarle un password.
+                }
+                let result = await userService.create(newUser);
+                done(null, result);
+            }else{//si entra aqui, es porque el usuario ya existia.
+                done(null, user);
+            }
+        }catch(error){
+            done(null, result);
+        }
+    }))
     
 }
 
