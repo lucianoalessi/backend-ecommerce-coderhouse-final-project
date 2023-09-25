@@ -81,28 +81,29 @@ const initializePassport = () => {
 
     //Inicio con Git Hub:
     passport.use('github', new GitHubStrategy({
-        clientID:" ",
-        clientSecret: " ",
-        callbackURL:" "
+        clientID:"Iv1.5fa4626ba072b167",
+        clientSecret: "ddc4da16191d83e241c2c02310d931bf18450e5b",
+        callbackURL:"http://localhost:8080/api/sessions/githubCallback"
     }, async(accessToken, refreshToken, profile, done) => {
         try{
             console.log(profile); //console.log para la informacion que viene del perfil. 
-            let user = await userService.findOne({email:profile._json.email})
+            let user = await userModel.findOne({email:profile._json.email})
             if(!user){ //El usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
                     age: 18, ////rellenamos los datos que no vienen desde el perfil.
                     email: profile._json.email,
-                    password: '' //al ser una autenticacion de terceros, no podemos asignarle un password.
+                    password: '', //al ser una autenticacion de terceros, no podemos asignarle un password.
+                    role: 'user'
                 }
-                let result = await userService.create(newUser);
+                let result = await userModel.create(newUser);
                 done(null, result);
             }else{//si entra aqui, es porque el usuario ya existia.
                 done(null, user);
             }
         }catch(error){
-            done(null, result);
+            done(error);
         }
     }))
     
