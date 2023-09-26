@@ -5,21 +5,23 @@ import {createHash , isValidPassword} from '../../utils.js'
 import GitHubStrategy from 'passport-github2';
 
 const LocalStrategy = local.Strategy;
+
+// Función para inicializar Passport y definir estrategias de autenticación
 const initializePassport = () => {
 
-    //Passport para el registro del usuario:
+    // Estrategia de autenticación para el registro de usuarios:
     passport.use('register', new LocalStrategy(
         {passReqToCallback:true , usernameField: 'email'}, async (req, username, password, done) => {
             const {first_name, last_name, email, age} = req.body; //El cliente pasa sus datos a travez de la vista por body.
             try {
 
-                //comprobamos is el usuario ya existe:
+                // Comprobamos si el usuario ya existe en la base de datos:
                 let user = await userModel.findOne({email:username});
                 if(user){
                     console.log('User already exists')
                     return done(null, false);
                 }
-                //en caso de que no exista, creamos el usuario con el role: 'user'
+                // Si el usuario no existe, creamos un nuevo usuario en la base de datos (le agregamos el rol=user):
                 const newUser = {
                     first_name, 
                     last_name, 
@@ -36,7 +38,7 @@ const initializePassport = () => {
         }
     ))
     
-    //Passport para el login del usuario:
+    // Estrategia de autenticación para el inicio de sesión de usuarios:
     passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
         try {
             //si el usuario que quiere loguearse es coderadmin:
@@ -44,7 +46,7 @@ const initializePassport = () => {
                 const newUser = {
                     first_name: 'Coder',
                     last_name: 'Admin',
-                    email: email,
+                    email: email, 
                     age: 27,
                     password: password,
                     role: 'admin', 
@@ -68,27 +70,36 @@ const initializePassport = () => {
     }));
 
 
-    //serializacion y deserializacion:
+    // Serialización y deserialización de usuarios para las sesiones
 
+    //La serialización de usuarios es el proceso de convertir un objeto de usuario (o sus datos clave) 
+    //en un formato que pueda ser almacenado en la sesión del usuario.
+
+    // El objeto 'user' es el usuario autenticado, 'done' es una función de callback
     passport.serializeUser((user, done) => {
-        done(null, user._id);
+        done(null, user._id); // Almacenamos el '_id' del usuario en la sesión
     });
     
+    //La deserialización de usuarios es el proceso inverso de la serialización. 
+    //Convierte el identificador único del usuario (generalmente el _id en la base de datos) de 
+    //la sesión en un objeto de usuario.
+
+    // 'id' es el identificador único del usuario almacenado en la sesión
     passport.deserializeUser( async(id, done) => {
-        let user = await userModel.findById(id);
-        done(null, user);
+        let user = await userModel.findById(id); // Buscamos al usuario en la base de datos
+        done(null, user); // Pasamos el objeto de usuario encontrado a través de 'done' para autenticación
     });
 
-    //Inicio con Git Hub:
+    // Estrategia de autenticación para iniciar sesión con GitHub
     passport.use('github', new GitHubStrategy({
         clientID:"Iv1.5fa4626ba072b167",
         clientSecret: "ddc4da16191d83e241c2c02310d931bf18450e5b",
         callbackURL:"http://localhost:8080/api/sessions/githubCallback"
     }, async(accessToken, refreshToken, profile, done) => {
         try{
-            console.log(profile); //console.log para la informacion que viene del perfil. 
-            let user = await userModel.findOne({email:profile._json.email})
-            if(!user){ //El usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
+            console.log(profile); //console.log para la informacion que viene del perfil de GitHub. 
+            let user = await userModel.findOne({email:profile._json.email}) // Buscamos un usuario por su dirección de correo electrónico en la base de datos
+            if(!user){ // si el usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
@@ -99,7 +110,7 @@ const initializePassport = () => {
                 }
                 let result = await userModel.create(newUser);
                 done(null, result);
-            }else{//si entra aqui, es porque el usuario ya existia.
+            }else{ // Si el usuario ya existe, simplemente lo autenticamos
                 done(null, user);
             }
         }catch(error){
