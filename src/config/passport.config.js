@@ -7,7 +7,7 @@ import GitHubStrategy from 'passport-github2';
 const LocalStrategy = local.Strategy;
 
 // Función para inicializar Passport y definir estrategias de autenticación
-const initializePassport = () => {
+const initializePassport = async () => {
 
     // Estrategia de autenticación para el registro de usuarios:
     passport.use('register', new LocalStrategy(
@@ -15,9 +15,12 @@ const initializePassport = () => {
             const {first_name, last_name, email, age} = req.body; //El cliente pasa sus datos a travez de la vista por body.
             try {
 
+                if (!first_name || !last_name || !email || !age || !password) {
+                    return done(null, false, { message: 'Incomplete Values' });
+                }
                 // Comprobamos si el usuario ya existe en la base de datos:
-                let user = await userModel.findOne({email:username});
-                if(user){
+                let exist = await userModel.findOne({email:username});
+                if(exist){
                     console.log('User already exists')
                     return done(null, false);
                 }
@@ -58,16 +61,32 @@ const initializePassport = () => {
             const user = await userModel.findOne({email:username}) //busca el usuario ingresado por su email
             if(!user){
                 console.log("User doesn't exist") // si el usuario no existe envia un error.
-                return done(null, false); // no se le envia un usuario = (false)
+                return done(null, false ,{message: "No se encontro el usuario"}); // no se le envia un usuario = (false)
             }
             if(!isValidPassword(user,password)){
-                return done(null, false) // si la contraseña es incorrecta, tampoco se le envia un usuario = (false).
+                return done(null, false , {message: "Contraseña incorrecta"}) // si la contraseña es incorrecta, tampoco se le envia un usuario = (false).
             }; 
             return done(null, user); // se le envia el usuario = (user)
         } catch (error) {
             return done(error); 
         }
     }));
+
+    //extrategia con JWT:
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: 'coderSecret'
+    }, async(jwt_payload, done) => {
+        console.log(jwt_payload);
+        try {
+            return done(null, jwt_payload);
+        } catch (error) {
+            return done(error);
+        }
+    }))
+
+
+
 
 
     // Serialización y deserialización de usuarios para las sesiones
