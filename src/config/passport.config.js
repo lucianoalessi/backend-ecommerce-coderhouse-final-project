@@ -3,8 +3,10 @@ import local from "passport-local";
 import { userModel } from "../dao/models/user.js";
 import {createHash , isValidPassword} from '../../utils.js'
 import GitHubStrategy from 'passport-github2';
+import jwt from 'passport-jwt'
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
 
 // Función para inicializar Passport y definir estrategias de autenticación
 const initializePassport = async () => {
