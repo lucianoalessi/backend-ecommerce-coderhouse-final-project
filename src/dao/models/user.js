@@ -26,4 +26,4 @@ userSchema.pre('find', function(){
     this.populate('cart.cartId');
 });
 
-export const userModel = mongoose.model(collection,schema)
+export const userModel = mongoose.model(collection,userSchema)

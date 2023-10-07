@@ -1,12 +1,16 @@
 import passport from "passport";
 import local from "passport-local";
-import { userModel } from "../dao/models/user.js";
-import {createHash , isValidPassword} from '../../utils.js'
+import jwt from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
-import jwt from 'passport-jwt'
+import { userModel } from "../dao/models/user.js";
+import {cookieExtractor , createHash , isValidPassword} from '../../utils.js'
+
+
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt; // Extractor de jwt ya sea de headers, cookies, etc
+
 
 // Función para inicializar Passport y definir estrategias de autenticación
 const initializePassport = async () => {
@@ -77,9 +81,8 @@ const initializePassport = async () => {
     //extrategia con JWT:
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: 'coderSecret'
+        secretOrKey: 'CoderSecret' //debe ser el mismo que en app.js/server.js
     }, async(jwt_payload, done) => {
-        console.log(jwt_payload);
         try {
             return done(null, jwt_payload);
         } catch (error) {

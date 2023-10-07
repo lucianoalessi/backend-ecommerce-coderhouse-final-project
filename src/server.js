@@ -9,6 +9,7 @@ import mongoose, { connect } from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import sessionRouter from './routers/sessions.router.js';
+import cookieParser from "cookie-parser";
 
 //importaciones para passport: 
 import passport from "passport";
@@ -66,6 +67,11 @@ app.use(session({
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+
+//middlewares para jwt, manejo de token en cookies:
+
+app.use(cookieParser());
+
 
 
 //Configuraciones para plantillas handlebars:

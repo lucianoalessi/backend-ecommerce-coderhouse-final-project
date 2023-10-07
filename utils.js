@@ -23,19 +23,20 @@ const __filename = fileURLToPath(import.meta.url) // __filename contiene la ruta
 const __dirname = dirname(__filename);// __dirname contiene el directorio del archivo actual.
 
 
-//Para jwt en Cookies
+//Para jwt , extractor de token en Cookies
 export const cookieExtractor = req => {
     let token;
-    if (req && req.cookies) {
-        token = req.cookies['coderCookie']
+    if (req && req.cookies) {  //corroboramos que hay alguna cookie que tomar
+        token = req.cookies['coderCookie'] //tomamos solo la cookie que necesitamos
     }
     return token;
 }
 
-export const bearerTokenExtractor = req => {
-    return req.headers.authorization.split(' ')[1];
-}
+// export const bearerTokenExtractor = req => {
+//     return req.headers.authorization.split(' ')[1];
+// }
 
+//para los errores de token jwt
 export const passportCall = (strategy) => {
     return async(req, res, next) => {
         passport.authenticate(strategy, function(err, user, info) {

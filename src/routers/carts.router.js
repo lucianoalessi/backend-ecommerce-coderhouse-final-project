@@ -38,6 +38,8 @@ router.get('/' , async (req, res) => {
 	}
 })
 
+
+
 // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
 router.post('/', async (req, res) => {
 	try{
