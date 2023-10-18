@@ -1,6 +1,6 @@
 // Importamos los modelos de datos de carrito y producto desde archivos separados.
-import { cartModel } from '../models/carts.model.js'
-import { productModel } from '../models/product.model.js';
+import { cartModel } from '../../models/carts.model.js'
+import { productModel } from '../../models/product.model.js';
 
 // Definimos una clase llamada CartManager para gestionar operaciones relacionadas con los carritos.
 export default class CartManager{

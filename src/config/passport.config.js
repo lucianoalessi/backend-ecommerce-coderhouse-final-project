@@ -2,8 +2,9 @@ import passport from "passport";
 import local from "passport-local";
 import jwt from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
-import { userModel } from "../dao/models/user.js";
+import { userModel } from "../models/user.js";
 import {cookieExtractor , createHash , isValidPassword} from '../../utils.js'
+import config from './config.js'
 
 
 
@@ -51,7 +52,7 @@ const initializePassport = async () => {
     passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
         try {
             //si el usuario que quiere loguearse es coderadmin:
-            if (username === 'adminCoder@coder.com' && password === 'adminCoder123') { 
+            if (username === config.ADMIN_NAME && password === config.ADMIN_PASSWORD) { 
                 const newUser = {
                     first_name: 'Coder',
                     last_name: 'Admin',

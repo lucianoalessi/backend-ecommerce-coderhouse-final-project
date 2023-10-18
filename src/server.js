@@ -21,6 +21,10 @@ import initializePassport from "./config/passport.config.js";
 import ProductManager from "./dao/managersMongoDb/ProductManagerMongo.js";
 import messageManager from "./dao/managersMongoDb/MessageManagerMongo.js";
 
+//import dotenv
+
+import config from './config/config.js'
+
 
 
 
@@ -28,7 +32,8 @@ import messageManager from "./dao/managersMongoDb/MessageManagerMongo.js";
 const app = express()
 
 // Iniciando el servidor Express para escuchar en el puerto 8080.
-const httpServer = app.listen(8080 , () => {console.log('Server ON')})
+const port = config.PORT
+const httpServer = app.listen( port , () => {console.log('Server ON')})
 
 //creamos un servidor Socket viviendo dentro de nuestro servidor principal:
 const socketServer = new Server(httpServer);
@@ -41,7 +46,7 @@ app.use(express.Router()); // Creando una instancia de un enrutador Express.
 
 //Conexion a mongo Atlas:
 
-mongoose.connect('mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mongodb.net/')
+mongoose.connect(config.MONGO_URL)
 
 
 //session para login (configuracion)
@@ -50,7 +55,7 @@ app.use(session({
     // Creo una nueva instancia de MongoStore para almacenar las sesiones en MongoDB
     store: MongoStore.create({
         // Especifico la URL de conexión a tu base de datos MongoDB
-        mongoUrl:'mongodb+srv://lucianoAlessi:coder123@proyectofinal2.ehjnvnu.mongodb.net/',
+        mongoUrl: config.MONGO_URL,
         // Establezco un tiempo de vida máximo para las sesiones en segundos (3600 segundos = 1 hora)
         ttl:3600
     }),

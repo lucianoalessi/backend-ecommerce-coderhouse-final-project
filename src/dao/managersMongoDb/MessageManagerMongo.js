@@ -1,5 +1,5 @@
 // Importa el modelo de datos relacionado con los mensajes.
-import { messageModel } from "../models/message.model.js";
+import { messageModel } from "../../models/message.model.js";
 
 // Define una clase llamada messageManager que gestionará las operaciones relacionadas con los mensajes.
 export default class messageManager{

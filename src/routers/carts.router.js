@@ -2,184 +2,49 @@
 import { Router } from "express"; // Importando la clase Router del módulo "express".
 import __dirname from '../../utils.js' // Importando la constante __dirname.
 
-//Ahora utilizaremos MONGO DB, asi que comentamos la importacion de FILE SYSTEM:
-
-//import CartManager from "../CartManager.js"; // Importando la clase CartManager 
-import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
-import ProductManager from "../dao/managersMongoDb/ProductManagerMongo.js";
-
-
-
 // Creando una nueva instancia de Router.
 const router = Router();
 
+//importamos los controllers
 
-
-
-
-// Creando una nueva instancia de CartManager Y ProductManager. En caso de utilizar FILE SYSTEM agregamos la ruta del archivo.
-
-//const cmanager = new CartManager(__dirname +'/files/cart.json');
-const cmanager = new CartManager();
-const pmanager = new ProductManager();
-
+import { 
+	getCarts,
+	newCart, 
+	getCartById, 
+	addProductToCart,
+	deleteProdInCart, 
+	deleteAllProductsInCart, 
+	insertArrayProds,
+	modifyQuantity
+} from "../controllers/cartController.js";
 
 
 
 //Rutas o endpoints:
 
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
-router.get('/' , async (req, res) => {
-	try{
-		const carts = await cmanager.getCarts(); // Llamamos al método getCarts de la instancia de CartManager para obtener los carritos y los guardamos en la variable carts
-		res.status(200).send({status:'success' , carts });  // Enviando una respuesta con los carritos obtenidos.
-	}catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-})
-
-
+router.get('/' , getCarts)
 
 // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
-router.post('/', async (req, res) => {
-	try{
-		const newCart = req.body; // Obteniendo los datos del carrito desde el cuerpo de la solicitud y los guardamos en la variable newCart. 
-		const addcart = await cmanager.addCart(newCart); // Llamando al método addCart de la instancia de CartManager para agregar un carrito y lo guaramos en una variable.
-    	res.status(200).send({status:'success'}); // Enviando una respuesta indicando el éxito al agregar el carrito.
-	}catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-})
-
+router.post('/', newCart )
 
 // Ruta para manejar las solicitudes GET para recuperar un carrito específico por su ID. (La misma sirve para mongoDB y file system)
-router.get('/:cid' , async (req, res) => {
-
-	try{
-		const cartID = req.params.cid; // Obteniendo el ID del carrito desde el parámetro (params) de la URL.
-		const getCart = await cmanager.getCartById(+cartID); // Llamando al método getCartById de la instancia de CartManager. Agregamos un + en (+cart) para convertirlo en entero y que no se pase un string como parametro. 
-		
-		if (!getCart) {
-			throw new Error(`Carrito con el id ${cartID} no existe`);
-		}
-		
-		const getProductsCart = getCart.products; // Obteniendo los productos del carrito recuperado.
-		res.status(200).send({status:'success' , getProductsCart }); // Enviando una respuesta con los productos recuperados.
-
-	}catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-})
-
+router.get('/:cid' , getCartById)
 
 // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
-router.post('/:cid/product/:pid' , async (req, res) => {
-
-	try {
-		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
-		const product = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
-	
-		const addProductToCart = await cmanager.addProductToCart(cart, product); // Llamando al método addProductToCart de la instancia de CartManager.
-	
-		res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
-		
-	} catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-})
+router.post('/:cid/product/:pid' , addProductToCart )
 
 //ruta para eliminar un producto de un carrito
-router.delete('/:cid/product/:pid', async (req, res) => {
-	const { cid, pid } = req.params;
-	try {
-		//Busca el carrito
-		const getCartByID = await cmanager.getCartById(cid)
-		if (!getCartByID) {
-			return res.status(404).send({ error: 'Cart not found' });
-		}
-		//Busca el producto en el carrito
-		const exist = getCartByID.products.find((prod) => prod.productID == pid);
-		if (!exist) {
-			return res.status(404).send({ error: 'Not found prod in cart' });
-		}
-
-		await cmanager.deleteProdInCart(cid, pid);
-
-		res.status(200).send({ status: 'success', deletedToCart: exist });
-	} catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-});
+router.delete('/:cid/product/:pid', deleteProdInCart );
 
 //ruta para vaciar un carrito
-router.delete('/:cid', async (req, res) => {
-	const { cid } = req.params;
-	try {
-		const existCart = await cmanager.getCartById(cid)
-
-		if (!existCart) {
-			return res
-				.status(404)
-				.send({ Status: 'error', message: 'Cart not found' });
-		}
-
-		const emptyCart = await cmanager.deleteAllProductsInCart(cid);
-
-		res.status(200).send({ status: 'success', emptyCart: emptyCart });
-	} catch (err) {
-		res.status(400).send({ error: err.message });
-	}
-});
+router.delete('/:cid', deleteAllProductsInCart );
 
 //Agregar un array de productos
-router.put('/:cid', async (req, res) => {
-
-	const { body } = req;
-	const { cid } = req.params;
-
-	try {
-		const existCart = cmanager.getCartById(cid);
-		if (!existCart) {
-			return res.status(404).send({ Status: 'error', message: 'Cart not found' });
-		}
-		body.forEach(async (item) => {
-			const existProd = await pmanager.getProductById(item.productID);
-			if (!existProd) {
-				return res.status(404).send({ Status: 'error', message: `Prod ${item.idx} not found` });
-			}
-		});
-
-		const newCart = await cmanager.insertArrayProds(cid, body);
-		res.status(200).send({ status: 'success', newCart: newCart });
-	} catch (err) {
-		res.status(400).send({ error: err.message });
-	}
-});
+router.put('/:cid', insertArrayProds );
 
 //Ruta para modificar cantidad del producto
-router.put('/:cid/product/:pid', async (req, res) => {
-	const { cid, pid } = req.params;
-	const { quantity } = req.body;
-	try {
-		//Busca el carrito
-		const getCartByID = await cmanager.getCartById(cid);
-		if (!getCartByID) {
-			return res.status(404).send({ error: 'Cart not found' });
-		}
-
-		//Busca el producto en el carrito
-		const exist = getCartByID.products.find((prod) => prod.productID.toJSON() === pid);
-		if (!exist) {
-			return res.status(404).send({ error: 'Not found prod in cart' });
-		}
-
-		const modStock = await cmanager.modifyQuantity(cid, pid, +quantity);
-		res.status(200).send({ status: 'success', deletedToCart: modStock });
-	} catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-});
-
+router.put('/:cid/product/:pid', modifyQuantity );
 
 
 export default router;
@@ -190,10 +55,72 @@ export default router;
 
 
 
+//FILE SYSTEM
+
+//Ahora utilizaremos MONGO DB, asi que comentamos la importacion de FILE SYSTEM:
+//import CartManager from "../CartManager.js"; // Importando la clase CartManager 
 
 
+// Creando una nueva instancia de CartManager Y ProductManager. En caso de utilizar FILE SYSTEM agregamos la ruta del archivo.
+//const cmanager = new CartManager(__dirname +'/files/cart.json');
+
+// // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
+// router.get('/' , async (req, res) => {
+// 	try{
+// 		const carts = await cmanager.getCarts(); // Llamamos al método getCarts de la instancia de CartManager para obtener los carritos y los guardamos en la variable carts
+// 		res.status(200).send({status:'success' , carts });  // Enviando una respuesta con los carritos obtenidos.
+// 	}catch (error) {
+// 		res.status(400).send({ error: error.message });
+// 	}
+// })
 
 
+// // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
+// router.post('/', async (req, res) => {
+// 	try{
+// 		const newCart = req.body; // Obteniendo los datos del carrito desde el cuerpo de la solicitud y los guardamos en la variable newCart. 
+// 		const addcart = await cmanager.addCart(newCart); // Llamando al método addCart de la instancia de CartManager para agregar un carrito y lo guaramos en una variable.
+//     	res.status(200).send({status:'success'}); // Enviando una respuesta indicando el éxito al agregar el carrito.
+// 	}catch (error) {
+// 		res.status(400).send({ error: error.message });
+// 	}
+// })
+
+
+// // Ruta para manejar las solicitudes GET para recuperar un carrito específico por su ID. (La misma sirve para mongoDB y file system)
+// router.get('/:cid' , async (req, res) => {
+
+// 	try{
+// 		const cartID = req.params.cid; // Obteniendo el ID del carrito desde el parámetro (params) de la URL.
+// 		const getCart = await cmanager.getCartById(+cartID); // Llamando al método getCartById de la instancia de CartManager. Agregamos un + en (+cart) para convertirlo en entero y que no se pase un string como parametro. 
+		
+// 		if (!getCart) {
+// 			throw new Error(`Carrito con el id ${cartID} no existe`);
+// 		}
+		
+// 		const getProductsCart = getCart.products; // Obteniendo los productos del carrito recuperado.
+// 		res.status(200).send({status:'success' , getProductsCart }); // Enviando una respuesta con los productos recuperados.
+
+// 	}catch (error) {
+// 		res.status(400).send({ error: error.message });
+// 	}
+// })
+
+// // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
+// router.post('/:cid/product/:pid' , async (req, res) => {
+
+// 	try {
+// 		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
+// 		const product = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
+	
+// 		const addProductToCart = await cmanager.addProductToCart(cart, product); // Llamando al método addProductToCart de la instancia de CartManager.
+	
+// 		res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
+		
+// 	} catch (error) {
+// 		res.status(400).send({ error: error.message });
+// 	}
+// })
 
 
 // router.delete('/:cid/product/:pid' , async (req, res) => {

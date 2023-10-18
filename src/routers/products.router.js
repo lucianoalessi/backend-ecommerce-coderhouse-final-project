@@ -1,98 +1,33 @@
 import { Router } from 'express';
 import __dirname from '../../utils.js'
 
-//Ahora utilizaremos MONGO DB, asi que comentamos la importacion de FILE SYSTEM:
-
-//import ProductManager from '../ProductManager.js'
-import ProductManager from '../dao/managersMongoDb/ProductManagerMongo.js';
-
-
 //Inicializamos la extencion de express, Router
 const router = Router()
 
-
-
-
-//Creamos una nueva instancia de la clase ProductManager.En caso de utilizar FILE SYSTEM agregamos la ruta del archivo.
-
-//const pmanager = new ProductManager(__dirname + '/files/products.json') //NOTA: para poder acceder al archivo y leer el contenido dentro en el servidor tenemos que usar dirname y no ./files/products.json. (hay que eliminar los puntos para que funcione)
-const pmanager = new ProductManager()
-
-
+//import controller
+import { 
+    getProductsQuery, 
+    getProductById, 
+    addProduct, 
+    updateProduct, 
+    deleteProduct
+} from '../controllers/productController.js';
 
 
 // //Ruta para manejar las solicitudes GET para obtener todos los productos. (Solo sirve para MONGO DB)
-router.get('/' , async (req, res) => {
-    const { limit, page, sort, query } = req.query;
-	try {
-		const prods = await pmanager.getProductsQuery(
-			limit,
-			page,
-			sort,
-			query
-		);
-
-		res.status(200).send({ status: 'success', prods: prods });
-	} catch (err) {
-		res.status(400).send({ error: err.message });
-	}
-});
-
+router.get('/' , getProductsQuery );
 
 //Ruta para manejar las solicitudes GET para recuperar un producto específico por su ID. (La misma sirve para mongoDB)
-router.get('/:pid' , async (req, res) => {
-    try{
-        //obtenemos el producto por ID
-        const {pid} = req.params
-        const product = await pmanager.getProductById(pid)
-
-        res.status(200).send({status:'success', product});
-    }catch(error){
-        res.status(400).send('Producto inexistente', error.message);
-        return error;
-    }
-});
+router.get('/:pid' , getProductById );
 
 // Ruta para agregar un producto. (Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.post('/' , async (req, res) => {
-
-    try {
-        const newProduct = req.body                             // la informacion que enviara el cliente estara dentro del req.body.
-        const addProduct = await pmanager.addProduct(newProduct) //agregamos el producto enviado por el cliente.
-        res.status(200).send({status:"Sucess: Producto agregado"})          //devolvemos un estado si se agrego correctamente.  
-    } catch (error) {
-        res.status(400).send('Error al agregar el producto:', error.message);
-        return error;
-    }
-})
+router.post('/' , addProduct )
 
 //Ruta para modificar un producto por ID. (Con put modificamos informacion del servidor).(mongoDB)
-router.put('/:pid' , async (req, res) => {
-    try {
-        const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
-        const update = req.body     //agregamos la informacion que actualizara el cliente en una variable
-        const productUpdate = await pmanager.updateProduct(productID,update); // actualizamos el producto filtrado
-
-        res.send({status:'Sucess: product updated', productUpdate});
-    } catch (error) {
-        res.status(400).send('Error al modificar el producto:', error.message);
-        return error; 
-    }
-})
+router.put('/:pid' , updateProduct );
 
 //Ruta para eliminar un producto. (Con delete eliminamos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.delete('/:pid', async (req, res) => {
-
-    try {
-        let {pid} = req.params                                 //obtenemos el id de producto ingresado el cliente por paramas
-        const productDeleted = await pmanager.deleteProduct(pid);  //eliminamos el producto deseado
-    
-        res.send({status:'Sucess: Producto eliminado'});                //devolvemos un estado si se elimino exitosamente
-    } catch (error) {
-        res.status(400).send('Error al eliminar el producto:', error.message);
-        return error; 
-    }
-});
+router.delete('/:pid', deleteProduct );
 
 export default router; 
 
@@ -110,7 +45,16 @@ export default router;
 
 
 
+
+
 //con FILE SYSTEM:
+
+//Ahora utilizaremos MONGO DB, asi que comentamos la importacion de FILE SYSTEM:
+//import ProductManager from '../ProductManager.js'
+
+//Creamos una nueva instancia de la clase ProductManager.En caso de utilizar FILE SYSTEM agregamos la ruta del archivo.
+//const pmanager = new ProductManager(__dirname + '/files/products.json') //NOTA: para poder acceder al archivo y leer el contenido dentro en el servidor tenemos que usar dirname y no ./files/products.json. (hay que eliminar los puntos para que funcione)
+
 
 // cambiamos app.get por router.get
 // router.get('/' , async (req, res) => {
