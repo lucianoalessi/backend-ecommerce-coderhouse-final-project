@@ -1,6 +1,6 @@
 import productService from "../services/productService.js";
 
-
+//Controller para obtener los productos y filtrar por query
 export const getProductsQuery = async (req, res) => {
     const { limit, page, sort, query } = req.query;
 	try {
@@ -10,14 +10,13 @@ export const getProductsQuery = async (req, res) => {
 			sort,
 			query
 		);
-
 		res.status(200).send({ status: 'success', prods: prods });
 	} catch (err) {
 		res.status(400).send({ error: err.message });
 	}
 }
 
-
+//obtener productos por id
 export const getProductById = async (req, res) => {
     try{
         //obtenemos el producto por ID
@@ -31,7 +30,7 @@ export const getProductById = async (req, res) => {
     }
 }
 
-
+//agregar un producto nuevo
 export const addProduct = async (req, res) => {
 
     try {

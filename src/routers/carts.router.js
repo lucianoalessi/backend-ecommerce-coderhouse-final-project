@@ -1,11 +1,11 @@
 // Importando los módulos y clases necesarios.
 import { Router } from "express"; // Importando la clase Router del módulo "express".
-import __dirname from '../../utils.js' // Importando la constante __dirname.
+import __dirname from '../../utils.js'; // Importando la constante __dirname para acceder a las rutas locales.
 
 // Creando una nueva instancia de Router.
 const router = Router();
 
-//importamos los controllers
+//importamos los controllers de cart
 
 import { 
 	getCarts,
@@ -23,28 +23,28 @@ import {
 //Rutas o endpoints:
 
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
-router.get('/' , getCarts)
+router.get('/' , getCarts);
 
 // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
-router.post('/', newCart )
+router.post('/', newCart);
 
-// Ruta para manejar las solicitudes GET para recuperar un carrito específico por su ID. (La misma sirve para mongoDB y file system)
-router.get('/:cid' , getCartById)
+// Ruta para manejar las solicitudes GET para obtener un carrito específico por su ID. (La misma sirve para mongoDB y file system)
+router.get('/:cid' , getCartById);
 
 // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
-router.post('/:cid/product/:pid' , addProductToCart )
+router.post('/:cid/product/:pid' , addProductToCart);
 
-//ruta para eliminar un producto de un carrito
-router.delete('/:cid/product/:pid', deleteProdInCart );
+// Ruta para eliminar un producto de un carrito
+router.delete('/:cid/product/:pid', deleteProdInCart);
 
-//ruta para vaciar un carrito
-router.delete('/:cid', deleteAllProductsInCart );
+// Ruta para vaciar un carrito
+router.delete('/:cid', deleteAllProductsInCart);
 
-//Agregar un array de productos
-router.put('/:cid', insertArrayProds );
+// Ruta para agregar un array de productos
+router.put('/:cid', insertArrayProds);
 
-//Ruta para modificar cantidad del producto
-router.put('/:cid/product/:pid', modifyQuantity );
+// Ruta para modificar cantidad del producto
+router.put('/:cid/product/:pid', modifyQuantity);
 
 
 export default router;

@@ -1,9 +1,7 @@
 import  {Router}  from "express";
 import __dirname from "../../utils.js";
 
-
 const router = Router();
-
 
 //importamos los controllers de las vistas:
 import { 
@@ -21,9 +19,8 @@ import {
 
 //Rutas para las vistas:
 
-
 //Ruta para la vista de todos los productos (ruta para plantilla handlebars):
-router.get('/home', getProducts )
+router.get('/home', getProducts );
 
 //Ruta de productos con formulario para agregar mas productos (ruta para handlebars + websockets):
 router.get('/realtimeproducts' , getProductsInRealTime );
@@ -47,7 +44,6 @@ const checkSession = (req, res, next) => {
 		res.clearCookie('connect.sid');
 		return res.redirect('/login');
 	}
-
 	next(); // Continúa con la siguiente función de middleware o ruta
 }
 
@@ -66,7 +62,6 @@ const sessionExist = (req, res, next) => {
 const permission = (req, res, next) => {
 	if (req.session.user.rol === 'user') {
 		const requestedUrl = req.originalUrl;
-
 		// Redirige al usuario a la página de inicio con un mensaje de error que incluye la URL
 		return res.redirect(
 			`/home?message=No%20tienes%20permisos%20para%20ingresar%20a%20${requestedUrl}.`

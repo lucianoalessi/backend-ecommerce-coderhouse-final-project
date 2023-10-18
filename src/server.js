@@ -15,9 +15,9 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
-// Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB.
+//Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB.
 
-//import ProductManager from "./ProductManager.js"; //CON FILE SYSTEM
+//Import ProductManager from "./ProductManager.js"; //CON FILE SYSTEM
 import ProductManager from "./dao/managersMongoDb/ProductManagerMongo.js";
 import messageManager from "./dao/managersMongoDb/MessageManagerMongo.js";
 

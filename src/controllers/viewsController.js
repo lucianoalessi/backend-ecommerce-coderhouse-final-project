@@ -1,20 +1,21 @@
 import cartService from "../services/cartService.js";
 import productService from "../services/productService.js";
 
+//Controllers para las vistas:
 
-//vista de productos:
+//vista de productos home.
 export const getProducts = async (req,res)=>{
     const listaProductos = await productService.getProducts()
     res.render('home' , {listaProductos, style:'style.css'})
 }
 
-//Ruta de productos con formulario para agregar mas productos (ruta para handlebars + websockets):
+//vista de productos en tiempo real con formulario para agregar mas productos. (ruta para handlebars + websockets):
 export const getProductsInRealTime = async (req,res) => {
     const listaProductos = await productService.getProducts({})
     res.render('realTimeProducts', {listaProductos, style:'style.css'})
 }
 
-//Ruta para el chat (handlebars + websockets):
+//vista para el chat (handlebars + websockets):
 export const chatStyle = async (req,res)=>{
     res.render("chat", {style:'style.css'})
 }
@@ -36,8 +37,7 @@ export const pagination = async (req, res) => {
 	}
 }
 
-
-//Ruta con vista del carrito:
+//Vista del carrito:
 export const cartView =  async (req, res) => {
 	const { cid } = req.params;
 	try {
@@ -55,8 +55,7 @@ export const cartView =  async (req, res) => {
 }
 
 
-
-//Rutas para Session: 
+//Rutas de vistas para Sessions: 
 
 //Redirect to '/':
 export const redirection = async (req, res) => {

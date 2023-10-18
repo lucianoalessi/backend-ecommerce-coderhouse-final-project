@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import __dirname from '../../utils.js'
 
-//Inicializamos la extencion de express, Router
+//Inicializamos la extencion de express: Router
 const router = Router()
 
-//import controller
+//import controller de productos
 import { 
     getProductsQuery, 
     getProductById, 
@@ -14,14 +14,14 @@ import {
 } from '../controllers/productController.js';
 
 
-// //Ruta para manejar las solicitudes GET para obtener todos los productos. (Solo sirve para MONGO DB)
+//Ruta para manejar las solicitudes GET para obtener todos los productos y filtrar por query. (Solo sirve para MONGO DB)
 router.get('/' , getProductsQuery );
 
 //Ruta para manejar las solicitudes GET para recuperar un producto específico por su ID. (La misma sirve para mongoDB)
 router.get('/:pid' , getProductById );
 
 // Ruta para agregar un producto. (Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.post('/' , addProduct )
+router.post('/' , addProduct );
 
 //Ruta para modificar un producto por ID. (Con put modificamos informacion del servidor).(mongoDB)
 router.put('/:pid' , updateProduct );
