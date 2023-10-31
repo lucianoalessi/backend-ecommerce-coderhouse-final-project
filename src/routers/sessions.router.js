@@ -44,12 +44,12 @@ router.get('/faillogin', failLogin);
 //CURRENT:
 
 //ruta para devolver al usuario que inicia sesion SESSION
-router.get('/current', async (req, res) => {
+router.get('/current2', async (req, res) => {
     res.send(req.user); 
 });
 
 //ruta para devolver al usuario que inicia sesion JWT
-router.get('/current2', passportCall('jwt'), authorization('user'), (req,res) => {
+router.get('/current', passportCall('jwt'), authorization('user'), (req,res) => {
     console.log(req.user)
     const user = new userDTO(req.user)
     res.send({status:"success", payload: user});

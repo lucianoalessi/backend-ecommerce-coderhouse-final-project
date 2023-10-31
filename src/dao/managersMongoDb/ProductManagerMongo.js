@@ -4,14 +4,10 @@ import { productModel } from '../../models/product.model.js';
 // Definimos la clase ProductManager que gestionará las operaciones relacionadas con los productos.
 export default class ProductManager{
 
-
     constructor(){
         //constructor vacio por ahora.
     }
 
-
-
-    
     //Get product con query, para poder ordenar y filtrar productos. 
 	getProductsQuery = async (limit, page, sort, query) => {
 		try {

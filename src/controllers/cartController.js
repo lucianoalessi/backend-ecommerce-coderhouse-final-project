@@ -141,12 +141,12 @@ export const modifyQuantity = async (req, res) => {
 //finalizar proceso de compra:
 export const purchase = async (req,res) => {
 
-	let purchaseComplete = []
-	let purchaseError = []
+	let purchaseComplete = []  //array para los productos procesados correctamente.
+	let purchaseError = [] //array para los productos que no pudieron procesarse por falta de stock.
 	let precioTotal = 0
-	const user = req.user.id;
+	const user = req.user.id; 
 	const findUser = await userModel.findById(user);
-	const cartId = findUser.cart[0]._id
+	const cartId = findUser.cart[0]._id  //cart[0] porque es el primer elemento dentro del array.
 	const cart = await cartService.getCartById(cartId)
 	const productsInCart = cart.products
 
@@ -173,7 +173,7 @@ export const purchase = async (req,res) => {
 			}
 		}
 
-		//lo que hacemos aca es eliminar los productos que se procesaron correctamente del carrito, y dejamos lo que no pudieron ser procesados, insertando el array de productos no procesados:
+		//Eliminamos los productos que se procesaron correctamente del carrito, e insertamos el array de productos no procesados:
 		const notPurchasedProductsInCart = await cartService.insertArrayProds(cartId,purchaseError);
 
 		//definimos los datos que necesitamos para el ticket:
@@ -181,27 +181,19 @@ export const purchase = async (req,res) => {
 			amount: precioTotal,
 			purchaser: req.user.email
 		}
-
 		//creamos el ticket en la base de datos:
 		const ticket = await ticketModel.create(ticketData);
 
 		//agregamos informacion adicional, los productos que se procesaron correctamente y los que no:
-		const ticketInfo = {
+		const purchaseData = {
 			ticket: ticket,
 			productosProcesados: purchaseComplete,
 			productosNoProcesados: purchaseError,
 		}
-		console.log(ticketInfo)
-		
-		res.status(200).send({ status: 'success', payload: ticketInfo})
+		//lo enviamos:
+		res.status(200).send({ status: 'success', payload: purchaseData})
 		
 	} catch (error) {
 		res.status(400).send({ error: error.message });
 	}
-
-
-
-
-
-
 }

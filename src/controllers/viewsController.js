@@ -85,4 +85,10 @@ export const profileView = (req, res) => {
 	res.render('profile' , {user: user , style:'style.css'});
 }
 
+//Vista para el perfil del usuario:
+export const purchaseView = (req, res) => {
+	res.render('purchase' , {user: user , style:'style.css'});
+}
+
+
 

@@ -32,7 +32,6 @@ export const getProductById = async (req, res) => {
 
 //agregar un producto nuevo
 export const addProduct = async (req, res) => {
-
     try {
         const newProduct = req.body                             // la informacion que enviara el cliente estara dentro del req.body.
         const addProduct = await productService.addProduct(newProduct) //agregamos el producto enviado por el cliente.
@@ -59,7 +58,6 @@ export const updateProduct = async (req, res) => {
 
 //eliminar un producto por id
 export const deleteProduct = async (req, res) => {
-
     try {
         let {pid} = req.params                                 //obtenemos el id de producto ingresado el cliente por paramas
         const productDeleted = await productService.deleteProduct(pid);  //eliminamos el producto deseado

@@ -5,14 +5,9 @@ import { productModel } from '../../models/product.model.js';
 // Definimos una clase llamada CartManager para gestionar operaciones relacionadas con los carritos.
 export default class CartManager{
 
-
     constructor(){
         // Constructor vacío por ahora.
     }
-
-
-
-
 
     // Método para obtener todos los carritos en la base de datos.
     getCarts = async () => {
@@ -21,7 +16,7 @@ export default class CartManager{
             return carts;
         }catch(error){
             console.log('Error al obtener los carritos:', error.message);
-            return []
+            return error
         }
     }
 
@@ -37,28 +32,14 @@ export default class CartManager{
         }
     }
 
-	// //otra forma mejor:
-	// getCartByID = async (idCart) => {
-    //     try{
-    //         const cart = await cartModel.findById(idCart).lean();
-    //         return cart;
-    //     }catch(error){
-    //         console.error('Carrito inexistente:',error.message);
-    //         return error;
-    //     }
-    // }
-
-
     // Método para crear un nuevo carrito con productos proporcionados (opcional).
     addCart = async (products) => {
         try{
-
             let cartData = {};
             if (products && products.length > 0) {
                 cartData.products = products;
             }
             return await cartModel.create(cartData);
-
         }catch(error){
             console.log('Error al crear el carrito:', error.message);
             return error;
@@ -67,10 +48,8 @@ export default class CartManager{
 
     // Agrega un producto a un carrito existente por sus IDs.
     addProductToCart = async (cid, pid) => {
-
         try{
             const cart = await cartModel.findOne({_id: cid});
-            
             const addProduct = await productModel.findOne({_id: pid});
             const productIndex = cart.products.findIndex(item => item.productID.toString() == addProduct._id.toString()); // Buscamos el producto en el carrito basado en el ID del producto.
             
@@ -95,7 +74,6 @@ export default class CartManager{
             const product = await productModel.findOne({_id: pid})
 			const filter = cart.products.filter((item) => item.productID.toString() !== product._id.toString());
 			await cartModel.updateOne({ _id: cid }, { products: filter });
-
 		} catch (error) {
 			console.log('Error al eleminar un producto del carrito:', error.message);
             return error;
@@ -107,13 +85,9 @@ export default class CartManager{
 		try {
 			// Filtrar por el índice del carrito y el índice del producto
 			const filter = { _id: cid, 'products.productID': pid };
-
 			// Actualizar la cantidad del producto específico
 			const update = { $set: { 'products.$.quantity': quantity } };
-
-			const updatedCart = await cartModel.findOneAndUpdate(filter, update, {
-				new: true,
-			}); // new: true devuelve el documento actualizado
+			const updatedCart = await cartModel.findOneAndUpdate(filter, update, {new: true}); // new: true devuelve el documento actualizado
 			return updatedCart;
 		} catch (error) {
 			console.log('Error al agregar un producto al carrito:', error.message);
@@ -126,14 +100,9 @@ export default class CartManager{
 		try {
 			// Filtrar por el índice del carrito
 			const filter = { _id: cid };
-
 			// Actualizar la cantidad del producto específico
 			const update = { $set: { products: [] } };
-
-			const updateCart = await cartModel.findOneAndUpdate(filter, update, {
-				new: true,
-			});
-			//console.log(updateCart);
+			const updateCart = await cartModel.findOneAndUpdate(filter, update, {new: true});
 			return updateCart;
 		} catch (error) {
 			console.log('Error al eliminar todos los productos:', error.message);
@@ -165,6 +134,4 @@ export default class CartManager{
 			console.log(error.message);
 		}
 	};
-
-
 }

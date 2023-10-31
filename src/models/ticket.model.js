@@ -7,6 +7,7 @@ const TicketSchema = new mongoose.Schema({
   code: { 
         type: String,
         default: () => uuidv4(),
+        //default: 'ORDER' + Date.now() + Math.floor(Math.random() * 10000 + 1)
         required: true, 
         unique: true 
     },
