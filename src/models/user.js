@@ -5,9 +5,16 @@ const collection = 'users';
 const userSchema = new mongoose.Schema({
     first_name: String,
     last_name: String,
-    email: {type: String , unique: true},
+    email: {
+        type: String,
+        unique: true,
+        require: true 
+    },
     age: Number,
-    password: String,
+    password: {
+        type: String,
+        require: true
+    },
     cart: {
         type:[
             {
@@ -19,7 +26,11 @@ const userSchema = new mongoose.Schema({
         ],
         default:[] // Si no se proporciona ningún valor para "carts", se establece como un array vacío por defecto.
     },
-    role: {type:String , default:'user'}
+    role: {
+        type:String,
+        enum: ['user', 'admin'], 
+        default:'user'
+    }
 });
 
 userSchema.pre('find', function(){

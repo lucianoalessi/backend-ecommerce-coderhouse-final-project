@@ -7,15 +7,75 @@ class ProductManager{
         this.products = [];
     }
 
+    //-------------------------------------------------------------------------------------//
+    //VERIFICAR EL SIGUIENTE METODO:
+    getProductsQuery = async (limit, page, sort, query) => {
+        try {
+            // Si no se proporciona un límite, se establece en 10 por defecto
+            !limit && (limit = 10);
+            // Si no se proporciona una página, se establece en 1 por defecto
+            !page && (page = 1);
+            // Si el ordenamiento es 'asc', se establece en 1
+            sort === 'asc' && (sort = 1);
+            // Si el ordenamiento es 'des', se establece en -1
+            sort === 'des' && (sort = -1);
+    
+            // Se crea un filtro a partir de la consulta proporcionada, si no hay consulta, el filtro es un objeto vacío.
+            const filter = query ? JSON.parse(query) : {};
+    
+            // Leer todos los archivos de productos
+            const productFiles = await fs.readdir(path.join(__dirname, 'products'));
+            let products = await Promise.all(productFiles.map(async file => {
+                const product = JSON.parse(await fs.readFile(path.join(__dirname, 'products', file), 'utf-8'));
+                return product;
+            }));
+    
+            // Filtrar y ordenar los productos
+            if (Object.keys(filter).length > 0) {
+                products = products.filter(product => {
+                    for (let key in filter) {
+                        if (product[key] !== filter[key]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+            if (sort) {
+                products.sort((a, b) => sort * (a.price - b.price));
+            }
+    
+            // Paginar los productos
+            const totalPages = Math.ceil(products.length / limit);
+            const start = (page - 1) * limit;
+            const end = start + limit;
+            products = products.slice(start, end);
+    
+            return {
+                docs: products,
+                totalDocs: products.length,
+                limit: limit,
+                totalPages: totalPages,
+                page: page,
+                pagingCounter: start + 1,
+                hasPrevPage: page > 1,
+                hasNextPage: page < totalPages,
+                prevPage: page > 1 ? page - 1 : null,
+                nextPage: page < totalPages ? page + 1 : null
+            };
+        } catch (error) {
+            console.log('Error al obtener productos con consulta:', error.message);
+        }
+    };
+
+    //-----------------------------------------------------------------------------------------------------//
 
     getProducts = async () => {
-
         //Leemos el contenido del archivo almacenado en la ruta (path) y lo almacenamos en una variable.Luego con Json.Parse()lo convertimos a formato objeto para poder manipularlo.
         try{
             const productsList = await fs.promises.readFile(this.path,"utf-8")
             const productsListParse = JSON.parse(productsList)
             return productsListParse
-
         //en caso de que se genere un error debido a que no exista el archivo que se intenta leer debido a que todavia no se agrego ningun producto, devolvemos this.products, el cual seria un array vacio.
         }catch{
             return this.products;
@@ -23,14 +83,12 @@ class ProductManager{
     }
 
     addProduct = async (obj) => {
-
         const {title, description, price, thumbnail, code, stock} = obj
         //verificamos que se ingresen todos los datos.
         if(!title || !description || !price || !thumbnail || !code || !stock){
             console.error("ERROR: Datos del producto incompletos")
             return 
         }
-
         const productList = await this.getProducts()
         //definimos el objeto con los datos ingresados.
         const product = {

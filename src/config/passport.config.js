@@ -5,20 +5,29 @@ import GitHubStrategy from 'passport-github2';
 import { userModel } from "../models/user.js";
 import {cookieExtractor , createHash , isValidPassword} from '../../utils.js'
 import config from './config.js'
+import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
 
+const cartManager = new CartManager()
 
+const admin = {
+    first_name: 'Coder',
+    last_name: 'Admin',
+    email: config.ADMIN_EMAIL,
+    password: config.ADMIN_PASSWORD,
+    role: 'admin', 
+};
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt; // Extractor de jwt ya sea de headers, cookies, etc
 
 
-// Función para inicializar Passport y definir estrategias de autenticación
+//Función para inicializar Passport y definir estrategias de autenticación
 const initializePassport = async () => {
 
-    // Estrategia de autenticación para el registro de usuarios:
+    //Estrategia de autenticación para el registro de usuarios:
     passport.use('register', new LocalStrategy(
-        {passReqToCallback:true , usernameField: 'email'}, async (req, username, password, done) => {
+        {passReqToCallback:true , usernameField: 'email' , session:false }, async (req, username, password, done) => {
             const {first_name, last_name, email, age} = req.body; //El cliente pasa sus datos a travez de la vista por body.
             try {
 
@@ -36,9 +45,10 @@ const initializePassport = async () => {
                     first_name, 
                     last_name, 
                     email, 
-                    age, 
+                    age,
+                    cart: await cartManager.addCart(),
                     password: createHash(password),
-                    role: 'User'
+                    role: 'user'
                 }
                 let result = await userModel.create(newUser);
                 return done(null,result); 
@@ -48,20 +58,13 @@ const initializePassport = async () => {
         }
     ))
     
-    // Estrategia de autenticación para el inicio de sesión de usuarios:
-    passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
+    //Estrategia de autenticación para el inicio de sesión de usuarios:
+    passport.use('login', new LocalStrategy({ usernameField: 'email' , session: false }, async (username, password, done) => {
         try {
             //si el usuario que quiere loguearse es coderadmin:
-            if (username === config.ADMIN_NAME && password === config.ADMIN_PASSWORD) { 
-                const newUser = {
-                    first_name: 'Coder',
-                    last_name: 'Admin',
-                    email: email, 
-                    age: 27,
-                    password: password,
-                    role: 'admin', 
-                };
-                return done(null, newUser) // se le envia el usuario = (newUser)
+            if (username === admin.email && password === admin.password) { 
+                const adminUser = admin
+                return done(null, adminUser) // se le envia el usuario = (adminUser)
             }
 
             //Si se quiere loguear un usuario comun:
@@ -79,43 +82,7 @@ const initializePassport = async () => {
         }
     }));
 
-    //extrategia con JWT:
-    passport.use('jwt', new JWTStrategy({
-        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: 'CoderSecret' //debe ser el mismo que en app.js/server.js
-    }, async(jwt_payload, done) => {
-        try {
-            return done(null, jwt_payload);
-        } catch (error) {
-            return done(error);
-        }
-    }))
-
-
-
-
-
-    // Serialización y deserialización de usuarios para las sesiones
-
-    //La serialización de usuarios es el proceso de convertir un objeto de usuario (o sus datos clave) 
-    //en un formato que pueda ser almacenado en la sesión del usuario.
-
-    // El objeto 'user' es el usuario autenticado, 'done' es una función de callback
-    passport.serializeUser((user, done) => {
-        done(null, user._id); // Almacenamos el '_id' del usuario en la sesión
-    });
-    
-    //La deserialización de usuarios es el proceso inverso de la serialización. 
-    //Convierte el identificador único del usuario (generalmente el _id en la base de datos) de 
-    //la sesión en un objeto de usuario.
-
-    // 'id' es el identificador único del usuario almacenado en la sesión
-    passport.deserializeUser( async(id, done) => {
-        let user = await userModel.findById(id); // Buscamos al usuario en la base de datos
-        done(null, user); // Pasamos el objeto de usuario encontrado a través de 'done' para autenticación
-    });
-
-    // Estrategia de autenticación para iniciar sesión con GitHub
+    //Estrategia de autenticación para iniciar sesión con GitHub:
     passport.use('github', new GitHubStrategy({
         clientID:"Iv1.5fa4626ba072b167",
         clientSecret: "ddc4da16191d83e241c2c02310d931bf18450e5b",
@@ -142,6 +109,39 @@ const initializePassport = async () => {
             done(error);
         }
     }))
+
+    //Extrategia con JWT:
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: 'CoderSecret' //debe ser el mismo que en app.js/server.js
+    }, async(jwt_payload, done) => {
+        try {
+            return done(null, jwt_payload);
+        } catch (error) {
+            return done(error);
+        }
+    }))
+
+
+    // Serialización y deserialización de usuarios para las sesiones:
+
+    //La serialización de usuarios es el proceso de convertir un objeto de usuario (o sus datos clave) 
+    //en un formato que pueda ser almacenado en la sesión del usuario.
+    //El objeto 'user' es el usuario autenticado, 'done' es una función de callback
+
+    passport.serializeUser((user, done) => {
+        done(null, user._id); // Almacenamos el '_id' del usuario en la sesión
+    });
+    
+    //La deserialización de usuarios es el proceso inverso de la serialización. 
+    //Convierte el identificador único del usuario (generalmente el _id en la base de datos) de 
+    //la sesión en un objeto de usuario.
+    // 'id' es el identificador único del usuario almacenado en la sesión
+
+    passport.deserializeUser( async(id, done) => {
+        let user = await userModel.findById(id); // Buscamos al usuario en la base de datos
+        done(null, user); // Pasamos el objeto de usuario encontrado a través de 'done' para autenticación
+    });
     
 }
 

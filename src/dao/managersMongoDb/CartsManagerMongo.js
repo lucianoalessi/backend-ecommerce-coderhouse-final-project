@@ -28,7 +28,8 @@ export default class CartManager{
     // Método para obtener un carrito específico por su ID.
     getCartById = async (idCart) => {
         try{
-            const cart = await cartModel.findOne({_id: idCart});
+            //const cart = await cartModel.findOne({_id: idCart});
+            const cart = await cartModel.findById(idCart).lean();
             return cart;
         }catch(error){
             console.log('Carrito inexistente:',error.message);

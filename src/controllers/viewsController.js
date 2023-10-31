@@ -23,7 +23,9 @@ export const chatStyle = async (req,res)=>{
 //Vista de productos con su paginacion (pagination):
 export const pagination = async (req, res) => {
 	const { limit, page, sort, query } = req.query;
-	const user = req.session.user
+	//const user = req.session.user
+	const user = req.user
+	console.log(user)
 	try {
 		const products = await productService.getProductsQuery(
 			limit,
@@ -78,6 +80,9 @@ export const registerView = (req, res) => {
 
 //Vista para el perfil del usuario:
 export const profileView = (req, res) => {
-	const user = req.session.user
+	//const user = req.session.user
+	const user = req.user
 	res.render('profile' , {user: user , style:'style.css'});
 }
+
+

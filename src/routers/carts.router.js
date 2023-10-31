@@ -15,8 +15,11 @@ import {
 	deleteProdInCart, 
 	deleteAllProductsInCart, 
 	insertArrayProds,
-	modifyQuantity
+	modifyQuantity,
+	purchase
 } from "../controllers/cartController.js";
+
+import { passportCall } from "../../utils.js";
 
 
 
@@ -45,6 +48,9 @@ router.put('/:cid', insertArrayProds);
 
 // Ruta para modificar cantidad del producto
 router.put('/:cid/product/:pid', modifyQuantity);
+
+//Ruta para tickets (finalizar compra):
+router.get('/:cid/purchase',passportCall('jwt'), purchase);
 
 
 export default router;

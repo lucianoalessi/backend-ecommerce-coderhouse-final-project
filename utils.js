@@ -36,7 +36,7 @@ export const cookieExtractor = req => {
 //     return req.headers.authorization.split(' ')[1];
 // }
 
-//para los errores de token jwt
+//Middleware Para los errores de token jwt:
 export const passportCall = (strategy) => {
     return async(req, res, next) => {
         passport.authenticate(strategy, function(err, user, info) {
@@ -47,6 +47,18 @@ export const passportCall = (strategy) => {
             req.user = user;
             next();
         }) (req, res, next);
+    }
+}
+
+export const authorization = (role) => {
+    return async(req, res, next)=> {
+        if (!req.user) {
+            return res.status(401).send({error: 'Unauthorized'});
+        }
+        if (req.user.role != role) {
+            return res.status(403).send({error: 'No permissions'});
+        }
+        next();
     }
 }
 
