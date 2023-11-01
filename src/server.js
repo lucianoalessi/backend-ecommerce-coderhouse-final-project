@@ -15,30 +15,28 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
-//Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB.
-
+//Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB:
 //Import ProductManager from "./ProductManager.js"; //CON FILE SYSTEM
 import ProductManager from "./dao/managersMongoDb/ProductManagerMongo.js";
 import messageManager from "./dao/managersMongoDb/MessageManagerMongo.js";
 
-//import dotenv
-
+//importamos dotenv:
 import config from './config/config.js'
 
 
 
 
-// Creando una instancia de la aplicación Express.
+//Creando una instancia de la aplicación Express.
 const app = express()
 
-// Iniciando el servidor Express para escuchar en el puerto 8080.
+//Iniciando el servidor Express para escuchar en el puerto 8080.
 const port = config.PORT
 const httpServer = app.listen( port , () => {console.log('Server ON')})
 
-//creamos un servidor Socket viviendo dentro de nuestro servidor principal:
+//Creamos un servidor Socket viviendo dentro de nuestro servidor principal:
 const socketServer = new Server(httpServer);
 
-//configuraciones o Middlewares:
+//Configuraciones o Middlewares:
 
 app.use(express.json()); // Configurando Express para parsear JSON en las solicitudes.
 app.use(express.urlencoded({extended:true})); // Configurando Express para parsear datos de formularios en las solicitudes.
@@ -49,7 +47,7 @@ app.use(express.Router()); // Creando una instancia de un enrutador Express.
 mongoose.connect(config.MONGO_URL)
 
 
-//session para login (configuracion)
+//Session para login (configuracion)
 
 app.use(session({
     // Creo una nueva instancia de MongoStore para almacenar las sesiones en MongoDB
@@ -67,13 +65,13 @@ app.use(session({
     saveUninitialized: false
 }))
 
-//passport:
+//Passport:
 
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-//middlewares para jwt, manejo de token en cookies:
+//Middleware para jwt, manejo de token en cookies:
 
 app.use(cookieParser());
 
@@ -86,7 +84,7 @@ app.set('views', __dirname + '/src/views');
 app.set('view engine', 'handlebars');
 app.use(express.static(__dirname +'/src/public'));
 
-//rutas utilizadas:
+//Rutas utilizadas:
 
 app.use('/api/products' , productsRouter); // Usando el router de productos para las rutas que comienzan con '/api/products'.
 app.use('/api/carts' , cartsRouter); // Usando el router de carritos para las rutas que comienzan con '/api/carts'.

@@ -67,19 +67,6 @@ export default class CartManager{
         }
     }
 
-    //eliminar un producto en el carrito
-    deleteProdInCart = async (cid, pid) => {
-		try {
-			const cart = await cartModel.findOne({ _id: cid });
-            const product = await productModel.findOne({_id: pid})
-			const filter = cart.products.filter((item) => item.productID.toString() !== product._id.toString());
-			await cartModel.updateOne({ _id: cid }, { products: filter });
-		} catch (error) {
-			console.log('Error al eleminar un producto del carrito:', error.message);
-            return error;
-		}
-	};
-
     //metodo para agregar un producto a un carrito y especificar la cantidad por body. 
     modifyQuantity = async (cid, pid, quantity) => {
 		try {
@@ -92,20 +79,6 @@ export default class CartManager{
 		} catch (error) {
 			console.log('Error al agregar un producto al carrito:', error.message);
             return error;
-		}
-	};
-
-    //metodo para eliminar todos los productos de un carrito
-	deleteAllProductsInCart = async (cid) => {
-		try {
-			// Filtrar por el índice del carrito
-			const filter = { _id: cid };
-			// Actualizar la cantidad del producto específico
-			const update = { $set: { products: [] } };
-			const updateCart = await cartModel.findOneAndUpdate(filter, update, {new: true});
-			return updateCart;
-		} catch (error) {
-			console.log('Error al eliminar todos los productos:', error.message);
 		}
 	};
 
@@ -134,4 +107,32 @@ export default class CartManager{
 			console.log(error.message);
 		}
 	};
+
+    //eliminar un producto en el carrito
+    deleteProdInCart = async (cid, pid) => {
+		try {
+			const cart = await cartModel.findOne({ _id: cid });
+            const product = await productModel.findOne({_id: pid})
+			const filter = cart.products.filter((item) => item.productID.toString() !== product._id.toString());
+			await cartModel.updateOne({ _id: cid }, { products: filter });
+		} catch (error) {
+			console.log('Error al eleminar un producto del carrito:', error.message);
+            return error;
+		}
+	};
+
+    //metodo para eliminar todos los productos de un carrito
+	deleteAllProductsInCart = async (cid) => {
+		try {
+			// Filtrar por el índice del carrito
+			const filter = { _id: cid };
+			// Actualizar la cantidad del producto específico
+			const update = { $set: { products: [] } };
+			const updateCart = await cartModel.findOneAndUpdate(filter, update, {new: true});
+			return updateCart;
+		} catch (error) {
+			console.log('Error al eliminar todos los productos:', error.message);
+		}
+	};
+
 }

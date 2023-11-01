@@ -3,7 +3,7 @@ import productService from "../services/productService.js";
 
 //Controllers para las vistas:
 
-//vista de productos home.
+//vista de productos home
 export const getProducts = async (req,res)=>{
     const listaProductos = await productService.getProducts()
     res.render('home' , {listaProductos, style:'style.css'})

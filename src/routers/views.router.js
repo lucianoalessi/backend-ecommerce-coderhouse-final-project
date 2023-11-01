@@ -1,8 +1,5 @@
 import  {Router}  from "express";
 import __dirname from "../../utils.js";
-
-const router = Router();
-
 //importamos los controllers de las vistas:
 import { 
 	getProducts, 
@@ -15,12 +12,17 @@ import {
 	registerView , 
 	profileView 
 } from "../controllers/viewsController.js";
-
-import { privateAccess , publicAccess , authorization, checkSession, sessionExist } from "../middlewares/auth.js";
+//Importamos middlewares:
+import { privateAccess, authorization} from "../middlewares/auth.js";
 import { passportCall } from "../../utils.js";
 
 
-//Rutas para las vistas:
+
+//Inicializamos la extencion de express: Router
+const router = Router();
+
+
+//RUTAS para las vistas:
 
 //Ruta para la vista de todos los productos (ruta para plantilla handlebars):
 router.get('/home', getProducts );
@@ -37,9 +39,7 @@ router.get("/products",passportCall('jwt'),authorization('user'), pagination );
 //Ruta con vista del carrito:
 router.get('/carts/:cid', cartView );
 
-
-//Rutas para Session: 
-
+//RUTAS para Session: 
 
 //Redirect to '/':
 router.get('/', redirection);

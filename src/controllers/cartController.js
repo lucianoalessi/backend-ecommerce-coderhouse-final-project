@@ -8,7 +8,7 @@ import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
 const cartManager = new CartManager()
 
 
-// Controller para obtener todos los carritos
+//Controller para obtener todos los carritos
 export const getCarts = async (req, res) => {
 	try{
 		const carts = await cartService.getCarts(); // Llamamos al método getCarts de la instancia de CartManager para obtener los carritos y los guardamos en la variable carts

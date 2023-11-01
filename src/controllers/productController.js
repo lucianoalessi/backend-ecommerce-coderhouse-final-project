@@ -59,10 +59,10 @@ export const updateProduct = async (req, res) => {
 //eliminar un producto por id
 export const deleteProduct = async (req, res) => {
     try {
-        let {pid} = req.params                                 //obtenemos el id de producto ingresado el cliente por paramas
+        let {pid} = req.params //obtenemos el id de producto ingresado el cliente por paramas
         const productDeleted = await productService.deleteProduct(pid);  //eliminamos el producto deseado
     
-        res.send({status:'Sucess: Producto eliminado'});                //devolvemos un estado si se elimino exitosamente
+        res.send({status:'Sucess: Producto eliminado'}); //devolvemos un estado si se elimino exitosamente
     } catch (error) {
         res.status(400).send('Error al eliminar el producto:', error.message);
         return error; 

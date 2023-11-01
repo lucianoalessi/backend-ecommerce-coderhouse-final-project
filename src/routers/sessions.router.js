@@ -3,7 +3,7 @@ import { userModel } from '../models/user.js'
 import { createHash, isValidPassword } from "../../utils.js";
 import { isValidObjectId } from "mongoose";
 import passport from "passport";
-//importamos los controllers 
+//importamos los controllers:
 import { 
     register, 
     failRegister, 
@@ -13,12 +13,17 @@ import {
     logOutJwt,
     logOutSession
 } from "../controllers/sessionsController.js";
-
+//Importamos middlewares:
 import { passportCall, authorization } from "../../utils.js";
+//importamos DTOS:
 import userDTO from "../dao/DTOs/userDTO.js";
 
 
+//Inicializamos la extencion de express: Router
 const router = Router()
+
+
+//RUTAS:
 
 //REGISTER:
 

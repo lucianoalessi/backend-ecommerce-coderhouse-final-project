@@ -60,11 +60,6 @@ export const failLogin = async(req,res) => {
     res.send({error:"Failed"}) // Respondiendo con un objeto JSON que indica el fallo
 }
 
-
-//Login con GITHUB
-
-
-
 //log out:
 
 export const logOutJwt = (req, res) => {
@@ -91,3 +86,4 @@ export const logOutSession = (req, res) => {
 }
 
 
+//Login con GITHUB:

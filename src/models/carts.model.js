@@ -14,7 +14,7 @@ const cartSchema = new mongoose.Schema({
             {
                 productID:{    
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Products'
+                    ref: 'Products' //referenciamos con que lo vamos a popular.
                 },
                 quantity:{
                     type: Number,
@@ -26,6 +26,7 @@ const cartSchema = new mongoose.Schema({
     }
 });
 
+//usamos populate para agregar los productos desde la base de datos al array de productos en el carro:
 cartSchema.pre('find', function(){
     this.populate('products.productID');
 });

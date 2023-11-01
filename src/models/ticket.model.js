@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'; //libreria que genera un codigo unico aleatorio.
 
 const ticketCollection = 'Tickets';
 
 const TicketSchema = new mongoose.Schema({
   code: { 
         type: String,
-        default: () => uuidv4(),
+        default: () => uuidv4(), //libreria que genera un codigo unico aleatorio.
         //default: 'ORDER' + Date.now() + Math.floor(Math.random() * 10000 + 1)
         required: true, 
         unique: true 

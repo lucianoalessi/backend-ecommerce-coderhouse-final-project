@@ -1,10 +1,6 @@
 import { Router } from 'express';
 import __dirname from '../../utils.js'
-
-//Inicializamos la extencion de express: Router
-const router = Router()
-
-//import controller de productos
+//import controller de productos:
 import { 
     getProductsQuery, 
     getProductById, 
@@ -13,6 +9,11 @@ import {
     deleteProduct
 } from '../controllers/productController.js';
 
+//Inicializamos la extencion de express: Router
+const router = Router()
+
+
+//RUTAS:
 
 //Ruta para manejar las solicitudes GET para obtener todos los productos y filtrar por query. (Solo sirve para MONGO DB)
 router.get('/' , getProductsQuery );

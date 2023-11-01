@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
             {
                 cartId:{    
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'Carts'
+                    ref: 'Carts' //referenciamos el modelo con el que popularemos.
                 }
             }
         ],
@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+//populamos: 
 userSchema.pre('find', function(){
     this.populate('cart.cartId');
 });

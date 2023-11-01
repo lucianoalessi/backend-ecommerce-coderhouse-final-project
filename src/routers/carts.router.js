@@ -1,12 +1,7 @@
 // Importando los módulos y clases necesarios.
 import { Router } from "express"; // Importando la clase Router del módulo "express".
 import __dirname from '../../utils.js'; // Importando la constante __dirname para acceder a las rutas locales.
-
-// Creando una nueva instancia de Router.
-const router = Router();
-
-//importamos los controllers de cart
-
+//importamos los controllers de cart:
 import { 
 	getCarts,
 	newCart, 
@@ -18,12 +13,14 @@ import {
 	modifyQuantity,
 	purchase
 } from "../controllers/cartController.js";
-
+//importamos middlewares:
 import { passportCall } from "../../utils.js";
 
+//Creando una nueva instancia de Router.
+const router = Router();
 
 
-//Rutas o endpoints:
+//RUTAS O ENDPOINTS:
 
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
 router.get('/' , getCarts);

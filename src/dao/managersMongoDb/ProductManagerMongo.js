@@ -20,7 +20,6 @@ export default class ProductManager{
             // Si el ordenamiento es 'des', se establece en -1
             sort === 'des' && (sort = -1);
 
-
 			// Se crea un filtro a partir de la consulta proporcionada, si no hay consulta, el filtro es un objeto vacío.
             //Ejemplo {"category": "una categoria"}
 			const filter = query ? JSON.parse(query) : {};
@@ -49,7 +48,7 @@ export default class ProductManager{
 	};
 
 
-    // Metodo que Utiliza el modelo "productModel" para buscar todos los productos en la base de datos y los convierte en objetos JSON.
+    //Metodo que Utiliza el modelo "productModel" para buscar todos los productos en la base de datos y los convierte en objetos JSON.
     getProducts = async () => {
         try{
             return await productModel.find().lean()  //.lean() es un método que convierte los resultados en objetos JSON.
@@ -58,19 +57,19 @@ export default class ProductManager{
         }
     }
 
-    // Agrega un nuevo producto a la base de datos.
-    addProduct = async (product) => {
+    //Obtiene un producto específico por su ID.
+    getProductById = async (idProduct) => {
         try {
-            await productModel.create(product)
+            return await productModel.findOne({ _id: idProduct })
         } catch (error) {
             console.log(error)
         }
     }
 
-    // Obtiene un producto específico por su ID.
-    getProductById = async (idProduct) => {
+    //Agrega un nuevo producto a la base de datos.
+    addProduct = async (product) => {
         try {
-            return await productModel.findOne({ _id: idProduct })
+            await productModel.create(product)
         } catch (error) {
             console.log(error)
         }
