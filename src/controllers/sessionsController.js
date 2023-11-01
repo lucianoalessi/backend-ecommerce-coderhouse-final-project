@@ -1,7 +1,3 @@
-import { userModel } from '../models/user.js'
-import { createHash, isValidPassword } from "../../utils.js";
-import { isValidObjectId } from "mongoose";
-import passport from "passport";
 import  jwt  from "jsonwebtoken";
 
 
