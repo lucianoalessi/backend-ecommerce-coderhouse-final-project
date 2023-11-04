@@ -144,7 +144,7 @@ export const purchase = async (req,res) => {
 	let purchaseComplete = []  //array para los productos procesados correctamente.
 	let purchaseError = [] //array para los productos que no pudieron procesarse por falta de stock.
 	let precioTotal = 0
-	const user = req.user.id; 
+	const user = req.user._id; 
 	const findUser = await userModel.findById(user);
 	const cartId = findUser.cart[0]._id  //cart[0] porque es el primer elemento dentro del array.
 	const cart = await cartService.getCartById(cartId)

@@ -1,22 +1,32 @@
 <div class='cart-container'>
 	<div class='tittle-container'>
-		<h1 class='cart-id'>Cart ID: {{_id}}</h1>
+		<h1>Cart ID:</h1>
+		<h1 id='cart-id'>{{cart._id}}</h1>
 	</div>
 	<div>
-		{{#each products}}
-			<div class='product-detaill'>
-				<p> ID:{{this.productID}}</p>
-				<p>Cantidad: {{this.quantity}}</p>
-			</div>
-
-			<div class='product-detail'>
-				{{!-- <div class='w-11'>
-					<img src='{{this.product.thumbnail}}' alt='{{this.product.title}}' />
-				</div> --}}
-				<p>Categoría: {{this.category}}</p>
-				<p>Nombre: {{products.title}}</p>
-				<p>Precio: {{product.price}}</p>
-			</div>
-		{{/each}}
+		<h2>Productos en el carrito:</h2>
+		<ol>
+			{{#each cart.products}}
+  			  <li>
+					<div class='product-detaill'>
+						<p>Product ID:{{this.productID}}</p>
+						<p>Cantidad: {{this.quantity}}</p>
+					</div>
+			    </li>
+			{{/each}}
+  		</ol>			
 	</div>
+
+	<button id="empty-cart">Vaciar Carrito</button>
+	<form action="/api/carts/{{cart._id}}/purchase" method="get">
+		<button>Confirmar Compra</button>
+	</form>
+	<form action="/products" method="get">
+		<button>Volver</button>
+	</form>
+
 </div>
+
+
+
+<script src="/js/cart.js"></script>

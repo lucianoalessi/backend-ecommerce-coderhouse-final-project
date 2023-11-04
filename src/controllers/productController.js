@@ -1,4 +1,8 @@
 import productService from "../services/productService.js";
+//manejo de errores custom:
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 //Controller para obtener los productos y filtrar por query
 export const getProductsQuery = async (req, res) => {
@@ -33,11 +37,32 @@ export const getProductById = async (req, res) => {
 //agregar un producto nuevo
 export const addProduct = async (req, res) => {
     try {
-        const newProduct = req.body                             // la informacion que enviara el cliente estara dentro del req.body.
+        //const newProduct = req.body   // la informacion que enviara el cliente estara dentro del req.body.
+        const {title, description, price, thumbnail, code, stock, category} = req.body
+        if(!title || !description || !price || isNaN(price) || !code  || !stock || isNaN(stock) || !category){
+            CustomError.createError({
+                name:"Product creation error",
+                cause: generateProductErrorInfo({title,description,price,thumbnail,code,stock, category}),
+                message: "Error Trying to create Product",
+                code: EErrors.INVALID_TYPES_ERROR
+            })
+        }
+
+        const newProduct = {
+            title,
+            description,
+            price,
+            thumbnail,
+            code,
+            stock,
+            category
+        }
+        
         const addProduct = await productService.addProduct(newProduct) //agregamos el producto enviado por el cliente.
         res.status(200).send({status:"Sucess: Producto agregado"})          //devolvemos un estado si se agrego correctamente.  
     } catch (error) {
-        res.status(400).send('Error al agregar el producto:', error.message);
+        res.status(400).send({ error: 'Error al agregar el producto', details: error.message });
+        console.log(error)
         return error;
     }
 }

@@ -39,7 +39,7 @@ export const loginSession = async (req, res) => {
 
 export const loginJWT = async (req, res) => {
     const serializedUser = {
-        id: req.user._id,
+        _id: req.user._id,
         first_name: req.user.first_name,
         last_name: req.user.last_name,
         age: req.user.age,

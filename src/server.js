@@ -2,14 +2,16 @@ import express from "express"; // Importando el módulo Express para crear y con
 import __dirname from "../utils.js"; //importando rutas absolutas para evitar asuntos de ruteo relativo.
 import handlebars from 'express-handlebars'; //importando plantillas con handlebars
 import { Server } from "socket.io"; //importamos socket io (websockets)
-import productsRouter from './routers/products.router.js'; // Importamos las rutas 
-import cartsRouter from './routers/carts.router.js';
-import viewsRouter from './routers/views.router.js';
 import mongoose, { connect } from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import sessionRouter from './routers/sessions.router.js';
 import cookieParser from "cookie-parser";
+// Importamos las rutas:
+import productsRouter from './routers/products.router.js'; 
+import cartsRouter from './routers/carts.router.js';
+import sessionRouter from './routers/sessions.router.js';
+import mockingRouter from './routers/mocking.router.js'
+import viewsRouter from './routers/views.router.js';
 
 //importaciones para passport: 
 import passport from "passport";
@@ -88,8 +90,9 @@ app.use(express.static(__dirname +'/src/public'));
 
 app.use('/api/products' , productsRouter); // Usando el router de productos para las rutas que comienzan con '/api/products'.
 app.use('/api/carts' , cartsRouter); // Usando el router de carritos para las rutas que comienzan con '/api/carts'.
-app.use('/', viewsRouter); //router handlebars para io con '/'.
 app.use('/api/sessions', sessionRouter); // ruta para las sessions 
+app.use('/mocking' , mockingRouter);//ruta para mock
+app.use('/', viewsRouter); //router handlebars para io con '/'.
 
 
 

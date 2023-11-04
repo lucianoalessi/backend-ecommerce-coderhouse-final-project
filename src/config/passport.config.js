@@ -6,6 +6,10 @@ import { userModel } from "../models/user.js";
 import {cookieExtractor , createHash , isValidPassword} from '../../utils.js'
 import config from './config.js'
 import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
+//manejo de errores custom:
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { generateUserErrorInfo } from "../services/errors/info.js";
 
 const cartManager = new CartManager()
 
@@ -32,6 +36,12 @@ const initializePassport = async () => {
             try {
 
                 if (!first_name || !last_name || !email || !age || !password) {
+                    CustomError.createError({
+                        name:"User creation error",
+                        cause: generateUserErrorInfo({first_name,last_name,email,age}),
+                        message: "Error Trying to create User",
+                        code: EErrors.INVALID_TYPES_ERROR
+                    })
                     return done(null, false, { message: 'Incomplete Values' });
                 }
                 // Comprobamos si el usuario ya existe en la base de datos:

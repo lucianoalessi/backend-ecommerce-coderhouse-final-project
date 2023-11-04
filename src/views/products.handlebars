@@ -4,10 +4,15 @@
     <p>Email: {{user.email}}</p>
     <p>Edad: {{user.age}}</p>
 	<p>Rol: {{user.role}}</p>
+	<p>Cart ID:</p>
+	<p id="cart-id">{{cart}}</p>
 
 
 	<form action="/profile" method="get">
 		<button>Perfil</button>
+	</form>
+	<form action="/carts/{{cart}}" method="get">
+		<button>Ir al carrito</button>
 	</form>
 	<form action="/api/sessions/logout" method="get">
 		<button>Salir</button>

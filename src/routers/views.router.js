@@ -37,7 +37,7 @@ router.get("/chat",passportCall('jwt'), authorization('user'), chatStyle );
 router.get("/products",passportCall('jwt'),authorization('user'), pagination );
 
 //Ruta con vista del carrito:
-router.get('/carts/:cid', cartView );
+router.get('/carts/:cid',passportCall('jwt'), cartView );
 
 //RUTAS para Session: 
 
