@@ -14,7 +14,6 @@ import {
 } from "../controllers/viewsController.js";
 //Importamos middlewares:
 import { privateAccess, authorization, redirectAdmin} from "../middlewares/auth.js";
-import { sendMail  , redirectionHome} from "../middlewares/mail.js";
 import { passportCall } from "../../utils.js";
 
 

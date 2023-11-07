@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import config from "../config/config.js";
 
-//endpoint para mailing:
+
 const transport = nodemailer.createTransport({
     service: 'gmail',
     port: 587,

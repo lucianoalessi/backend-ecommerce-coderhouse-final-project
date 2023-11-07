@@ -1,4 +1,6 @@
 import  jwt  from "jsonwebtoken";
+import nodemailer from 'nodemailer'
+import config from "../config/config.js";
 
 
 //registro de usuarios:
@@ -47,8 +49,37 @@ export const loginJWT = async (req, res) => {
         role: req.user.role,
         email: req.user.email
     }
-    const token = jwt.sign(serializedUser, 'CoderSecret', {expiresIn: '1h'})
-    res.cookie('coderCookie', token, {maxAge: 3600000}).send({status:"success", payload: serializedUser});
+    const token = jwt.sign(serializedUser, process.env.JWT_SECRET , {expiresIn: '1h'})
+    res.cookie('coderCookie', token, {maxAge: 3600000, httpOnly: true, secure: true}).send({status:"success", payload: serializedUser});
+
+
+    //enviamos un mail al usuario diciendo que ha iniciado session (esto es un extra, luego lo podemos usar para restablecer la contraseña):
+    const transport = nodemailer.createTransport({
+        service: 'gmail',
+        port: 587,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+    
+    let result;
+    try {
+        result = await transport.sendMail({
+            from:'Inicio de sesion en Coder App <' + process.env.EMAIL_USER + '>',
+            to: req.user.email,
+            subject: 'Correo de prueba',
+            html:`
+            <div>
+                <h1>Has iniciado sesion en coder App!</h1>
+            </div>
+            `,
+            attachments:[]
+        })
+    } catch (error) {
+        console.error('Error enviando correo electrónico:', error);
+    }
+    
 }
 
 
