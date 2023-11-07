@@ -7,5 +7,7 @@ export default {
     MONGO_URL: process.env.MONGO_URL,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
-    PERSISTENCE: process.env.PERSISTENCE
+    PERSISTENCE: process.env.PERSISTENCE,
+    EMAIL_USER: process.env.EMAIL_USER,
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD
 }

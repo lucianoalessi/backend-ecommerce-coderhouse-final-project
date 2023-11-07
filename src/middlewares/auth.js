@@ -23,6 +23,14 @@ export const authorization = (role) => {
     }
 }
 
+export const redirectAdmin = (req, res, next) => {
+    if (req.user.role == 'admin') {
+        return res.redirect('/realtimeproducts');
+    
+    }
+    next();
+}
+
 // //----------------------------------------------------------------------------------//
 // //middlewares que me dio chat gpt:
 

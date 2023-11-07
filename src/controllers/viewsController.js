@@ -15,7 +15,8 @@ export const getProducts = async (req,res)=>{
 //vista de productos en tiempo real con formulario para agregar mas productos. (ruta para handlebars + websockets):
 export const getProductsInRealTime = async (req,res) => {
     const listaProductos = await productService.getProducts({})
-    res.render('realTimeProducts', {listaProductos, style:'style.css'})
+	const user = req.user
+    res.render('realTimeProducts', {listaProductos,user, style:'style.css'})
 }
 
 //vista para el chat (handlebars + websockets):
@@ -94,7 +95,7 @@ export const profileView = async (req, res) => {
 	res.render('profile' , {user: user, cartId,  style:'style.css'});
 }
 
-//Vista para el perfil del usuario:
+//Vista para purchase:
 export const purchaseView = (req, res) => {
 	res.render('purchase' , {user: user , style:'style.css'});
 }

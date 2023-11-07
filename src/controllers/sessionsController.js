@@ -32,6 +32,7 @@ export const loginSession = async (req, res) => {
 
     //si el usuario existe y se loguea correctamente, crea la session:
     req.session.user = req.user // Almacenamos el usuario en la sesión
+    console.log(req.user)
     res.send({status:'success', payload: req.session.user}) // Respondemos con un objeto JSON que indica un inicio de sesión exitoso y enviamos los datos del usuario en 'payload'
 }
 

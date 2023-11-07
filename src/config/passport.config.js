@@ -121,13 +121,28 @@ const initializePassport = async () => {
     }))
 
     //Extrategia con JWT:
+    // Usamos el método 'use' de Passport para implementar la estrategia JWT (JSON Web Token)
     passport.use('jwt', new JWTStrategy({
+        // 'jwtFromRequest' es una función requerida que acepta una solicitud como único parámetro
+        // Extrae el JWT de la solicitud utilizando extractores personalizados (en este caso, 'cookieExtractor')
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        // 'secretOrKey' es la clave secreta utilizada para firmar los tokens.
+        // Debe ser la misma que la utilizada en app.js/server.js para mantener la consistencia
         secretOrKey: 'CoderSecret' //debe ser el mismo que en app.js/server.js
+        // Esta es la función de verificación que se ejecuta después de que se decodifica el token.
+        // 'jwt_payload' es el objeto decodificado que se obtuvo del token.
+        // 'done' es una función de callback que se llama al final de la función de verificación.
     }, async(jwt_payload, done) => {
         try {
+            if(jwt_payload.email === admin.email){
+                const adminUser = admin
+                console.log('==========>',jwt_payload)
+                return done(null, adminUser);
+            }
+            // Si no hay errores, se llama a 'done' con el objeto 'jwt_payload' como segundo argumento.
             return done(null, jwt_payload);
         } catch (error) {
+            // Si hay un error, se llama a 'done' con el error como primer argumento.
             return done(error);
         }
     }))
