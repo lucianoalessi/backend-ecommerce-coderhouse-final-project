@@ -23,7 +23,7 @@ const updateProductList = (products) => {
       <div class="card-content">
         <h4>${product.title}</h4>
         <div>
-          <h5>Id: ${product.id}</h5>
+          <h5>Id: ${product._id}</h5>
         </div>
         <div>
           <p>${product.description}</p>
