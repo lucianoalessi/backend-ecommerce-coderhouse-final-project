@@ -25,37 +25,3 @@ export const mailingController = async(req,res) =>{
     })
 }
 
-// //send email interno
-// export const mailingController = async (email, subject, message, attachments ) => {
-//     transport.sendMail({
-//       from: config.emailFrom,
-//       to: email,
-//       subject: subject,
-//       html: `${message}`,
-//       attachments: attachments,
-//     });
-//   };
-
-
-// // send email desde Postman
-// export const mailingController = (req, res) => {
-//   const { email, subject, message, attachments } = req.body;
-
-//   transport
-//     .sendMail({
-//       from: config.emailFrom,
-//       to: email,
-//       subject: subject,
-//       html: `${message}`,
-//       attachments: attachments,
-//     })
-//     .then((info) => {
-//       console.log(info);
-//       res.send({ status: "success", message: "Email sent successfully" });
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//       res.send({ status: "error", message: "Error sending email" });
-//     });
-// };
-

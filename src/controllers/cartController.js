@@ -161,7 +161,7 @@ export const purchase = async (req,res) => {
 				purchaseError.push(product);  //agregamos el producto al array de productos que pudieron procesarse para la compra.
 			}
 	
-			if(quantity < productInDB.stock){
+			if(quantity < productInDB.stock || quantity == productInDB.stock ){
 	
 				let productUpdate = productInDB;
 				const quantityUpdate = productInDB.stock - quantity;
