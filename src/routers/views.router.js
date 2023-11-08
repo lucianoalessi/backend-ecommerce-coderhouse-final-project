@@ -13,7 +13,7 @@ import {
 	profileView 
 } from "../controllers/viewsController.js";
 //Importamos middlewares:
-import { privateAccess, authorization, redirectAdmin} from "../middlewares/auth.js";
+import { privateAccess, authorization, redirectAdmin ,checkSession , sessionExist} from "../middlewares/auth.js";
 import { passportCall } from "../../utils.js";
 
 
@@ -34,7 +34,7 @@ router.get('/realtimeproducts' ,passportCall('jwt'), authorization('admin'), get
 router.get("/chat",passportCall('jwt'), authorization('user'), chatStyle );
 
 //Vista de productos con su paginacion (pagination):
-router.get("/products",passportCall('jwt'),redirectAdmin, authorization('user'), pagination );
+router.get("/products",passportCall('jwt'), redirectAdmin, authorization('user'), pagination );
 
 //Ruta con vista del carrito (sin estilo, porque no le puede pasar el estilo a /:cid):
 router.get('/carts/:cid',passportCall('jwt'), cartView );

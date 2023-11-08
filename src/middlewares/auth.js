@@ -31,6 +31,28 @@ export const redirectAdmin = (req, res, next) => {
     next();
 }
 
+
+//Middleware para verificar la session.(si se intenta ingresar a alguna de las otras rutas te trae directamente a la ruta: '/login'):
+export const checkSession = (req, res, next) => {
+	if (!req.user) {
+		// La sesión ha expirado o el usuario no ha iniciado sesión, redirige a la página de inicio de sesión
+		res.clearCookie('connect.sid');
+		return res.redirect('/login');
+	}
+	next(); // Continúa con la siguiente función de middleware o ruta
+}
+
+//Middleware para verificar si hay session activa y evitar acceder a login y register:
+export const sessionExist = (req, res, next) => {
+	if (req.user) {
+		// Si hay una sesión activa y el usuario intenta acceder a /login o /register,
+		// redirige automáticamente a la página de inicio (por ejemplo, /home)
+		return res.redirect('/products');
+	}
+	// Si la sesión no está activa, permite el acceso a /login y /register
+	next();
+}
+
 // //----------------------------------------------------------------------------------//
 // //middlewares que me dio chat gpt:
 

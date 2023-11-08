@@ -87,7 +87,8 @@ export default class ProductManager{
     // Elimina un producto existente por su ID.
     deleteProduct = async (idProduct) => {
         try{
-            return await productModel.deleteOne({_id: idProduct})
+            return await productModel.findByIdAndDelete(idProduct)
+            //return await productModel.deleteOne({_id: idProduct})
         }catch (error) {
             console.log(error)
         }

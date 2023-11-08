@@ -39,10 +39,30 @@
         </form>
     </div> 
 
+        <div class="update-form">
+        
+        <h3>Actualize un producto:<h3></h3>
+        <form id="updateForm">
+            <div div class="input">
+                <input class="controls" type="text" name="productID" id="productID" placeholder="Ingrese ID" >
+                <br>
+                <h4>Datos a actualizar:<h4>
+                <input class="controls" type="text" name="title" id="title" placeholder="Ingrese Nombre del Producto" >
+                <input class="controls" type="text" name="description" id="description" placeholder="Ingrese description" >
+                <input class="controls" type="number" name="stock" id="stock" placeholder="Ingrese su stock" >
+                <input class="controls" type="text" name="thumbnail" id="thumbnail" placeholder="Ingrese su imagen url" >
+                <input class="controls" type="text" name="category" id="category" placeholder="Ingrese categoria" >
+                <input class="controls" type="number" name="price" id="price" placeholder="Ingrese precio del producto" >
+                <input class="controls" type="text" name="code" id="code" placeholder="Ingrese codigo del producto" >
+            </div>
+            <button class="botons" type="submit" name="add-btn" id="add-btn" >Update </button>
+        </form>
+    </div> 
+
     <div class="delete-product-container">
         <h3> Eliminar un producto:</h3>
         <form id="deleteProduct">
-            <input class="controls" type="text" name="productID" id="productID" placeholder="Ingrese ID" >
+            <input class="controls" type="text" name="productID-delete" id="productID-delete" placeholder="Ingrese ID" >
         </form>
         <button class="botons" type="button" id="delete-btn">Eliminar</button>
     </div>

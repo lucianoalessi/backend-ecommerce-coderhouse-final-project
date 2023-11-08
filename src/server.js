@@ -124,15 +124,32 @@ socketServer.on('connection', async (socket) => {
     const products = await pManager.getProducts()
     socket.emit('productos', products); //enviamos al cliente un array con todos los productos.
 
+    //#ADD PRODUCT:
     //recibimos informacion del cliente, en este caso un nuevo producto y lo agregamos a nuestra base de datos. 
     socket.on('addProduct', async data => {
 
         await pManager.addProduct(data)
-        const updateProducts = await pManager.getProducts();
-        socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+        const updateProductsList = await pManager.getProducts();
+        socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
     
     })
+
+    //#UPDATE PRODUCT:
+    socket.on('updateProduct', async data => {
+
+        const idProduct = data._id;
+        delete data._id; // Eliminar el _id del objeto para evitar errores
     
+        // Actualizar el producto en la base de datos
+        await pManager.updateProduct(idProduct, { $set: data });
+
+        const updateProductsList = await pManager.getProducts();
+        socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+    
+    })
+
+
+    //#DELETE PRODUCT:
     //recibimos del cliente el id del producto a eliminar
     socket.on('deleteProduct', async data => {
         await pManager.deleteProduct(data); //eliminamos el producto
