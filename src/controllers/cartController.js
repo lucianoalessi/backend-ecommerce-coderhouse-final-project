@@ -161,7 +161,7 @@ export const purchase = async (req,res) => {
 				purchaseError.push(product);  //agregamos el producto al array de productos que pudieron procesarse para la compra.
 			}
 	
-			if(quantity < productInDB.stock || quantity == productInDB.stock ){
+			if(quantity <= productInDB.stock){
 	
 				let productUpdate = productInDB;
 				const quantityUpdate = productInDB.stock - quantity;
@@ -176,22 +176,28 @@ export const purchase = async (req,res) => {
 		//Eliminamos los productos que se procesaron correctamente del carrito, e insertamos el array de productos no procesados:
 		const notPurchasedProductsInCart = await cartService.insertArrayProds(cartId,purchaseError);
 
-		//definimos los datos que necesitamos para el ticket:
-		const ticketData = {
-			amount: precioTotal,
-			purchaser: req.user.email
-		}
-		//creamos el ticket en la base de datos:
-		const ticket = await ticketModel.create(ticketData);
+		// Solo creamos el ticket si hay productos en purchaseComplete
+        if (purchaseComplete.length > 0) {
+			//definimos los datos que necesitamos para el ticket:
+			const ticketData = {
+				amount: precioTotal,
+				purchaser: req.user.email
+			}
+			//creamos el ticket en la base de datos:
+			const ticket = await ticketModel.create(ticketData);
 
-		//agregamos informacion adicional, los productos que se procesaron correctamente y los que no:
-		const purchaseData = {
-			ticket: ticket,
-			productosProcesados: purchaseComplete,
-			productosNoProcesados: purchaseError,
-		}
-		//lo enviamos:
-		res.status(200).send({ status: 'success', payload: purchaseData})
+			//agregamos informacion adicional, los productos que se procesaron correctamente y los que no:
+			const purchaseData = {
+				ticket: ticket,
+				productosProcesados: purchaseComplete,
+				productosNoProcesados: purchaseError,
+			}
+			//lo enviamos:
+			res.status(200).send({ status: 'success', payload: purchaseData})
+		}else {
+            // Si no hay productos en purchaseComplete, devolvemos los productos en purchaseError
+            res.status(200).send({ status: 'success', message: 'No se procesaron productos, por falta de stock.', productosNoProcesados: purchaseError});
+        }
 		
 	} catch (error) {
 		res.status(400).send({ error: error.message });
