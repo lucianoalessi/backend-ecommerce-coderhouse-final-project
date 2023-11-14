@@ -12,6 +12,7 @@ import cartsRouter from './routers/carts.router.js';
 import sessionRouter from './routers/sessions.router.js';
 import mockingRouter from './routers/mocking.router.js'
 import mailingRouter from './routers/mailing.router.js'
+import loggerRouter from './routers/logger.router.js'
 import viewsRouter from './routers/views.router.js';
 
 //importaciones para passport: 
@@ -89,11 +90,12 @@ app.use(express.static(__dirname +'/src/public'));
 
 //Rutas utilizadas:
 
-app.use('/api/products' , productsRouter); // Usando el router de productos para las rutas que comienzan con '/api/products'.
-app.use('/api/carts' , cartsRouter); // Usando el router de carritos para las rutas que comienzan con '/api/carts'.
-app.use('/api/sessions', sessionRouter); // ruta para las sessions 
+app.use('/api/products' , productsRouter); //Usando el router de productos para las rutas que comienzan con '/api/products'.
+app.use('/api/carts' , cartsRouter); //Usando el router de carritos para las rutas que comienzan con '/api/carts'.
+app.use('/api/sessions', sessionRouter); //ruta para las sessions 
 app.use('/mocking' , mockingRouter);//ruta para mock
 app.use('/mail', mailingRouter); //ruta para mails
+app.use('/loggerTest', loggerRouter ); //ruta para logger
 app.use('/', viewsRouter); //router handlebars para io con '/'.
 
 

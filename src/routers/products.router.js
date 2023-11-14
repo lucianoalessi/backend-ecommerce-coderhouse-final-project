@@ -8,6 +8,8 @@ import {
     updateProduct, 
     deleteProduct
 } from '../controllers/productController.js';
+//Importamod middleware para logger:
+import { addLogger } from '../utils/logger.js';
 
 //Inicializamos la extencion de express: Router
 const router = Router()
@@ -16,19 +18,19 @@ const router = Router()
 //RUTAS:
 
 //Ruta para manejar las solicitudes GET para obtener todos los productos y filtrar por query. (Solo sirve para MONGO DB)
-router.get('/' , getProductsQuery );
+router.get('/' ,addLogger, getProductsQuery );
 
 //Ruta para manejar las solicitudes GET para recuperar un producto específico por su ID. (La misma sirve para mongoDB)
-router.get('/:pid' , getProductById );
+router.get('/:pid' ,addLogger, getProductById );
 
 // Ruta para agregar un producto. (Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.post('/' , addProduct );
+router.post('/' ,addLogger, addProduct );
 
 //Ruta para modificar un producto por ID. (Con put modificamos informacion del servidor).(mongoDB)
-router.put('/:pid' , updateProduct );
+router.put('/:pid' ,addLogger, updateProduct );
 
 //Ruta para eliminar un producto. (Con delete eliminamos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.delete('/:pid', deleteProduct );
+router.delete('/:pid',addLogger, deleteProduct );
 
 export default router; 
 

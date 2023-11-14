@@ -16,6 +16,9 @@ import {
 //importamos middlewares:
 import { passportCall } from "../../utils.js";
 
+//importamos middleware para logger:
+import { addLogger } from "../utils/logger.js";
+
 //Creando una nueva instancia de Router.
 const router = Router();
 
@@ -23,31 +26,31 @@ const router = Router();
 //RUTAS O ENDPOINTS:
 
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
-router.get('/' , getCarts);
+router.get('/' , addLogger, getCarts);
 
 // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
-router.post('/', newCart);
+router.post('/', addLogger, newCart);
 
 // Ruta para manejar las solicitudes GET para obtener un carrito específico por su ID. (La misma sirve para mongoDB y file system)
-router.get('/:cid' , getCartById);
+router.get('/:cid' , addLogger, getCartById);
 
 // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
-router.post('/:cid/product/:pid' , addProductToCart);
+router.post('/:cid/product/:pid' , addLogger, addProductToCart);
 
 // Ruta para eliminar un producto de un carrito
-router.delete('/:cid/product/:pid', deleteProdInCart);
+router.delete('/:cid/product/:pid', addLogger, deleteProdInCart);
 
 // Ruta para vaciar un carrito
-router.delete('/:cid', deleteAllProductsInCart);
+router.delete('/:cid', addLogger, deleteAllProductsInCart);
 
 // Ruta para agregar un array de productos
-router.put('/:cid', insertArrayProds);
+router.put('/:cid', addLogger, insertArrayProds);
 
 // Ruta para modificar cantidad del producto
-router.put('/:cid/product/:pid', modifyQuantity);
+router.put('/:cid/product/:pid', addLogger, modifyQuantity);
 
 //Ruta para tickets (finalizar compra):
-router.get('/:cid/purchase',passportCall('jwt'), purchase);
+router.get('/:cid/purchase',passportCall('jwt'), addLogger, purchase);
 
 
 export default router;

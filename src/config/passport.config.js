@@ -106,6 +106,7 @@ const initializePassport = async () => {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
                     age: 18, ////rellenamos los datos que no vienen desde el perfil.
+                    cart: await cartManager.addCart(),
                     email: profile._json.email,
                     password: '', //al ser una autenticacion de terceros, no podemos asignarle un password.
                     role: 'user'

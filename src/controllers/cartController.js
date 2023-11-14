@@ -12,8 +12,10 @@ const cartManager = new CartManager()
 export const getCarts = async (req, res) => {
 	try{
 		const carts = await cartService.getCarts(); // Llamamos al método getCarts de la instancia de CartManager para obtener los carritos y los guardamos en la variable carts
+		req.logger.info(`Carritos obtenidos: ${carts.length}`);
 		res.status(200).send({status:'success' , carts });  // Enviando una respuesta con los carritos obtenidos.
 	}catch (error) {
+		req.logger.error(`Error al obtener carritos: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }
@@ -23,8 +25,10 @@ export const newCart = async (req, res) => {
 	try{
 		const newCart = req.body; // Obteniendo los datos del carrito desde el cuerpo de la solicitud y los guardamos en la variable newCart. 
 		const addcart = await cartService.addCart(newCart); // Llamando al método addCart de la instancia de CartManager para agregar un carrito y lo guaramos en una variable.
-    	res.status(200).send({status:'success'}); // Enviando una respuesta indicando el éxito al agregar el carrito.
+    	req.logger.info(`Carrito creado: ${addcart._id}`);
+		res.status(200).send({status:'success'}); // Enviando una respuesta indicando el éxito al agregar el carrito.
 	}catch (error) {
+		req.logger.error(`Error al crear carrito: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }
@@ -38,8 +42,10 @@ export const getCartById = async (req, res) => {
 			throw new Error(`Carrito con el id ${cartID} no existe`);
 		}
 		const getProductsCart = getCart.products; // Obteniendo los productos del carrito recuperado.
+		req.logger.info(`Productos obtenidos del carrito ${cartID}: ${getProductsCart.length}`);
 		res.status(200).send({status:'success' , payload:getProductsCart }); // Enviando una respuesta con los productos recuperados.
 	}catch (error) {
+		req.logger.error(`Error al obtener carrito por ID: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }
@@ -50,8 +56,10 @@ export const addProductToCart = async (req, res) => {
 		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
 		const product = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
 		const addProductToCart = await cartService.addProductToCart(cart, product); // Llamando al método addProductToCart de la instancia de CartManager.
+		req.logger.info(`Producto ${product} agregado al carrito ${cart}`);
 		res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
 	} catch (error) {
+		req.logger.error(`Error al agregar producto al carrito: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }
@@ -71,8 +79,10 @@ export const deleteProdInCart = async (req, res) => {
 			return res.status(404).send({ error: 'Not found prod in cart' });
 		}
 		await cartService.deleteProdInCart(cid, pid);
+		req.logger.info(`Producto ${pid} eliminado del carrito ${cid}`);
 		res.status(200).send({ status: 'success', deletedToCart: exist });
 	} catch (error) {
+		req.logger.error(`Error al eliminar producto del carrito: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }
@@ -88,8 +98,10 @@ export const deleteAllProductsInCart = async (req, res) => {
 				.send({ Status: 'error', message: 'Cart not found' });
 		}
 		const emptyCart = await cartService.deleteAllProductsInCart(cid);
+		req.logger.info(`Todos los productos eliminados del carrito ${cid}`);
 		res.status(200).send({ status: 'success', emptyCart: emptyCart });
 	} catch (err) {
+		req.logger.error(`Error al eliminar todos los productos del carrito: ${err.message}`);
 		res.status(400).send({ error: err.message });
 	}
 }
@@ -101,17 +113,21 @@ export const insertArrayProds = async (req, res) => {
 	try {
 		const existCart = cartService.getCartById(cid);
 		if (!existCart) {
+			req.logger.warning(`Carrito ${cid} no encontrado.`);
 			return res.status(404).send({ Status: 'error', message: 'Cart not found' });
 		}
 		body.forEach(async (item) => {
 			const existProd = await productService.getProductById(item.productID);
 			if (!existProd) {
+				req.logger.error(`Producto ${item.idx} no encontrado.`);
 				return res.status(404).send({ Status: 'error', message: `Prod ${item.idx} not found` });
 			}
 		});
 		const newCart = await cartService.insertArrayProds(cid, body);
+		req.logger.info(`Productos agregados al carrito ${cid}.`);
 		res.status(200).send({ status: 'success', newCart: newCart });
 	} catch (err) {
+		req.logger.error(`Error al agregar productos al carrito: ${err.message}`);
 		res.status(400).send({ error: err.message });
 	}
 }
@@ -124,16 +140,20 @@ export const modifyQuantity = async (req, res) => {
 		//Busca el carrito
 		const getCartByID = await cartService.getCartById(cid);
 		if (!getCartByID) {
+			req.logger.error(`Carrito ${cid} no encontrado.`);
 			return res.status(404).send({ error: 'Cart not found' });
 		}
 		//Busca el producto en el carrito
 		const exist = getCartByID.products.find((prod) => prod.productID.toJSON() === pid);
 		if (!exist) {
+			req.logger.error(`Producto ${pid} no encontrado en el carrito ${cid}.`);
 			return res.status(404).send({ error: 'Not found prod in cart' });
 		}
 		const modStock = await cartService.modifyQuantity(cid, pid, +quantity);
+		req.logger.info(`Cantidad modificada para el producto ${pid} en el carrito ${cid}.`);
 		res.status(200).send({ status: 'success', deletedToCart: modStock });
 	} catch (error) {
+		req.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }
@@ -159,6 +179,7 @@ export const purchase = async (req,res) => {
 	
 			if(quantity > productInDB.stock){  //verificamos que la cantidad comprada no sea mayor a nuestro stock
 				purchaseError.push(product);  //agregamos el producto al array de productos que pudieron procesarse para la compra.
+				req.logger.warning(`El producto ${product.productID} no tiene suficiente stock.`);
 			}
 	
 			if(quantity <= productInDB.stock){
@@ -170,6 +191,7 @@ export const purchase = async (req,res) => {
 				purchaseComplete.push(product); //agreamos el producto al array para proceder con la compra.
 				const monto = productInDB.price * quantity
 				precioTotal = precioTotal + monto
+				req.logger.info(`El producto ${product.productID} se ha procesado correctamente.`);
 			}
 		}
 
@@ -193,13 +215,16 @@ export const purchase = async (req,res) => {
 				productosNoProcesados: purchaseError,
 			}
 			//lo enviamos:
+			req.logger.info('Compra realizada con éxito.');
 			res.status(200).send({ status: 'success', payload: purchaseData})
 		}else {
             // Si no hay productos en purchaseComplete, devolvemos los productos en purchaseError
+			req.logger.warning('No se procesaron productos, por falta de stock.');
             res.status(200).send({ status: 'success', message: 'No se procesaron productos, por falta de stock.', productosNoProcesados: purchaseError});
         }
 		
 	} catch (error) {
+		req.logger.error(`Error en el proceso de compra: ${error.message}`);
 		res.status(400).send({ error: error.message });
 	}
 }

@@ -60,7 +60,8 @@ export default class ProductManager{
     //Obtiene un producto específico por su ID.
     getProductById = async (idProduct) => {
         try {
-            return await productModel.findOne({ _id: idProduct })
+            return await productModel.findById(idProduct)
+            //return await productModel.findOne({ _id: idProduct })
         } catch (error) {
             console.log(error)
         }
