@@ -4,38 +4,33 @@ const addToCartButtons = document.querySelectorAll('.card button#addToCart');
 // Itero a través de cada botón encontrado
 addToCartButtons.forEach((button) => {
   // Agrega un event listener para el evento 'click' en cada botón
-  button.addEventListener('click', () => {
-    // Encuentra el elemento padre más cercano con la clase 'card' al botón actual.
-    const card = button.closest('.card');
-    // Encuentra el elemento con la clase 'card-id' dentro de la tarjeta y obtiene su contenido de texto. 
-    const productID = card.querySelector('.card-id').textContent;
-    //obtenemos el id del carrito
-    const cartID = document.getElementById('cart-id').textContent;
+  button.addEventListener('click', async () => {
+    try {
+      // Encuentra el elemento padre más cercano con la clase 'card' al botón actual.
+      const card = button.closest('.card');
+      // Encuentra el elemento con la clase 'card-id' dentro de la tarjeta y obtiene su contenido de texto. 
+      const productID = card.querySelector('.card-id').textContent.trim();
+      //obtenemos el id del carrito
+      const cartID = document.getElementById('cart-id').textContent.trim();
 
-    // Primero, verifica si el producto está en stock
-    fetch(`api/products/${productID}`)
-    .then((response) => response.json())
-    .then((productData) => {
+      // Primero, verifica si el producto está en stock
+      const response = await fetch(`api/products/${productID}`);
+      const productData = await response.json();
+
       if (productData.product.stock > 0) {
         // Si el producto está en stock, realiza una solicitud (POST) a una API para agregar un producto al carrito.
-        fetch(`api/carts/${cartID}/product/${productID}`, {
+        const response = await fetch(`api/carts/${cartID}/product/${productID}`, {
           method: 'POST',
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
         });
+        const data = await response.json();
+        console.log(data);
       } else {
         // Si el producto no está en stock, muestra una alerta
         alert('El producto no está en stock');
       }
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error('Error:', error);
-    });
+    }
   });
 });
 

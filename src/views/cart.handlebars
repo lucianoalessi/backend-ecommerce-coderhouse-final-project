@@ -1,4 +1,39 @@
-<div class='cart-container'>
+<div class="container py-5">
+	<div class="row justify-content-center">
+		<div class="col-12">
+			<h1 class="text-center"><i class="bi bi-cart-fill"></i> ID del Carrito: <span id='cart-id' class='text-primary'>{{cart._id}}</span></h1>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-12">
+			<h2><i class="bi bi-basket-fill"></i> Productos en el carrito:</h2>
+			<ul class='list-group'>
+				{{#each cart.products}}
+					<li class='list-group-item'>
+						<div class='product-detail'>
+							<p><i class="bi bi-hash"></i> ID del Producto: <span class='text-info'>{{this.productID}}</span></p>
+							<p><i class="bi bi-stack"></i> Cantidad: <span class='text-info'>{{this.quantity}}</span></p>
+						</div>
+					</li>
+				{{/each}}
+			</ul>			
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-12">
+			<button id="empty-cart" class='btn btn-danger'><i class="bi bi-cart-x-fill"></i> Vaciar Carrito</button>
+			<form action="/api/carts/{{cart._id}}/purchase" method="get" class='d-inline-block ml-2'>
+				<button class='btn btn-success'><i class="bi bi-cash-coin"></i> Confirmar Compra</button>
+			</form>
+			<form action="/products" method="get" class='d-inline-block ml-2'>
+				<button class='btn btn-primary'><i class="bi bi-arrow-left-circle"></i> Volver</button>
+			</form>
+		</div>
+	</div>
+</div>
+<script src="/js/cart.js"></script>
+
+{{!-- <div class='cart-container'>
 	<div class='tittle-container'>
 		<h1>Cart ID:</h1>
 		<h1 id='cart-id'>{{cart._id}}</h1>
@@ -29,4 +64,4 @@
 
 
 
-<script src="/js/cart.js"></script>
+<script src="/js/cart.js"></script> --}}

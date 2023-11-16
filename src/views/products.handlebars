@@ -1,4 +1,181 @@
-<div>
+<div class="container mt-4">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<h3 class="mb-3 text-center"><i class="fas fa-user-circle"></i> Bienvenido, {{user.first_name}} {{user.last_name}}!</h3>
+			<h4><i class="fas fa-info-circle"></i> Datos de usuario:</h4>
+			<ul class="list-group mb-4">
+				<li class="list-group-item"><i class="fas fa-envelope"></i> Email: {{user.email}}</li>
+				<li class="list-group-item"><i class="fas fa-birthday-cake"></i> Edad: {{user.age}}</li>
+				<li class="list-group-item"><i class="fas fa-user-tag"></i> Rol: {{user.role}}</li>
+				<li class="list-group-item"><i class="fas fa-shopping-cart"></i> Cart ID: <span id="cart-id">{{cart}}</span></li>
+			</ul>
+
+			<div class="d-flex justify-content-around my-3">
+				<a href="/profile" class="btn btn-outline-secondary"><i class="fas fa-id-card"></i> Perfil</a>
+				<a href="/chat" class="btn btn-outline-secondary"><i class="fas fa-comments"></i> Chat</a>
+				<a href="/carts/{{cart}}" class="btn btn-outline-secondary"><i class="fas fa-cart-arrow-down"></i> Ir al carrito</a>
+				<a href="/api/sessions/logout" class="btn btn-outline-danger"><i class="fas fa-sign-out-alt"></i> Salir</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='container productsList mt-4'>
+	<div class="row row-cols-1 row-cols-md-5 g-4">
+		{{#each products.docs}}
+			<div class='col'>
+				<div class='card h-100' id='card-container'>
+					<div class='card-header'>
+						<small class='card-category'><i class="fas fa-tags"></i> Categoría: {{this.category}}</small>
+						<small class='card-id'> {{this._id}}</small>
+					</div>
+					<div class='card-body d-flex flex-column'>
+						<h5 class='card-title font-bold'><i class="fas fa-box-open"></i> {{this.title}}</h5>
+						<p class='card-description'><i class="fas fa-info"></i> {{this.description}}</p>
+						<p class='card-price'><i class="fas fa-dollar-sign"></i> USD {{this.price}}</p>
+						<div class='info-container'>
+							<p class='code'><i class="fas fa-barcode"></i> Codigo: {{this.code}}</p>
+							<p class='stock'><i class="fas fa-warehouse"></i> Stock: {{this.stock}}</p>
+						</div>
+						<button id='addToCart' class='btn btn-outline-success mt-auto'><i class="fas fa-cart-plus"></i> Agregar al carrito</button>
+					</div>
+				</div>
+			</div>
+		{{/each}}
+	</div>
+</div>
+
+<div class='container pagination my-4'>
+	<nav aria-label="Page navigation">
+		<ul class="pagination justify-content-center">
+			{{#if products.hasPrevPage}}
+				<li class="page-item">
+					<a class="page-link" href="{{products.prevLink}}" aria-label="Previous">
+						<span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+					</a>
+				</li>
+			{{/if}}
+			<li class="page-item active"><a class="page-link" href="#">{{products.page}}</a></li>
+			{{#if products.hasNextPage}}
+				<li class="page-item">
+					<a class="page-link" href="{{products.nextLink}}" aria-label="Next">
+						<span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+					</a>
+				</li>
+			{{/if}}
+		</ul>
+	</nav>
+</div>
+<script src='js/products.js'></script>
+
+
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ededed;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+h3 {
+    color: #333;
+}
+
+h4 {
+    color: #555;
+}
+
+.list-group-item {
+    border: none;
+    padding: 10px 15px;
+    color: #333;
+}
+
+.btn-outline-secondary {
+    border-color: #3483fa;
+    color: #3483fa;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #3483fa;
+    color: #fff;
+}
+
+.btn-outline-danger {
+    border-color: #ff4e50;
+    color: #ff4e50;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ff4e50;
+    color: #fff;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 100%; /* Ajusta este valor según tus necesidades */
+    margin: auto;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+}
+
+.card-category {
+    color: #3483fa;
+}
+
+.card-id {
+    color: #6c757d;
+}
+
+.card-title {
+    color: #333;
+}
+
+.card-description {
+    color: #555;
+}
+
+.card-price {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.info-container {
+    color: #6c757d;
+}
+
+.btn-outline-success {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #3483fa;
+    border-color: #3483fa;
+}
+</style>
+
+
+
+{{!-- <div>
     <h3>Bienvenido, {{user.first_name}} {{user.last_name}}!</h3>
 	<h4>Datos de usuario:</h4>
     <p>Email: {{user.email}}</p>
@@ -31,17 +208,7 @@
 				<small class='card-id'>{{this._id}}</small>
 			</div>
 			<br />
-			{{!-- <div class='slides'>
 
-				<a href='/products/{{this.idx}}'>
-					<img
-						src='{{this.thumbnail}}'
-						alt='{{this.title}}'
-						class='thumbnail'
-					/>
-				</a>
-
-			</div> --}}
 			<br />
 			<h3 class='card-title font-bold'>{{this.title}}</h3>
 			<br />
@@ -69,4 +236,4 @@
 		<a href={{products.nextLink}}>Siguiente </a>
 	{{/if}}
 </div>
-<script src='js/products.js'></script>
+<script src='js/products.js'></script> --}}

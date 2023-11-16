@@ -1,4 +1,18 @@
-<div>
+    <div class="container mt-4">
+        <h1 class="mb-3"><i class="fas fa-user-circle"></i> Tu perfil (sin datos sensibles):</h1>
+        <div class="card mb-3">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-user"></i> <strong>Nombre completo:</strong> {{user.first_name}} {{user.last_name}}</li>
+                <li class="list-group-item"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{user.email}}</li>
+                <li class="list-group-item"><i class="fas fa-birthday-cake"></i> <strong>Edad:</strong> {{user.age}}</li>
+                <li class="list-group-item"><i class="fas fa-user-tag"></i> <strong>Rol:</strong> {{user.role}}</li>
+                <li class="list-group-item"><i class="fas fa-shopping-cart"></i> <strong>Cart ID:</strong> {{cartId}}</li>
+            </ul>
+        </div>
+    </div>
+
+
+{{!-- <div>
     <h1>Tu perfil (sin datos sensibles):</h1>
     <p>Nombre completo: {{user.first_name}} {{user.last_name}}</p>
     <p>Email: {{user.email}}</p>
@@ -11,4 +25,4 @@
     <form action="/api/sessions/logout" method="get">
 		<button>Salir</button>
 	</form>
-</div>
+</div> --}}

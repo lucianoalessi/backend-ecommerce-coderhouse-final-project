@@ -38,7 +38,8 @@ export const pagination = async (req, res) => {
 			sort,
 			query
 		);
-		res.render('products', { products: products, user: user , cart:cart , style:'style.css' });
+		// estilos con css: agregar al objeto de render lo siguiente: , style:'style.css'
+		res.render('products', { products: products, user: user , cart:cart  });
 	} catch (error) {
 		res.status(500).send({ error: error.message });
 	}
@@ -78,12 +79,14 @@ export const redirection = async (req, res) => {
 
 //Vista para logearse:
 export const loginView = (req, res) => {
-	res.render('login' , {style:'style.css'});
+	//, {style:'style.css'}
+	res.render('login' );
 }
 
 //Vista para registrarse:
 export const registerView = (req, res) => {
-	res.render('register' , {style:'style.css'})
+	//estilo para la vista, agregar el siguiente objeto a render: {style:'style.css'}
+	res.render('register')
 }
 
 //Vista para el perfil del usuario:
@@ -92,7 +95,8 @@ export const profileView = async (req, res) => {
 	const userId = req.user._id
 	const user = await userManager.getUserById(userId)
 	const cartId = user.cart[0]._id
-	res.render('profile' , {user: user, cartId,  style:'style.css'});
+	//estilo para la vista: style:'style.css'
+	res.render('profile' , {user: user, cartId  });
 }
 
 //Vista para purchase:

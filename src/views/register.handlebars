@@ -1,4 +1,38 @@
-<div>
+<div class='container py-5'>
+    <div class='row justify-content-center'>
+        <div class='col-md-6'>
+            <h2 class='text-center mb-4'>Registro</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="first_name">Nombre:</label>
+                    <input id="first_name" name="first_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Apellido:</label>
+                    <input id="last_name" name="last_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="ejemplo@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Edad:</label>
+                    <input type="number" id="age" name="age" class="form-control" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-3">Enviar</button>
+            </form>
+            <p class='text-center mt-3'>¿Ya tienes una cuenta? <a href="/login">Ingresa aquí.</a></p>
+        </div>
+    </div>
+</div>
+<script src="/js/register.js"></script>
+
+
+{{!-- <div>
     <h1>Registro</h1>
     <form id="registerForm">
 
@@ -26,4 +60,4 @@
     </form>
     <p>¿Ya tienes una cuenta? <a href="/login">Ingresa aquí.</a></p>
 </div>
-<script src="/js/register.js"></script>
+<script src="/js/register.js"></script> --}}
