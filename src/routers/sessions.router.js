@@ -12,7 +12,9 @@ import {
     gitHubCallBack, 
     failLogin, 
     logOutJwt,
-    logOutSession
+    logOutSession,
+    resetPassword,
+    newPassword
 } from "../controllers/sessionsController.js";
 //Importamos middlewares:
 import { passportCall, authorization } from "../../utils.js";
@@ -89,5 +91,17 @@ router.get('/logout',addLogger, logOutJwt);
 
 // //ruta para logOut SESSION:
 // router.get('/logout', logOutSession);
+
+
+//RESET PASSWORD:
+router.post('/resetpassword', resetPassword);
+
+//new PASSWORD:
+router.put('/newpassword', newPassword);
+
+
+
+
+
 
 export default router;

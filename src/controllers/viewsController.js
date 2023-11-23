@@ -65,6 +65,12 @@ export const cartView =  async (req, res) => {
 	}
 }
 
+//Vista para purchase:
+export const purchaseView = (req, res) => {
+	res.render('purchase' , {user: user , style:'style.css'});
+}
+
+
 
 //Rutas de vistas para Sessions: 
 
@@ -89,6 +95,18 @@ export const registerView = (req, res) => {
 	res.render('register')
 }
 
+//vista para restablecer password.
+
+export const resetPasswordView = (req, res) => {
+	res.render('resetPassword' , {style:'style.css'})
+}
+
+//vista para ingresar nuevo password.
+
+export const newPasswordView = (req, res) => {
+	res.render('newPassword')
+}
+
 //Vista para el perfil del usuario:
 export const profileView = async (req, res) => {
 	//const user = req.session.user
@@ -97,11 +115,6 @@ export const profileView = async (req, res) => {
 	const cartId = user.cart[0]._id
 	//estilo para la vista: style:'style.css'
 	res.render('profile' , {user: user, cartId  });
-}
-
-//Vista para purchase:
-export const purchaseView = (req, res) => {
-	res.render('purchase' , {user: user , style:'style.css'});
 }
 
 

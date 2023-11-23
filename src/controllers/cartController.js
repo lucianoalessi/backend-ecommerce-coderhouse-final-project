@@ -2,10 +2,13 @@ import cartService from "../services/cartService.js";
 import productService from "../services/productService.js";
 import { userModel } from "../models/user.js";
 import { ticketModel} from '../models/ticket.model.js'
+import ProductManager from "../dao/managersMongoDb/ProductManagerMongo.js";
 import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
+import UserManager from "../dao/managersMongoDb/UserManagerMongo.js"
 
-
+const productManager = new ProductManager()
 const cartManager = new CartManager()
+const userManager = new UserManager()
 
 
 //Controller para obtener todos los carritos
@@ -54,10 +57,19 @@ export const getCartById = async (req, res) => {
 export const addProductToCart = async (req, res) => {
 	try {
 		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
-		const product = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
-		const addProductToCart = await cartService.addProductToCart(cart, product); // Llamando al método addProductToCart de la instancia de CartManager.
-		req.logger.info(`Producto ${product} agregado al carrito ${cart}`);
-		res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
+		const productId = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
+		const userId = req.user._id; //obteniendo el ID del usuario;
+
+		const product = await productManager.getProductById(productId)
+
+		if (product.owner == userId && req.user.role == 'premium') {
+			req.logger.info(`El usuario premium ${userId} intentó agregar su propio producto ${productId} al carrito ${cart}`);
+			res.status(400).send({status:'error: un usuario premium no puede agregar su propio producto al carrito'});
+		}else{
+			const addProductToCart = await cartService.addProductToCart(cart, productId); // Llamando al método addProductToCart de la instancia de CartManager.
+			req.logger.info(`Producto ${productId} agregado al carrito ${cart}`);
+			res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
+		}
 	} catch (error) {
 		req.logger.error(`Error al agregar producto al carrito: ${error.message}`);
 		res.status(400).send({ error: error.message });

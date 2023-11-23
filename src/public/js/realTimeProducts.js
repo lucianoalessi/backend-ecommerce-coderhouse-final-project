@@ -1,3 +1,7 @@
+// Obtener referencia con datos del usuario
+let userId = document.getElementById('user-id').textContent;
+let userRole = document.getElementById('user-role').textContent;
+
 // Crear una instancia de socket.io cliente
 const socketCliente = io();
 
@@ -13,31 +17,29 @@ socketCliente.on("productos", (products) => {
 
 const updateProductList = (products) => {
   let productListContainer = document.getElementById("products-list-container");
-  let productsList = "";
+  let productsList = '<div class="row">'; // Inicia una nueva fila
 
   // Itera a través de la lista de productos y crea una tarjeta HTML para cada uno
   products.forEach((product) => {
     productsList += `
-    
-    <div class="card">
-      <div class="card-content">
-        <h4>${product.title}</h4>
-        <div>
-          <h5>Id: ${product._id}</h5>
+    <div class="col-md-4 mb-4"> <!-- Cada producto ocupará 4 columnas en dispositivos medianos y grandes -->
+      <div class="card h-100 shadow-sm"> <!-- Añade sombra a la tarjeta -->
+        <div class="card-body">
+          <h4 class="card-title">${product.title}</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Id: ${product._id}</h6>
+          <p class="card-text">${product.description}</p>
+          <h5 class="card-text">Precio: ${product.price} USD</h5>
+          <h5 class="card-text">Stock: ${product.stock}</h5>
+          <h6 class="card-text">Owner: ${product.owner}</h6>
         </div>
-        <div>
-          <p>${product.description}</p>
-        </div>
-        <div>
-          <h5>Precio: ${product.price} USD</h5>
-          <h5>stock: ${product.stock}</h5>
-        </div>
-        <div>
-          <a href="#">Buy Now</a>
+        <div class="card-footer">
+          <a href="#" class="btn btn-primary">Buy Now</a>
         </div>
       </div>
-    </div>`;
+    </div>`; // Cierra la columna del producto
   });
+
+  productsList += '</div>'; // Cierra la fila
 
   // Actualiza el contenido del contenedor de la lista de productos en la página.
   productListContainer.innerHTML = productsList;
@@ -46,6 +48,7 @@ const updateProductList = (products) => {
 //#AGREGAR UN PRODUCTO
 // Obtener referencia al formulario y agregar un evento para cuando se envíe
 let form = document.getElementById("formProduct");
+
 form.addEventListener("submit", (event) => {
   event.preventDefault(); // Evitar que el formulario recargue la página
 
@@ -57,23 +60,31 @@ form.addEventListener("submit", (event) => {
   let price = form.elements.price.value;
   let code = form.elements.code.value;
   let category = form.elements.category.value;
-
-  // Emitir un evento "addProduct" al servidor con la información del nuevo producto
-  socketCliente.emit("addProduct", {
+  
+  const product = {
     title,
     description,
     stock,
     thumbnail,
     price,
     code,
-    category,
-  });
-  alert('Producto Agregado Correctamente')
+    category,    
+  }
+
+  // Emitir un evento "addProduct" al servidor con la información del nuevo producto
+  socketCliente.emit("addProduct", {product , userId});
+});
+
+// Escuchar el evento de producto agregado
+socketCliente.on('productAdded', () => {
+  alert('Producto Agregado Correctamente');
   form.reset(); // Restablecer los campos del formulario
 });
 
 
+
 //#ACTUALIZAR UN PRODUCTO
+
 // Obtener referencia al formulario y agregar un evento para cuando se envíe
 let updateForm = document.getElementById("updateForm");
 updateForm.addEventListener("submit", (event) => {
@@ -100,10 +111,20 @@ updateForm.addEventListener("submit", (event) => {
   if (code) productData.code = code;
   if (category) productData.category = category;
 
-  // Emitir un evento "updateProduct" al servidor con la información del producto
-  socketCliente.emit("updateProduct", productData);
+  // Crear un objeto con los datos del usuario
+  let userData = {
+    _id: userId,
+    role: userRole
+  }
 
-  alert('Producto Actualizado')
+  // Emitir un evento "updateProduct" al servidor con la información del producto y del usuario
+  socketCliente.emit("updateProduct", productData , userData);
+});
+
+
+// Escuchar el evento de producto actualizado
+socketCliente.on('productUpdated', () => {
+  alert('Producto Actualizado');
   updateForm.reset(); // Restablecer los campos del formulario
 });
 
@@ -114,16 +135,32 @@ const deleteButton =  document.getElementById('delete-btn');
 
 // Agregar un evento para cuando se haga clic en el botón de eliminación
 deleteButton.addEventListener('click', () => {
-  const idInput = document.getElementById('productID-delete'); // obtenemos el input donde se ingresa el id
-  console.log(idInput.value)
-  //const productID = parseInt(idInput.value); //convertimos el valor del input a entero
-  const productID = idInput.value
-  //enviamos el valor al servidor
-  socketCliente.emit('deleteProduct' , productID);
-  alert('Producto eliminado correctamente!')
-  idInput.value = "" // Restablecer el valor del input
 
-})
+  // obtenemos el input donde se ingresa el id
+  const productId = document.getElementById('productID-delete').value;
+  // Crear un objeto con los datos del usuario
+  let userData = {
+    _id: userId,
+    role: userRole
+  } 
+  //enviamos el valor al servidor
+  socketCliente.emit('deleteProduct' , productId , userData);
+  productId = "" // Restablecer el valor del input 
+});
+
+// Escuchar el evento de producto eliminado
+socketCliente.on('productDeleted', () => {
+  alert('Producto eliminado correctamente!');
+});
+
+
+//ALERTAS DE ERRORES:
+
+  socketCliente.on('error', (errorMessage) => {
+    alert(errorMessage);
+  });
+
+
 
 //Escuchar eventos "updatedProducts" enviados por el servidor después de una actualización
 

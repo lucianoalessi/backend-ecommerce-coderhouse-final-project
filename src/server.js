@@ -13,6 +13,7 @@ import sessionRouter from './routers/sessions.router.js';
 import mockingRouter from './routers/mocking.router.js'
 import mailingRouter from './routers/mailing.router.js'
 import loggerRouter from './routers/logger.router.js'
+import premiumRouter from './routers/premium.router.js'
 import viewsRouter from './routers/views.router.js';
 
 //importaciones para passport: 
@@ -23,9 +24,11 @@ import initializePassport from "./config/passport.config.js";
 //Import ProductManager from "./ProductManager.js"; //CON FILE SYSTEM
 import ProductManager from "./dao/managersMongoDb/ProductManagerMongo.js";
 import messageManager from "./dao/managersMongoDb/MessageManagerMongo.js";
+import UserManager from "./dao/managersMongoDb/UserManagerMongo.js";
 
 //importamos dotenv:
 import config from './config/config.js';
+
 
 
 
@@ -96,6 +99,7 @@ app.use('/api/sessions', sessionRouter); //ruta para las sessions
 app.use('/mocking' , mockingRouter);//ruta para mock
 app.use('/mail', mailingRouter); //ruta para mails
 app.use('/loggerTest', loggerRouter ); //ruta para logger
+app.use('/api/users' , premiumRouter); //ruta para convertir usuarios a premium
 app.use('/', viewsRouter); //router handlebars para io con '/'.
 
 
@@ -109,6 +113,7 @@ app.use('/', viewsRouter); //router handlebars para io con '/'.
 //const pManager = new ProductManager(__dirname +'/files/products.json');  //CON FILE SYSTEM.
 const pManager = new ProductManager();
 const mManager = new messageManager();
+const userManager = new UserManager();
 
 
 
@@ -130,36 +135,64 @@ socketServer.on('connection', async (socket) => {
     //recibimos informacion del cliente, en este caso un nuevo producto y lo agregamos a nuestra base de datos. 
     socket.on('addProduct', async data => {
 
-        await pManager.addProduct(data)
+        const product = data.product;
+        const userId = data.userId;
+        const user = await userManager.getUserById(userId);
+        if(user) product.owner = user._id
+
+        await pManager.addProduct(product)
         const updateProductsList = await pManager.getProducts();
         socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
-    
+        socket.emit('productAdded'); //para el manejo de alertas
     })
 
     //#UPDATE PRODUCT:
-    socket.on('updateProduct', async data => {
-
-        const idProduct = data._id;
-        delete data._id; // Eliminar el _id del objeto para evitar errores
+    socket.on('updateProduct', async (productData, userData) => {
+        const idProduct = productData._id;
+        delete productData._id; // Eliminar el _id del objeto para evitar errores
     
-        // Actualizar el producto en la base de datos
-        await pManager.updateProduct(idProduct, { $set: data });
-
-        const updateProductsList = await pManager.getProducts();
-        socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+        // Obtener el producto de la base de datos
+        const product = await pManager.getProductById(idProduct);
     
-    })
+        // Verificar si el usuario es el propietario del producto o es un administrador
+        if (userData.role === 'admin' || product.owner === userData._id) {
+
+            // Actualizar el producto en la base de datos
+            await pManager.updateProduct(idProduct, { $set: productData });
+    
+            const updateProductsList = await pManager.getProducts();
+            socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+            socket.emit('productUpdated');//para el manejor de alertas
+        } else {
+            // Enviar un mensaje de error al cliente
+            socket.emit('error',  'No tienes permiso para actualizar este producto.' );
+        }
+    });
 
 
     //#DELETE PRODUCT:
     //recibimos del cliente el id del producto a eliminar
-    socket.on('deleteProduct', async data => {
-        await pManager.deleteProduct(data); //eliminamos el producto
-        const updateProducts = await pManager.getProducts(); //obtenemos la lista actualizada con el producto eliminado
-        socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista actualizada
+    socket.on('deleteProduct', async (productId , userData) => {
+        // Obtenemos el producto
+        const product = await pManager.getProductById(productId);
+
+        if (product === null) {
+            socket.emit('error', 'Producto no encontrado');
+        }
+        // Verificamos si el usuario es el propietario del producto o si es admin
+        else if (userData.role === 'admin' || product.owner === userData._id) {
+            await pManager.deleteProduct(productId); //eliminamos el producto
+            const updateProducts = await pManager.getProducts(); //obtenemos la lista actualizada con el producto eliminado
+            socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista actualizada
+            socket.emit('productDeleted')//para el manejo de alertas
+        } else {
+            socket.emit('error', 'No tienes permiso para eliminar este producto');
+        }
     })
 
 })
+
+
 
 
 

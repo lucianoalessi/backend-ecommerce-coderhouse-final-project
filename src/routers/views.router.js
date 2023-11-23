@@ -10,10 +10,12 @@ import {
 	redirection, 
 	loginView , 
 	registerView , 
-	profileView 
+	profileView, 
+	resetPasswordView,
+	newPasswordView
 } from "../controllers/viewsController.js";
 //Importamos middlewares:
-import { privateAccess, authorization, redirectAdmin ,checkSession , sessionExist} from "../middlewares/auth.js";
+import { applyPolicy,  privateAccess, authorization, redirectAdmin ,checkSession , sessionExist} from "../middlewares/auth.js";
 import { passportCall } from "../../utils.js";
 
 
@@ -28,18 +30,16 @@ const router = Router();
 router.get('/home', getProducts );
 
 //Ruta de productos con formulario para agregar mas productos (ruta para handlebars + websockets):
-router.get('/realtimeproducts' ,passportCall('jwt'), authorization('admin'), getProductsInRealTime );
+router.get('/realtimeproducts' ,passportCall('jwt'), applyPolicy(['ADMIN' , 'PREMIUM']), getProductsInRealTime );
 
 //Ruta para el chat (handlebars + websockets):
-router.get("/chat",passportCall('jwt'), authorization('user'), chatStyle );
+router.get("/chat",passportCall('jwt'),applyPolicy(['USER' , 'PREMIUM']), chatStyle );
 
 //Vista de productos con su paginacion (pagination):
-router.get("/products",passportCall('jwt'), redirectAdmin, authorization('user'), pagination );
+router.get("/products",passportCall('jwt'), redirectAdmin, applyPolicy(['USER' , 'PREMIUM']), pagination );
 
-//Ruta con vista del carrito (sin estilo, porque no le puede pasar el estilo a /:cid):
+//Ruta con vista del carrito:
 router.get('/carts/:cid',passportCall('jwt'), cartView );
-//ruta con vista del carrito (con estilo)
-router.get('/cart/',passportCall('jwt'), cartView ); 
 
 //RUTAS para Session: 
 
@@ -52,9 +52,16 @@ router.get('/login', loginView);
 //Vista para registrarse:
 router.get('/register', registerView);
 
+//Vista para restablecer password:
+router.get('/resetpassword', resetPasswordView);
+
+//Vista para ingresar un nuevo password:
+router.get('/newpassword/:pid', newPasswordView);
+
+
 //Vista para el perfil del usuario:
 //NOTA: le agregamos el middleware passportcall('jwt) para que pueda obtener los datos del usuario en token a travez de req.user
-router.get('/profile', passportCall('jwt'),authorization('user'), privateAccess, profileView);
+router.get('/profile', passportCall('jwt'),applyPolicy(['USER' , 'PREMIUM']), privateAccess, profileView);
 
 export default router;
 

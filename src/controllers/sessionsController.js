@@ -1,7 +1,15 @@
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer'
 import config from "../config/config.js";
+import UserManager from "../dao/managersMongoDb/UserManagerMongo.js"
+import ResetCodeManager from "../dao/managersMongoDb/ResetCodeManager.js";
+import {sendEmailToUser} from '../../utils.js'
+import crypto from 'crypto';
+import { createHash } from "../../utils.js";
 
+
+const userManager = new UserManager()
+const resetCodeManager = new ResetCodeManager()
 
 //registro de usuarios:
 
@@ -141,3 +149,99 @@ export const logOutSession = (req, res) => {
 }
 
 
+
+// Función para restablecer la contraseña
+export const resetPassword = async (req, res, next) => {
+    // Extraer el email del cuerpo de la solicitud
+    const { email } = req.body;
+
+    try {
+        // Buscar al usuario por su email
+        const user = await userManager.getUserByEmail(email);
+        console.log(user)
+        // Verificar si el usuario existe
+        if (!user) {
+            // Si el usuario no existe, enviar un mensaje de error
+            return res.status(400).json({ message: 'El correo electrónico no está registrado' });
+        }
+
+        // Función para generar un código aleatorio
+        const generateRandomCode = () => {
+            return crypto.randomBytes(4).toString('hex');
+        }
+
+        // Generar un código aleatorio
+        const code = generateRandomCode();
+        console.log(code)
+        // Guardar el código de recuperación, el modelo de los resetCode esta configurado para que expiren en una hora. 
+        const newCode = await resetCodeManager.saveCode(email, code);
+        console.log(newCode)
+
+        //enviamos mail de recuperacion de password
+        const transport = nodemailer.createTransport({
+            service: 'gmail',
+            port: 587,
+            auth: {
+                user: config.EMAIL_USER,
+                pass: config.EMAIL_PASSWORD
+            }
+        });
+        
+        try {
+           let result = await transport.sendMail({
+                from:'Coder App - recuperacion de contraseña <' + config.EMAIL_USER + '>',
+                to: email,
+                subject: "Código de recuperación de tu contraseña",
+                html:`
+                <div>
+                    <p>Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:<br><a href="http://localhost:8080/newpassword/${code}">http://localhost:8080/newpassword/${code}</a></p>
+                    <p>El código para recuperar tu contraseña es: ${code}<br>Si no fuiste tú quién lo solicitó, ignora este mensaje.</p>
+                </div>
+                `,
+                attachments:[]
+            })
+            req.logger.info(`Correo de inicio de sesión enviado al usuario ${email}`);
+        } catch (error) {
+            //req.logger.error('Error enviando correo electrónico:', error);
+        }
+
+        // Enviar una respuesta exitosa
+        res.status(200).json({ message: 'Código de recuperación enviado exitosamente'});
+    } catch (error) {
+        // Registrar el error y pasar al siguiente middleware
+        //req.logger.error(error.message)
+        next(error)
+    }
+}
+
+// Función para reiniciar la contraseña
+export const newPassword = async (req, res) => {
+    try {
+        // Extraer el email y la contraseña del cuerpo de la solicitud
+        const { code, password } = req.body;
+
+        // Obtener el código de recuperación
+        const resetCode = await resetCodeManager.getCode(code);
+        if (!resetCode) {
+            return res.status(400).json({ status: "error", message: "Código de recuperación inválido" });
+        }
+        
+        // Crear un hash de la contraseña
+        const passwordHash = createHash(password);
+
+        // Definir los campos a actualizar
+        const updates = { password: passwordHash };
+
+        // Actualizar el usuario
+        const updatedUser = await userManager.updateUserByEmail(resetCode.email, updates);
+        if (!updatedUser) {
+            return res.status(500).json({ status: "error", message: "Error al actualizar la contraseña del usuario" });
+        }
+
+        // Enviar una respuesta exitosa
+        res.json({ status: "success", message: "Contraseña actualizada con éxito" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: "error", message: "Error del servidor" });
+    }
+}

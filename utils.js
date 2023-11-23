@@ -5,6 +5,9 @@ import { dirname } from "path";
 import bcrypt from 'bcrypt';
 //importamos passport
 import passport from "passport";
+//importamos nodemailer:
+import nodemailer from 'nodemailer'
+import config from "./src/config/config.js";
 
 
 
@@ -90,3 +93,65 @@ export const generateProduct = () => {
         // image: faker.image.image(),
     }
 }
+
+
+//-----RESTAR PASSWORD----//
+
+// Función para generar un código aleatorio
+export const generateRandomCode = () => {
+    const codeLength = 6;
+    // Genera un código aleatorio de longitud especificada
+    return crypto.randomBytes(Math.ceil(codeLength / 2))
+        .toString('hex')
+        .slice(0, codeLength);
+}
+
+// Configuración del transporte para el envío de correos electrónicos
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.EMAIL_USER,
+        pass: config.EMAIL_PASSWORD
+    }
+});
+
+// Función para enviar un correo electrónico al usuario
+export const sendEmailToUser = async (email, subject, html) => {
+    // Enviar el correo electrónico y devolver el resultado
+    const result = await transport.sendMail({
+        from: 'Inicio de sesion en Coder App <' + config.EMAIL_USER + '>',
+        to: email,
+        subject: subject,
+        html: html
+    })
+    return (result);
+}
+
+// // Middleware para validar el código de recuperación
+// export const validateResetCode = () => {
+//     return async (req, res, next) => {
+//         const { code, email, password } = req.body;
+//         // Verificar que se proporcionaron todos los datos necesarios
+//         if (!email || !password || !code) {
+//             return res.status(400).send({ status: "error", error: "Datos incompletos" });
+//         }
+
+//         // Obtener el código de recuperación
+//         const resetCode = await resetCodesService.getCode(email, code)
+
+//         // Si el código no existe o ha expirado, devolver un error
+//         if (!resetCode) {
+//             return res.status(404).json({ error: 'Código inválido' });
+//         }
+//         if (resetCode.expiresAt <= new Date()) {
+//             return res.status(400).json({ error: 'Código expirado' });
+//         }
+
+//         // Eliminar el código de recuperación
+//         await resetCodesService.deleteCode(email, code)
+
+//         // Pasar al siguiente middleware
+//         next();
+//     }
+// }

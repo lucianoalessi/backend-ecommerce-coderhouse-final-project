@@ -69,7 +69,7 @@ export const addProduct = async (req, res) => {
             thumbnail,
             code,
             stock,
-            category
+            category,
         }
         
         const addProduct = await productService.addProduct(newProduct) //agregamos el producto enviado por el cliente.

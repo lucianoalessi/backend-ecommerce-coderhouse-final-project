@@ -36,6 +36,10 @@ const productSchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: true // Establecemos el valor por defecto en true
+    },
+    owner: {
+        type: String,
+        default: 'admin' // Si un producto se crea sin owner, se coloca por defecto “admin”.
     }
 });
 

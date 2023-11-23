@@ -24,6 +24,16 @@ export default class UserManager{
         }
     }
 
+    //Metodo para obtener un usuario por ID
+    getUserByEmail = async (userEmail) => {
+        try {
+            const user = await userModel.findOne({email: userEmail}).lean()
+            return user
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     //Agrega un nuevo usuario a la base de datos.
     addUser = async (user) => {
         try {
@@ -34,9 +44,18 @@ export default class UserManager{
     }
 
     // Actualiza un usuario existente por su ID con los datos proporcionados en el objeto "user".
-    updateUser = async (idUser, user) => {
+    updateUserById = async (idUser, user) => {
         try{
             return await userModel.updateOne({ _id: idUser } , user)
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    // Actualiza un usuario existente por su email con los datos proporcionados en el objeto "user".
+    updateUserByEmail = async (userEmail, user) => {
+        try{
+            return await userModel.updateOne({ email: userEmail } , user)
         }catch(error){
             console.log(error);
         }

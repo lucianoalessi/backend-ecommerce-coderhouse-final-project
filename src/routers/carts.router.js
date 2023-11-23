@@ -35,7 +35,7 @@ router.post('/', addLogger, newCart);
 router.get('/:cid' , addLogger, getCartById);
 
 // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
-router.post('/:cid/product/:pid' , addLogger, addProductToCart);
+router.post('/:cid/product/:pid' , passportCall('jwt'), addLogger, addProductToCart);
 
 // Ruta para eliminar un producto de un carrito
 router.delete('/:cid/product/:pid', addLogger, deleteProdInCart);
