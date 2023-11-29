@@ -1,0 +1,474 @@
+paths:
+  /api/carts/:
+    get:
+      summary: Obtine todos los carritos de compra
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Los carritos fueron obtenidos satisfactoriamente de la base de datos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Cart'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion en la base de datos
+    post:
+      summary: Crea un nuevo carrito
+      description: Esta ruta crea un nuevo carrito utilizando los datos proporcionados en el cuerpo de la solicitud.
+      operationId: newCart
+      tags:
+        - Carts
+      requestBody:
+        description: Datos del nuevo carrito
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productID:
+                        type: string
+                        description: ID del producto referenciado en la colección 'Products'
+                      quantity:
+                        type: integer
+                        description: Cantidad del producto en el carrito
+                        default: 1
+                  default: []
+      responses:
+        '200':
+          description: Carrito creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Error al crear el carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un carrito especifico a partir de su Id
+      description: Esta ruta maneja las solicitudes GET para obtener un carrito específico por su ID.
+      tags:
+        - Carts
+      operationId: getCartById
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: ID del carrito
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Operación exitosa. Devuelve los productos del carrito solicitado.
+          content: 
+            application/json:
+              schema:
+                $ref: '#components/schemas/Carts'
+        "400":
+          description: Error al obtener el carrito por ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    # put:
+    #   summary: Actualizar un producto a partir de su id
+    #   tags:
+    #     - Products
+    #   parameters:
+    #   - name: pid
+    #     in: path
+    #     required: true
+    #     description: id del producto que se desea solicitar.
+    #     schema:
+    #       type: string
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#components/requestBodies/updateProduct'
+    delete:
+      summary: Elimina un carrito
+      tags:
+        - Carts
+      description: Esta ruta permite eliminar un producto por su ID.
+      operationId: deleteProduct
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto a eliminar.
+      responses:
+        '200':
+          description: Producto eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'Sucess: Producto eliminado'
+        '400':
+          description: Error al eliminar el producto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'Error al eliminar el producto'
+
+    put:
+      summary: Agrega un array de productos a un carrito
+      tags:
+        - Carts
+      description: Esta ruta permite agregar un array de productos a un carrito específico.
+      operationId: insertArrayProds
+      parameters:
+        - name: cid
+          in: path
+          description: ID del carrito
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Array de productos a agregar
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  productID:
+                    type: string
+      responses:
+        '200':
+          description: Productos agregados con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  newCart:
+                    type: object
+        '400':
+          description: Error al agregar los productos al carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Carrito o producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Status:
+                    type: string
+                  message:
+                    type: string
+
+
+  api/carts/{cid}/product/{pid}:
+    post:
+      summary: Agrega un producto a un carrito específico
+      description: Esta ruta maneja las solicitudes POST para agregar un producto a un carrito específico.
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          description: ID del carrito
+          schema:
+            type: string
+        - in: path
+          name: pid
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto agregado al carrito correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success: producto agregado al carrito correctamente"
+        '400':
+          description: Error al agregar producto al carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "error: un usuario premium no puede agregar su propio producto al carrito"
+      security:
+        - jwt: []
+      tags:
+        - Carts
+
+    put:
+      summary: Modificar la cantidad de un producto en el carrito
+      tags: 
+        - Carts
+      description: Esta ruta permite modificar la cantidad de un producto específico en un carrito específico.
+      parameters:
+        - name: cid
+          in: path
+          description: ID del carrito
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          description: ID del producto
+          required: true
+          schema:
+            type: string
+        - name: quantity
+          in: body
+          description: Cantidad del producto a modificar
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cantidad del producto modificada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  deletedToCart:
+                    type: integer
+        '400':
+          description: Error al modificar la cantidad del producto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Carrito o producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Elimina un producto de un carrito
+      tags:
+        - Carts
+      description: Esta ruta permite eliminar un producto específico de un carrito específico.
+      operationId: deleteProdInCart
+      parameters:
+        - name: cid
+          in: path
+          description: ID del carrito
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          description: ID del producto
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto eliminado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  deletedToCart:
+                    type: object
+        '400':
+          description: Error al eliminar el producto del carrito especifico.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Carrito o producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  
+  api/carts/{cid}/purchase:
+    get:
+      tags:
+        - Purchase
+      summary: Finalizar proceso de compra
+      description: Esta ruta se utiliza para finalizar el proceso de compra. Devuelve un ticket con los productos procesados correctamente y los que no pudieron procesarse por falta de stock.
+      operationId: purchase
+      parameters:
+        - name: cid
+          in: path
+          description: ID del carrito de compras
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Compra realizada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    type: object
+                    properties:
+                      ticket:
+                        $ref: '#/components/schemas/Ticket'
+                      productosProcesados:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                      productosNoProcesados:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+        '400':
+          description: Error en el proceso de compra
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        
+components: 
+  schemas:
+    ProductInCart:
+      type: object
+      properties:
+        productID:
+          type: string
+          description: Id del producto referenciado
+        quantity:
+          type: integer
+          description: Cantidad del producto en el carrito
+          default: 1
+      example: 
+        productID: "64ff36e4a5029e949c5ba588"
+        quantity: 2
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado de mongo
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductInCart'
+          description: Lista de productos en el carrito
+          default: []
+      example: 
+        _id: "64ff36e4a5029e949c5ba588"
+        products: 
+          - productID: "64ff36e4a5029e949c5ba588"
+            quantity: 2
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        tittle:
+          type: string
+          description: Titulo del producto
+        description: 
+          type: string
+          description: Descripcion del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnail:
+          type: string
+          description: Imagen del producto
+        code:
+          type: string
+          description: Codigo del producto
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoria donde pertenece del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        owner:
+          type: string
+          description: Creador del producto
+      example: 
+        title: "Monitor"
+        description: "Monitor asus 24 pulgadas"
+        price: 100
+        thumbnail: "no hay"
+        code: "asd123"
+        stock: 102
+        category: "PC"
+        status: true
+        owner: "admin"
