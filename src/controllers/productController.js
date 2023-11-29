@@ -95,7 +95,7 @@ export const updateProduct = async (req, res) => {
         res.send({status:'Sucess: product updated', productUpdate});
     } catch (error) {
         req.logger.error(`Error al modificar el producto: ${error.message}`);
-        res.status(400).send('Error al modificar el producto:', error.message);
+        res.status(400).send('Error al eliminar el producto: ' + error.message);
         return error; 
     }
 }
@@ -110,7 +110,6 @@ export const deleteProduct = async (req, res) => {
         res.send({status:'Sucess: Producto eliminado'}); //devolvemos un estado si se elimino exitosamente
     } catch (error) {
         req.logger.error(`Error al eliminar el producto: ${error.message}`);
-        res.status(400).send('Error al eliminar el producto:', error.message);
-        return error; 
+        res.status(400).send(`Error al eliminar el producto: ${error.message}`);
     }
 }

@@ -29,7 +29,9 @@ import UserManager from "./dao/managersMongoDb/UserManagerMongo.js";
 //importamos dotenv:
 import config from './config/config.js';
 
-
+//importamos swagger para la documentacion:
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 
 
@@ -42,6 +44,21 @@ const httpServer = app.listen( port , () => {console.log('Server ON')})
 
 //Creamos un servidor Socket viviendo dentro de nuestro servidor principal:
 const socketServer = new Server(httpServer);
+
+//configuracion para documentacion con swagger:
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentacion Market Place',
+            description: 'API pensada para aplicacion de un Marketplace'
+        }
+    },
+    apis: [`${__dirname}/src/docs/**/*.yaml`]
+}
+
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/api/docs',swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 //Configuraciones o Middlewares:
 

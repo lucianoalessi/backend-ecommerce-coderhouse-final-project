@@ -1,0 +1,371 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtine todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron obtenidos satisfactoriamente de la base de datos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Product'
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion en la base de datos
+    post:
+      summary: Agregar un nuevo producto
+      description: Este endpoint te permite agregar un nuevo producto.
+      operationId: addProduct
+      tags:
+        - Products
+      requestBody:
+        description: Objeto del producto que necesita ser agregado
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - price
+                - thumbnail
+                - code
+                - stock
+                - category
+              properties:
+                title:
+                  type: string
+                  description: El título del producto
+                description:
+                  type: string
+                  description: La descripción del producto
+                price:
+                  type: number
+                  description: El precio del producto
+                thumbnail:
+                  type: string
+                  description: La miniatura del producto
+                code:
+                  type: string
+                  description: El código del producto
+                stock:
+                  type: number
+                  description: El stock del producto
+                category:
+                  type: string
+                  description: La categoría del producto
+      responses:
+        '200':
+          description: Producto agregado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Éxito: Producto agregado"
+        '400':
+          description: Ocurrió un error al agregar el producto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error al agregar el producto"
+                  details:
+                    type: string
+
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un solo producto a partir de su Id
+      tags:
+        - Products
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: id del producto que se desea solicitar.
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Producto encontrado
+          content: 
+            application/json:
+              schema:
+                $ref: '#components/schemas/Products'
+    put:
+      summary: Actualizar un producto a partir de su id
+      tags:
+        - Products
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: id del producto que se desea solicitar.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+    delete:
+      summary: Elimina un producto
+      tags:
+        - Products
+      description: Esta ruta permite eliminar un producto por su ID.
+      operationId: deleteProduct
+      parameters:
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto a eliminar.
+      responses:
+        '200':
+          description: Producto eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'Sucess: Producto eliminado'
+        '400':
+          description: Error al eliminar el producto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'Error al eliminar el producto'
+        
+components: 
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado de mongo
+        tittle:
+          type: string
+          description: Titulo del producto
+        description: 
+          type: string
+          description: Descripcion del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnail:
+          type: string
+          description: Imagen del producto
+        code:
+          type: string
+          description: Codigo del producto
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoria donde pertenece del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        owner:
+          type: string
+          description: Creador del producto
+      example: 
+        _id: "64ff36e4a5029e949c5ba588"
+        title: "Monitor"
+        description: "Monitor asus 24 pulgadas"
+        price: 100
+        thumbnail: "no hay"
+        code: "asd123"
+        stock: 102
+        category: "PC"
+        status: true
+        owner: "admin"
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        tittle:
+          type: string
+          description: Titulo del producto
+        description: 
+          type: string
+          description: Descripcion del producto
+        price:
+          type: number
+          description: Precio del producto
+        thumbnail:
+          type: string
+          description: Imagen del producto
+        code:
+          type: string
+          description: Codigo del producto
+        stock:
+          type: number
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoria donde pertenece del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        owner:
+          type: string
+          description: Creador del producto
+      example: 
+        title: "Monitor"
+        description: "Monitor asus 24 pulgadas"
+        price: 100
+        thumbnail: "no hay"
+        code: "asd123"
+        stock: 102
+        category: "PC"
+        status: true
+        owner: "admin"
+
+
+
+
+
+# paths:
+#   /api/products/:
+#     get:
+#       summary: Obtine todos los productos
+#       tags:
+#         - Products
+#       responses:
+#         "200":
+#           description: Los productos fueron obtenidos satisfactoriamente de la base de datos
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#components/schemas/Product'
+#         "500":
+#           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion en la base de datos
+
+#   /api/products/{pid}:
+#     get:
+#       summary: Obtiene un solo producto a partir de su Id
+#       tags:
+#         - Products
+#       parameters:
+#       - name: pid
+#         in: path
+#         required: true
+#         description: id del producto que se desea solicitar.
+#         schema:
+#           type: String
+#       responses:
+#         "200":
+#           description: Producto encontrado
+#           content: 
+#             application/json:
+#               schema:
+#                 $ref: '#components/schemas/Products'
+        
+# components: 
+#   schemas:
+#     Product:
+#       type: object
+#       properties:
+#         _id:
+#           type: ObjectId
+#           description: Id autogenerado de mongo
+#         tittle:
+#           type: String
+#           description: Titulo del producto
+#         description: 
+#           type: String
+#           description: Descripcion del producto
+#         price:
+#           type: Number
+#           description: Precio del producto
+#         thumbnail:
+#           type: String
+#           description: Imagen del producto
+#         code:
+#           type: String
+#           description: Codigo del producto
+#         stock:
+#           type: Number
+#           description: Stock del producto
+#         category:
+#           type: String
+#           description: Categoria donde pertenece del producto
+#         status:
+#           type: Boolean
+#           description: Estado del producto
+#         owner:
+#           type: String
+#           description: Creador del producto
+#       example: 
+#         _id: ObjectId("64ff36e4a5029e949c5ba588")
+#         title: "Monitor"
+#         description: "Monitor asus 24 pulgadas"
+#         price: 100
+#         thumbnail: "no hay"
+#         code: "asd123"
+#         stock: 102
+#         category: "PC"
+#         status: true
+#         owner: "admin"
+#   requestBodies:
+#     updateProduct:
+#       type: object
+#       properties:
+#         tittle:
+#           type: String
+#           description: Titulo del producto
+#         description: 
+#           type: String
+#           description: Descripcion del producto
+#         price:
+#           type: Number
+#           description: Precio del producto
+#         thumbnail:
+#           type: String
+#           description: Imagen del producto
+#         code:
+#           type: String
+#           description: Codigo del producto
+#         stock:
+#           type: Number
+#           description: Stock del producto
+#         category:
+#           type: String
+#           description: Categoria donde pertenece del producto
+#         status:
+#           type: Boolean
+#           description: Estado del producto
+#         owner:
+#           type: String
+#           description: Creador del producto
+#       example: 
+#         title: "Monitor"
+#         description: "Monitor asus 24 pulgadas"
+#         price: 100
+#         thumbnail: "no hay"
+#         code: "asd123"
+#         stock: 102
+#         category: "PC"
+#         status: true
+#         owner: "admin"
