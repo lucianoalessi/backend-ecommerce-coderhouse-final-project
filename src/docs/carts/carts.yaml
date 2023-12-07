@@ -16,237 +16,135 @@ paths:
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion en la base de datos
     post:
-      summary: Crea un nuevo carrito
-      description: Esta ruta crea un nuevo carrito utilizando los datos proporcionados en el cuerpo de la solicitud.
-      operationId: newCart
+      summary: Crea un carrito
       tags:
         - Carts
-      requestBody:
-        description: Datos del nuevo carrito
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                products:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      productID:
-                        type: string
-                        description: ID del producto referenciado en la colección 'Products'
-                      quantity:
-                        type: integer
-                        description: Cantidad del producto en el carrito
-                        default: 1
-                  default: []
       responses:
-        '200':
-          description: Carrito creado exitosamente
+        "200":
+          description: El carrito fue creado exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-        '400':
-          description: Error al crear el carrito
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-
-  /api/carts/{cid}:
+                type: array
+                items:
+                  $ref: "#components/schemas/Cart"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD.
+  /api/carts/{cid}/:
     get:
-      summary: Obtiene un carrito especifico a partir de su Id
-      description: Esta ruta maneja las solicitudes GET para obtener un carrito específico por su ID.
+      summary: Obtiene un carrito a partir del id
       tags:
         - Carts
-      operationId: getCartById
       parameters:
       - name: cid
         in: path
         required: true
-        description: ID del carrito
+        description: ID del carrito a solicitar
         schema:
-          type: string
+          $type: String
       responses:
         "200":
-          description: Operación exitosa. Devuelve los productos del carrito solicitado.
-          content: 
-            application/json:
-              schema:
-                $ref: '#components/schemas/Carts'
-        "400":
-          description: Error al obtener el carrito por ID
+          description: El carrito fue obtenido satisfactoriamente.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+                type: array
+                items:
+                  $ref: "#components/schemas/Cart"
+        "400":
+          description: El ID no tiene el formato de id de Mongo.
+        "404":
+          description: Carrito no encontrado.
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD.
     # put:
-    #   summary: Actualizar un producto a partir de su id
+    #   summary: Modifica los productos del carrito
     #   tags:
-    #     - Products
+    #     - Carts
     #   parameters:
-    #   - name: pid
+    #   - name: cid
     #     in: path
     #     required: true
-    #     description: id del producto que se desea solicitar.
+    #     description: ID del carrito a modificar
     #     schema:
-    #       type: string
+    #       $type: String
     #   requestBody:
     #     required: true
     #     content:
     #       application/json:
     #         schema:
-    #           $ref: '#components/requestBodies/updateProduct'
+    #           $ref: '#components/requestBodies/updateCart'
+    #   responses:
+    #     "200":
+    #       description: Carrito actualizado con éxito
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#components/schemas/Cart'
+    #     "400":
+    #       description: El params o el body no tienen el formato adecuado.
+    #     "404":
+    #       description: Carrito no encontrado.
+    #     "500":
+    #       description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
     delete:
-      summary: Elimina un carrito
+      summary: Borra todos los productos de un carrito a partir del id
       tags:
         - Carts
-      description: Esta ruta permite eliminar un producto por su ID.
-      operationId: deleteProduct
       parameters:
-        - in: path
-          name: pid
-          schema:
-            type: string
-          required: true
-          description: ID del producto a eliminar.
-      responses:
-        '200':
-          description: Producto eliminado exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'Sucess: Producto eliminado'
-        '400':
-          description: Error al eliminar el producto
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'Error al eliminar el producto'
-
-    put:
-      summary: Agrega un array de productos a un carrito
-      tags:
-        - Carts
-      description: Esta ruta permite agregar un array de productos a un carrito específico.
-      operationId: insertArrayProds
-      parameters:
-        - name: cid
-          in: path
-          description: ID del carrito
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Array de productos a agregar
+      - name: cid
+        in: path
         required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: object
-                properties:
-                  productID:
-                    type: string
+        description: ID del carrito a limpiar
+        schema:
+          $type: String
       responses:
-        '200':
-          description: Productos agregados con éxito
+        "200":
+          description: Carrito limpiado con éxito
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  newCart:
-                    type: object
-        '400':
-          description: Error al agregar los productos al carrito
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        '404':
-          description: Carrito o producto no encontrado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  Status:
-                    type: string
-                  message:
-                    type: string
-
-
-  api/carts/{cid}/product/{pid}:
+                $ref: '#components/schemas/Cart'
+        "400":
+          description: El ID no tiene el formato de id de Mongo.
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
+  /api/carts/{cid}/product/{pid}/:
     post:
-      summary: Agrega un producto a un carrito específico
-      description: Esta ruta maneja las solicitudes POST para agregar un producto a un carrito específico.
-      parameters:
-        - in: path
-          name: cid
-          required: true
-          description: ID del carrito
-          schema:
-            type: string
-        - in: path
-          name: pid
-          required: true
-          description: ID del producto
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Producto agregado al carrito correctamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "success: producto agregado al carrito correctamente"
-        '400':
-          description: Error al agregar producto al carrito
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "error: un usuario premium no puede agregar su propio producto al carrito"
+      summary: Agrega un producto al carrito
+      description: Este endpoint requiere token JWT para autorización y roles de usuario o premium. En caso de ser premium, el usuario no debe ser dueño del producto.
       security:
-        - jwt: []
+        - bearerAuth: []
       tags:
         - Carts
-
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: ID del carrito a modificar
+        schema:
+          $type: String
+      - name: pid
+        in: path
+        required: true
+        description: ID del producto a agregar
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Producto agregado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Cart'
+        "400":
+          description: Alguno de los ID no tiene el formato de id de Mongo.
+        "404":
+          description: Producto o carrito no encontrado.
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
     put:
       summary: Modificar la cantidad de un producto en el carrito
       tags: 
@@ -302,173 +200,714 @@ paths:
                   error:
                     type: string
     delete:
-      summary: Elimina un producto de un carrito
+      summary: Elimina un producto del carrito
       tags:
         - Carts
-      description: Esta ruta permite eliminar un producto específico de un carrito específico.
-      operationId: deleteProdInCart
       parameters:
-        - name: cid
-          in: path
-          description: ID del carrito
-          required: true
-          schema:
-            type: string
-        - name: pid
-          in: path
-          description: ID del producto
-          required: true
-          schema:
-            type: string
+      - name: cid
+        in: path
+        required: true
+        description: ID del carrito a modificar
+        schema:
+          $type: String
+      - name: pid
+        in: path
+        required: true
+        description: ID del producto a borrar
+        schema:
+          $type: String
       responses:
-        '200':
+        "200":
           description: Producto eliminado con éxito
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  deletedToCart:
-                    type: object
-        '400':
-          description: Error al eliminar el producto del carrito especifico.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        '404':
-          description: Carrito o producto no encontrado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-  
-  api/carts/{cid}/purchase:
-    get:
+                $ref: '#components/schemas/Cart'
+        "400":
+          description: Alguno de los ID no tiene el formato de id de Mongo.
+        "404":
+          description: Producto o carrito no encontrado.
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
+  /api/carts/{cid}/purchase/:
+    post:
+      summary: Genera la orden de compra
+      description: Este endpoint requiere token JWT para autorización y roles de usuario o premium.
+      security:
+        - bearerAuth: []
       tags:
-        - Purchase
-      summary: Finalizar proceso de compra
-      description: Esta ruta se utiliza para finalizar el proceso de compra. Devuelve un ticket con los productos procesados correctamente y los que no pudieron procesarse por falta de stock.
-      operationId: purchase
+        - Carts
       parameters:
-        - name: cid
-          in: path
-          description: ID del carrito de compras
-          required: true
-          schema:
-            type: string
+      - name: cid
+        in: path
+        required: true
+        description: ID del carrito a comprar
+        schema:
+          $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/purchase'
       responses:
-        '200':
-          description: Compra realizada con éxito
+        "200":
+          description: Orden generada con éxito
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  payload:
-                    type: object
-                    properties:
-                      ticket:
-                        $ref: '#/components/schemas/Ticket'
-                      productosProcesados:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Product'
-                      productosNoProcesados:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Product'
-        '400':
-          description: Error en el proceso de compra
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        
-components: 
+                $ref: '#components/schemas/Order'
+        "400":
+          description: Alguno de los ID no tiene el formato de id de Mongo, o el email no es válido.
+        "404":
+          description: Carrito no encontrado o falta de stock en todos los productos.
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
   schemas:
-    ProductInCart:
-      type: object
-      properties:
-        productID:
-          type: string
-          description: Id del producto referenciado
-        quantity:
-          type: integer
-          description: Cantidad del producto en el carrito
-          default: 1
-      example: 
-        productID: "64ff36e4a5029e949c5ba588"
-        quantity: 2
     Cart:
       type: object
       properties:
         _id:
-          type: string
-          description: Id autogenerado de mongo
+          type: ObjectId
+          description: ID autogenerado de mongo
         products:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductInCart'
-          description: Lista de productos en el carrito
-          default: []
-      example: 
-        _id: "64ff36e4a5029e949c5ba588"
-        products: 
-          - productID: "64ff36e4a5029e949c5ba588"
-            quantity: 2
-  requestBodies:
-    updateProduct:
+          $ref: '#/components/schemas/CartProducts'
+      example:
+        _id: ObjectId("654024a6d24c0072b01fb159")
+        products: [{
+                "productID": "64f650a1fe5c0b9e6ec4c426",
+                "quantity": 2
+            },
+            {
+                "productID": "64f650b5fe5c0b9e6ec4c428",
+                "quantity": 11
+            }]
+
+    CartProducts:
+      type: array
+      items:
+        type: object
+        properties:
+          productID:
+            type: ObjectId
+            description: ID autogenerado de mongo
+          quantity:
+            type: integer
+            description: Unidades del producto en el carrito.
+
+    Order:
       type: object
       properties:
-        tittle:
-          type: string
-          description: Titulo del producto
-        description: 
-          type: string
-          description: Descripcion del producto
-        price:
-          type: number
-          description: Precio del producto
-        thumbnail:
-          type: string
-          description: Imagen del producto
-        code:
-          type: string
-          description: Codigo del producto
-        stock:
-          type: number
-          description: Stock del producto
-        category:
-          type: string
-          description: Categoria donde pertenece del producto
-        status:
-          type: boolean
-          description: Estado del producto
-        owner:
-          type: string
-          description: Creador del producto
-      example: 
-        title: "Monitor"
-        description: "Monitor asus 24 pulgadas"
-        price: 100
-        thumbnail: "no hay"
-        code: "asd123"
-        stock: 102
-        category: "PC"
-        status: true
-        owner: "admin"
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+        cart:
+          $ref: '#/components/schemas/Cart'
+      example:
+        ticket: {
+            code: 'ORDER17013722750762162',
+            amount: 54.959999999999994,
+            purchaser: 'analia.a.acosta@gmail.com',
+            products: [{
+                "product": {
+                    "_id": "64f650b5fe5c0b9e6ec4c428",
+                    "title": "Product 3",
+                    "description": "Description for Product 3",
+                    "code": "P003",
+                    "price": 9.99,
+                    "stock": 87,
+                    "category": "Home & Kitchen",
+                    "thumbnail": [
+                        "product3_1.jpg",
+                        "product3_2.jpg"
+                    ],
+                    "status": true,
+                },
+                "quantity": 11
+            }],
+            status: 'Pending',
+            _id: new ObjectId("6568e173b6116d550105e0bc"),
+            purchase_datetime: 2023-11-30T19:24:35.078Z,
+          }
+        cart: {
+          _id: new ObjectId("654024a6d24c0072b01fb159"),
+          products: [{
+                "product": {
+                    "_id": "64f650a1fe5c0b9e6ec4c426",
+                    "title": "Product 2",
+                    "description": "Description for Product 2",
+                    "code": "P002",
+                    "price": 29.99,
+                    "stock": 0,
+                    "category": "Clothing",
+                    "thumbnail": [
+                        "product2_1.jpg",
+                        "product2_2.jpg"
+                    ],
+                    "status": true,
+                },
+                "quantity": 2
+            }]
+          }
+
+        Ticket:
+          type: object
+          properties:
+            _id:
+              type: ObjectId
+              description: ID autogenerado de mongo
+            code:
+              type: string
+              description: Código de la orden
+            purchase_datetime:
+              type: string
+              description: Fecha de realización de la orden
+            amount:
+              type: number
+              description: Monto de la orden
+            purchaser:
+              type: string
+              description: email del comprador
+          example:
+            code: 'ORDER17013722750762162'
+            amount: 54.959999999999994
+            purchaser: 'lucianoalessi@gmail.com'
+            _id: new ObjectId("6568e173b6116d550105e0bc")
+            purchase_datetime: 2023-11-30T19:24:35.078Z
+
+  requestBodies:
+    updateCart:
+      type: object
+      properties:
+        products:
+          $ref: '#/components/schemas/CartProducts'
+      example:
+        products: [
+            {
+                "productID": "64f650b5fe5c0b9e6ec4c428",
+                "quantity": 2
+            },
+            {
+                "productID": "64f6508cfe5c0b9e6ec4c424",
+                "quantity": 1
+            }
+        ]
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# paths:
+#   /api/carts/:
+#     get:
+#       summary: Obtine todos los carritos de compra
+#       tags:
+#         - Carts
+#       responses:
+#         "200":
+#           description: Los carritos fueron obtenidos satisfactoriamente de la base de datos
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#components/schemas/Cart'
+#         "500":
+#           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion en la base de datos
+    
+#     post:
+#       summary: Crea un nuevo carrito
+#       description: Esta ruta crea un nuevo carrito utilizando los datos proporcionados en el cuerpo de la solicitud.
+#       operationId: newCart
+#       tags:
+#         - Carts
+#       requestBody:
+#         description: Datos del nuevo carrito
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 products:
+#                   type: array
+#                   items:
+#                     type: object
+#                     properties:
+#                       productID:
+#                         type: string
+#                         description: ID del producto referenciado en la colección 'Products'
+#                       quantity:
+#                         type: integer
+#                         description: Cantidad del producto en el carrito
+#                         default: 1
+#                   default: []
+#       responses:
+#         '200':
+#           description: Carrito creado exitosamente
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                     example: success
+#         '400':
+#           description: Error al crear el carrito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+
+#   /api/carts/{cid}:
+#     get:
+#       summary: Obtiene un carrito especifico a partir de su Id
+#       description: Esta ruta maneja las solicitudes GET para obtener un carrito específico por su ID.
+#       tags:
+#         - Carts
+#       operationId: getCartById
+#       parameters:
+#       - name: cid
+#         in: path
+#         required: true
+#         description: ID del carrito
+#         schema:
+#           type: string
+#       responses:
+#         "200":
+#           description: Operación exitosa. Devuelve los productos del carrito solicitado.
+#           content: 
+#             application/json:
+#               schema:
+#                 $ref: '#components/schemas/Carts'
+#         "400":
+#           description: Error al obtener el carrito por ID
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+
+#     delete:
+#       summary: Elimina un carrito
+#       tags:
+#         - Carts
+#       description: Esta ruta permite eliminar un producto por su ID.
+#       operationId: deleteProduct
+#       parameters:
+#         - in: path
+#           name: pid
+#           schema:
+#             type: string
+#           required: true
+#           description: ID del producto a eliminar.
+#       responses:
+#         '200':
+#           description: Producto eliminado exitosamente
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                     example: 'Sucess: Producto eliminado'
+#         '400':
+#           description: Error al eliminar el producto
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                     example: 'Error al eliminar el producto'
+
+#     put:
+#       summary: Agrega un array de productos a un carrito
+#       tags:
+#         - Carts
+#       description: Esta ruta permite agregar un array de productos a un carrito específico.
+#       operationId: insertArrayProds
+#       parameters:
+#         - name: cid
+#           in: path
+#           description: ID del carrito
+#           required: true
+#           schema:
+#             type: string
+#       requestBody:
+#         description: Array de productos a agregar
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: array
+#               items:
+#                 type: object
+#                 properties:
+#                   productID:
+#                     type: string
+#       responses:
+#         '200':
+#           description: Productos agregados con éxito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                   newCart:
+#                     type: object
+#         '400':
+#           description: Error al agregar los productos al carrito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+#         '404':
+#           description: Carrito o producto no encontrado
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   Status:
+#                     type: string
+#                   message:
+#                     type: string
+
+
+#   api/carts/{cid}/product/{pid}:
+#     post:
+#       summary: Agrega un producto a un carrito específico
+#       description: Esta ruta maneja las solicitudes POST para agregar un producto a un carrito específico.
+#       parameters:
+#         - in: path
+#           name: cid
+#           required: true
+#           description: ID del carrito
+#           schema:
+#             type: string
+#         - in: path
+#           name: pid
+#           required: true
+#           description: ID del producto
+#           schema:
+#             type: string
+#       responses:
+#         '200':
+#           description: Producto agregado al carrito correctamente
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                     example: "success: producto agregado al carrito correctamente"
+#         '400':
+#           description: Error al agregar producto al carrito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+#                     example: "error: un usuario premium no puede agregar su propio producto al carrito"
+#       security:
+#         - jwt: []
+#       tags:
+#         - Carts
+
+#     put:
+#       summary: Modificar la cantidad de un producto en el carrito
+#       tags: 
+#         - Carts
+#       description: Esta ruta permite modificar la cantidad de un producto específico en un carrito específico.
+#       parameters:
+#         - name: cid
+#           in: path
+#           description: ID del carrito
+#           required: true
+#           schema:
+#             type: string
+#         - name: pid
+#           in: path
+#           description: ID del producto
+#           required: true
+#           schema:
+#             type: string
+#         - name: quantity
+#           in: body
+#           description: Cantidad del producto a modificar
+#           required: true
+#           schema:
+#             type: integer
+#       responses:
+#         '200':
+#           description: Cantidad del producto modificada con éxito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                   deletedToCart:
+#                     type: integer
+#         '400':
+#           description: Error al modificar la cantidad del producto
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+#         '404':
+#           description: Carrito o producto no encontrado
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+#     delete:
+#       summary: Elimina un producto de un carrito
+#       tags:
+#         - Carts
+#       description: Esta ruta permite eliminar un producto específico de un carrito específico.
+#       operationId: deleteProdInCart
+#       parameters:
+#         - name: cid
+#           in: path
+#           description: ID del carrito
+#           required: true
+#           schema:
+#             type: string
+#         - name: pid
+#           in: path
+#           description: ID del producto
+#           required: true
+#           schema:
+#             type: string
+#       responses:
+#         '200':
+#           description: Producto eliminado con éxito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                   deletedToCart:
+#                     type: object
+#         '400':
+#           description: Error al eliminar el producto del carrito especifico.
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+#         '404':
+#           description: Carrito o producto no encontrado
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+  
+#   api/carts/{cid}/purchase:
+#     get:
+#       tags:
+#         - Purchase
+#       summary: Finalizar proceso de compra
+#       description: Esta ruta se utiliza para finalizar el proceso de compra. Devuelve un ticket con los productos procesados correctamente y los que no pudieron procesarse por falta de stock.
+#       operationId: purchase
+#       parameters:
+#         - name: cid
+#           in: path
+#           description: ID del carrito de compras
+#           required: true
+#           schema:
+#             type: string
+#       responses:
+#         '200':
+#           description: Compra realizada con éxito
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   status:
+#                     type: string
+#                     example: success
+#                   payload:
+#                     type: object
+#                     properties:
+#                       ticket:
+#                         $ref: '#/components/schemas/Ticket'
+#                       productosProcesados:
+#                         type: array
+#                         items:
+#                           $ref: '#/components/schemas/Product'
+#                       productosNoProcesados:
+#                         type: array
+#                         items:
+#                           $ref: '#/components/schemas/Product'
+#         '400':
+#           description: Error en el proceso de compra
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   error:
+#                     type: string
+        
+# components: 
+#   schemas:
+#     ProductInCart:
+#       type: object
+#       properties:
+#         productID:
+#           type: string
+#           description: Id del producto referenciado
+#         quantity:
+#           type: integer
+#           description: Cantidad del producto en el carrito
+#           default: 1
+#       example: 
+#         productID: "64ff36e4a5029e949c5ba588"
+#         quantity: 2
+#     Cart:
+#       type: object
+#       properties:
+#         _id:
+#           type: string
+#           description: Id autogenerado de mongo
+#         products:
+#           type: array
+#           items:
+#             $ref: '#/definitions/ProductInCart'
+#       example: 
+#         _id: "64ff36e4a5029e949c5ba588"
+#         products: 
+#           - productID: "64ff36e4a5029e949c5ba588"
+#             quantity: 2
+#   requestBodies:
+#     updateProduct:
+#       type: object
+#       properties:
+#         tittle:
+#           type: string
+#           description: Titulo del producto
+#         description: 
+#           type: string
+#           description: Descripcion del producto
+#         price:
+#           type: number
+#           description: Precio del producto
+#         thumbnail:
+#           type: string
+#           description: Imagen del producto
+#         code:
+#           type: string
+#           description: Codigo del producto
+#         stock:
+#           type: number
+#           description: Stock del producto
+#         category:
+#           type: string
+#           description: Categoria donde pertenece del producto
+#         status:
+#           type: boolean
+#           description: Estado del producto
+#         owner:
+#           type: string
+#           description: Creador del producto
+#       example: 
+#         title: "Monitor"
+#         description: "Monitor asus 24 pulgadas"
+#         price: 100
+#         thumbnail: "no hay"
+#         code: "asd123"
+#         stock: 102
+#         category: "PC"
+#         status: true
+#         owner: "admin"
+#   Product:
+#     type: object
+#     properties:
+#       title:
+#         type: string
+#         description: Título del producto
+#       description:
+#         type: string
+#         description: Descripción del producto
+#       price:
+#         type: number
+#         format: double
+#         description: Precio del producto
+#       thumbnail:
+#         type: string
+#         description: Miniatura del producto
+#       code:
+#         type: string
+#         description: Código único del producto
+#       stock:
+#         type: integer
+#         format: int32
+#         description: Stock del producto
+#       category:
+#         type: string
+#         description: Categoría del producto
+#       status:
+#         type: boolean
+#         description: Estado del producto
+#       owner:
+#         type: string
+#         description: Propietario del producto

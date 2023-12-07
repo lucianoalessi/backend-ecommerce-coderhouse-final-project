@@ -68,8 +68,11 @@ const initializePassport = async () => {
         }
     ))
     
-    //Estrategia de autenticación para el inicio de sesión de usuarios:
-    passport.use('login', new LocalStrategy({ usernameField: 'email' , session: false }, async (username, password, done) => {
+    //Estrategia de autenticación para el inicio de sesión de usuarios(estrategia de autenticación local):
+    passport.use('login', new LocalStrategy({ 
+        usernameField: 'email', // Se define que el campo de nombre de usuario será el email
+        session: false // No se utilizarán sesiones
+    }, async (username, password, done) => {
         try {
             //si el usuario que quiere loguearse es coderadmin:
             if (username === admin.email && password === admin.password) { 
@@ -86,7 +89,7 @@ const initializePassport = async () => {
             if(!isValidPassword(user,password)){
                 return done(null, false , {message: "Contraseña incorrecta"}) // si la contraseña es incorrecta, tampoco se le envia un usuario = (false).
             }; 
-            return done(null, user); // se le envia el usuario = (user)
+            return done(null, user); // se le envia el usuario en forma de objeto con todos sus datos como sale de la base de datos = {user}
         } catch (error) {
             return done(error); 
         }
@@ -121,8 +124,9 @@ const initializePassport = async () => {
         }
     }))
 
-    //Extrategia con JWT:
+    //Extrategia de autenticación con JWT:
     // Usamos el método 'use' de Passport para implementar la estrategia JWT (JSON Web Token)
+    //Esta estrategia se encarga de extraer el token JWT de las solicitudes y verificar su validez.
     passport.use('jwt', new JWTStrategy({
         // 'jwtFromRequest' es una función requerida que acepta una solicitud como único parámetro
         // Extrae el JWT de la solicitud utilizando extractores personalizados (en este caso, 'cookieExtractor')
@@ -134,13 +138,13 @@ const initializePassport = async () => {
         // 'jwt_payload' es el objeto decodificado que se obtuvo del token.
         // 'done' es una función de callback que se llama al final de la función de verificación.
     }, async(jwt_payload, done) => {
+        //NOTA: jwt_payload es el objeto que se obtiene después de decodificar el token JWT. Contiene la información del usuario que fue almacenada en el token cuando se creó. Esta información puede incluir detalles como el ID del usuario, el nombre de usuario, el correo electrónico, y cualquier otra información que se haya incluido al momento de la creación del token
         try {
             if(jwt_payload.email === admin.email){
                 const adminUser = admin
-                console.log('==========>',jwt_payload)
                 return done(null, adminUser);
             }
-            // Si no hay errores, se llama a 'done' con el objeto 'jwt_payload' como segundo argumento.
+            // Si no hay errores, se llama a 'done' con el objeto 'jwt_payload' como segundo argumento y se autentica el usuario.
             return done(null, jwt_payload);
         } catch (error) {
             // Si hay un error, se llama a 'done' con el error como primer argumento.

@@ -60,6 +60,7 @@ export default class CartManager{
             }
 
             await cartModel.updateOne({_id: cid}, cart);
+            return cart
 
         }catch(error){
             console.log('Error al agregar el producto al carrito:' ,error.message);

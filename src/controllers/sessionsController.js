@@ -52,7 +52,9 @@ export const loginSession = async (req, res) => {
 //login de usuarios con JWT:
 
 export const loginJWT = async (req, res) => {
+    // Registramos en el logger que el inicio de sesión con JWT ha comenzado
     req.logger.info('Inicio de sesión con JWT iniciado');
+    // Creamos un objeto con los datos del usuario que queremos incluir en el token. el user es el que recibimos en el middleware de passport. (lo recibimos en el req)
     const serializedUser = {
         _id: req.user._id,
         first_name: req.user.first_name,
@@ -61,37 +63,40 @@ export const loginJWT = async (req, res) => {
         role: req.user.role,
         email: req.user.email
     }
+    // Creamos un token JWT con los datos del usuario, una clave secreta y una duración de 1 hora
     const token = jwt.sign(serializedUser, process.env.JWT_SECRET , {expiresIn: '1h'})
+    // Enviamos una cookie al cliente con el token JWT y respondemos con un estado de éxito y los datos del usuario
     res.cookie('coderCookie', token, {maxAge: 3600000, httpOnly: true, secure: true}).send({status:"success", payload: serializedUser});
+    // Registramos en el logger que se ha generado un token JWT para el usuario
     req.logger.info(`Token JWT generado para el usuario ${req.user._id}`);
 
     //enviamos un mail al usuario diciendo que ha iniciado session (esto es un extra, luego lo podemos usar para restablecer la contraseña):
-    const transport = nodemailer.createTransport({
-        service: 'gmail',
-        port: 587,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
+    // const transport = nodemailer.createTransport({
+    //     service: 'gmail',
+    //     port: 587,
+    //     auth: {
+    //         user: process.env.EMAIL_USER,
+    //         pass: process.env.EMAIL_PASSWORD
+    //     }
+    // });
     
-    let result;
-    try {
-        result = await transport.sendMail({
-            from:'Inicio de sesion en Coder App <' + process.env.EMAIL_USER + '>',
-            to: req.user.email,
-            subject: 'Correo de prueba',
-            html:`
-            <div>
-                <h1>Has iniciado sesion en coder App!</h1>
-            </div>
-            `,
-            attachments:[]
-        })
-        req.logger.info(`Correo de inicio de sesión enviado al usuario ${req.user.email}`);
-    } catch (error) {
-        req.logger.error('Error enviando correo electrónico:', error);
-    }
+    // let result;
+    // try {
+    //     result = await transport.sendMail({
+    //         from:'Inicio de sesion en Coder App <' + process.env.EMAIL_USER + '>',
+    //         to: req.user.email,
+    //         subject: 'Correo de prueba',
+    //         html:`
+    //         <div>
+    //             <h1>Has iniciado sesion en coder App!</h1>
+    //         </div>
+    //         `,
+    //         attachments:[]
+    //     })
+    //     req.logger.info(`Correo de inicio de sesión enviado al usuario ${req.user.email}`);
+    // } catch (error) {
+    //     req.logger.error('Error enviando correo electrónico:', error);
+    // }
     
 }
 

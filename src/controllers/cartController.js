@@ -16,7 +16,7 @@ export const getCarts = async (req, res) => {
 	try{
 		const carts = await cartService.getCarts(); // Llamamos al método getCarts de la instancia de CartManager para obtener los carritos y los guardamos en la variable carts
 		req.logger.info(`Carritos obtenidos: ${carts.length}`);
-		res.status(200).send({status:'success' , carts });  // Enviando una respuesta con los carritos obtenidos.
+		res.status(200).send({status:'success' , payload: carts });  // Enviando una respuesta con los carritos obtenidos.
 	}catch (error) {
 		req.logger.error(`Error al obtener carritos: ${error.message}`);
 		res.status(400).send({ error: error.message });
@@ -27,9 +27,9 @@ export const getCarts = async (req, res) => {
 export const newCart = async (req, res) => {
 	try{
 		const newCart = req.body; // Obteniendo los datos del carrito desde el cuerpo de la solicitud y los guardamos en la variable newCart. 
-		const addcart = await cartService.addCart(newCart); // Llamando al método addCart de la instancia de CartManager para agregar un carrito y lo guaramos en una variable.
-    	req.logger.info(`Carrito creado: ${addcart._id}`);
-		res.status(200).send({status:'success'}); // Enviando una respuesta indicando el éxito al agregar el carrito.
+		const addCart = await cartService.addCart(newCart); // Llamando al método addCart de la instancia de CartManager para agregar un carrito y lo guaramos en una variable.
+    	req.logger.info(`Carrito creado: ${addCart._id}`);
+		res.status(201).send({status:'success', payload: addCart}); // Enviando una respuesta indicando el éxito al agregar el carrito.
 	}catch (error) {
 		req.logger.error(`Error al crear carrito: ${error.message}`);
 		res.status(400).send({ error: error.message });
@@ -46,7 +46,7 @@ export const getCartById = async (req, res) => {
 		}
 		const getProductsCart = getCart.products; // Obteniendo los productos del carrito recuperado.
 		req.logger.info(`Productos obtenidos del carrito ${cartID}: ${getProductsCart.length}`);
-		res.status(200).send({status:'success' , payload:getProductsCart }); // Enviando una respuesta con los productos recuperados.
+		res.status(200).send({status:'success' , payload:getCart }); // Enviando una respuesta con los productos recuperados.
 	}catch (error) {
 		req.logger.error(`Error al obtener carrito por ID: ${error.message}`);
 		res.status(400).send({ error: error.message });

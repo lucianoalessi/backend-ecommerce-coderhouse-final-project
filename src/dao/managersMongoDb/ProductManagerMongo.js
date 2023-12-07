@@ -70,7 +70,7 @@ export default class ProductManager{
     //Agrega un nuevo producto a la base de datos.
     addProduct = async (product) => {
         try {
-            await productModel.create(product)
+            return await productModel.create(product)
         } catch (error) {
             console.log(error)
         }

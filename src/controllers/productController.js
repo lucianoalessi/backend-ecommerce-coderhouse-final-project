@@ -41,7 +41,7 @@ export const getProductById = async (req, res) => {
         }
 
         req.logger.info(`Producto obtenido: ${product.title}`);
-        res.status(200).send({status:'success', product});
+        res.status(200).send({status:'success', payload:product});
     }catch(error){
         req.logger.error(`Error: ${error.message}`);
         res.status(400).send({status: 'error', message: error.message});
@@ -72,9 +72,10 @@ export const addProduct = async (req, res) => {
             category,
         }
         
-        const addProduct = await productService.addProduct(newProduct) //agregamos el producto enviado por el cliente.
+        const result = await productService.addProduct(newProduct) //agregamos el producto enviado por el cliente.
+        console.log(result)
         req.logger.info(`Producto agregado: ${newProduct.title}`);
-        res.status(200).send({status:"Sucess: Producto agregado"})          //devolvemos un estado si se agrego correctamente.  
+        res.status(201).send({status:"Sucess: Producto agregado" , payload: result})   //devolvemos un estado si se agrego correctamente.  
     } catch (error) {
         req.logger.error(`Error al agregar el producto: ${error.message}`);
         res.status(400).send({ error: 'Error al agregar el producto', details: error.message });
@@ -88,11 +89,12 @@ export const addProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
-        const update = req.body     //agregamos la informacion que actualizara el cliente en una variable
-        const productUpdate = await productService.updateProduct(productID,update); // actualizamos el producto filtrado
+        const updateData = req.body     //agregamos la informacion que actualizara el cliente en una variable
+        const update = await productService.updateProduct(productID, { $set: updateData }); // actualizamos el producto filtrado
+        const productUpdated = await productService.getProductById(productID)
 
-        req.logger.info(`Producto actualizado: ${productUpdate.title}`);
-        res.send({status:'Sucess: product updated', productUpdate});
+        req.logger.info(`Producto actualizado: ${productUpdated.title}`);
+        res.status(200).send({status:'Sucess: product updated', payload: productUpdated});
     } catch (error) {
         req.logger.error(`Error al modificar el producto: ${error.message}`);
         res.status(400).send('Error al eliminar el producto: ' + error.message);
@@ -107,7 +109,7 @@ export const deleteProduct = async (req, res) => {
         const productDeleted = await productService.deleteProduct(pid);  //eliminamos el producto deseado
         
         req.logger.info(`Producto eliminado: ${productDeleted.title}`);
-        res.send({status:'Sucess: Producto eliminado'}); //devolvemos un estado si se elimino exitosamente
+        res.status(204).send({status:'Sucess: Producto eliminado'}); //devolvemos un estado si se elimino exitosamente
     } catch (error) {
         req.logger.error(`Error al eliminar el producto: ${error.message}`);
         res.status(400).send(`Error al eliminar el producto: ${error.message}`);

@@ -18,3 +18,9 @@ export const premiumController = async(req,res) =>{
     res.status(200).send({ status: 'success', user: user })
     
 }
+
+
+export const getUsers = async(req,res) => {
+    const users = await userManager.getUsers()
+    res.status(200).send({ status: 'success', users: users })
+}
