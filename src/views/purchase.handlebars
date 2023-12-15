@@ -1,0 +1,25 @@
+
+<div class="container">
+    <h1>Finalizar Compra</h1>
+    {{#if productosProcesados}}
+        <h2>Productos Procesados Correctamente</h2>
+        <ul>
+            {{#each productosProcesados}}
+                <li>{{this.productID}} - {{this.quantity}}</li>
+            {{/each}}
+        </ul>
+    {{/if}}
+    {{#if productosNoProcesados}}
+        <h2>Productos No Procesados</h2>
+        <ul>
+            {{#each productosNoProcesados}}
+                <li>{{this.productID}} - {{this.quantity}}</li>
+            {{/each}}
+        </ul>
+    {{/if}}
+    {{#if ticket}}
+        <h2>Ticket</h2>
+        <p>Monto Total: {{ticket.amount}}</p>
+        <p>Comprador: {{ticket.purchaser}}</p>
+    {{/if}}
+</div>

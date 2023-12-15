@@ -16,8 +16,9 @@ addToCartButtons.forEach((button) => {
       // Primero, verifica si el producto está en stock
       const response = await fetch(`api/products/${productID}`);
       const productData = await response.json();
+      console.log(productData.payload.stock)
 
-      if (productData.product.stock > 0) {
+      if (productData.payload.stock > 0) {
         // Si el producto está en stock, realiza una solicitud (POST) a una API para agregar un producto al carrito.
         const response = await fetch(`api/carts/${cartID}/product/${productID}`, {
           method: 'POST',

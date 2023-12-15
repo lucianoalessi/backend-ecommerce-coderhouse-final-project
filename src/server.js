@@ -13,7 +13,7 @@ import sessionRouter from './routers/sessions.router.js';
 import mockingRouter from './routers/mocking.router.js'
 import mailingRouter from './routers/mailing.router.js'
 import loggerRouter from './routers/logger.router.js'
-import premiumRouter from './routers/premium.router.js'
+import usersRouter from './routers/users.router.js'
 import viewsRouter from './routers/views.router.js';
 
 //importaciones para passport: 
@@ -34,13 +34,12 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
 
 
-
 //Creando una instancia de la aplicación Express.
 const app = express()
 
 //Iniciando el servidor Express para escuchar en el puerto 8080.
 const port = config.PORT
-const httpServer = app.listen( port , () => {console.log('Server ON')})
+const httpServer = app.listen( port , () => {console.log('Server ON in port:', config.PORT)})
 
 //Creamos un servidor Socket viviendo dentro de nuestro servidor principal:
 const socketServer = new Server(httpServer);
@@ -67,12 +66,10 @@ app.use(express.urlencoded({extended:true})); // Configurando Express para parse
 app.use(express.Router()); // Creando una instancia de un enrutador Express.
 
 //Conexion a mongo Atlas:
-
 mongoose.connect(config.MONGO_URL)
 
 
 //Session para login (configuracion)
-
 app.use(session({
     // Creo una nueva instancia de MongoStore para almacenar las sesiones en MongoDB
     store: MongoStore.create({
@@ -116,7 +113,7 @@ app.use('/api/sessions', sessionRouter); //ruta para las sessions
 app.use('/mocking' , mockingRouter);//ruta para mock
 app.use('/mail', mailingRouter); //ruta para mails
 app.use('/loggerTest', loggerRouter ); //ruta para logger
-app.use('/api/users' , premiumRouter); //ruta para convertir usuarios a premium
+app.use('/api/users' , usersRouter); //ruta para convertir usuarios a premium
 app.use('/', viewsRouter); //router handlebars para io con '/'.
 
 

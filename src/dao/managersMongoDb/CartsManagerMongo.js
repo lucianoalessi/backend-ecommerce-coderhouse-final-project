@@ -10,12 +10,12 @@ export default class CartManager{
     }
 
     // Método para obtener todos los carritos en la base de datos.
-    getCarts = async () => {
+    getAllCarts = async () => {
         try{
             const carts = await cartModel.find();
             return carts;
         }catch(error){
-            console.log('Error al obtener los carritos:', error.message);
+            console.error('Error al obtener los carritos:', error.message);
             return error
         }
     }
@@ -23,25 +23,31 @@ export default class CartManager{
     // Método para obtener un carrito específico por su ID.
     getCartById = async (idCart) => {
         try{
-            //const cart = await cartModel.findOne({_id: idCart});
             const cart = await cartModel.findById(idCart).lean();
             return cart;
         }catch(error){
-            console.log('Carrito inexistente:',error.message);
+            console.error('Carrito inexistente:',error.message);
             return error;
         }
     }
 
-    // Método para crear un nuevo carrito con productos proporcionados (opcional).
-    addCart = async (products) => {
+    // Método para crear un nuevo carrito. Los productos son opcionales.
+    createCart = async (products) => {
         try{
+            // Inicializamos los datos del carrito.
             let cartData = {};
+
+            // Si se proporcionan productos y no están vacíos, los agregamos al carrito.
             if (products && products.length > 0) {
                 cartData.products = products;
             }
-            return await cartModel.create(cartData);
+
+            // Creamos el carrito en la base de datos y lo retornamos.
+            const newCart = await cartModel.create(cartData);
+            console.log('Carrito creado con éxito:', newCart);
+            return newCart;
         }catch(error){
-            console.log('Error al crear el carrito:', error.message);
+            console.error('Error al crear el carrito:', error.message);
             return error;
         }
     }

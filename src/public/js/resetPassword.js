@@ -4,9 +4,9 @@ const form = document.getElementById('resetpassword-form');
 // Función para manejar la respuesta del servidor
 const handleResponse = (result) => {
     // Imprimimos el estado de la respuesta en la consola
-    console.log(result.status);
+    console.log(result);
     // Creamos un mensaje basado en el estado de la respuesta
-    const message = result.status === 200 
+    const message = result.status === 'success' 
         ? 'Se ha enviado un correo electrónico con instrucciones para restablecer su contraseña.' 
         : `Error: ${result.message}`;
     // Mostramos el mensaje en una alerta

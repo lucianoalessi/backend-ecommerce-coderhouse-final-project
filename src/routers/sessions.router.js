@@ -31,7 +31,7 @@ const router = Router()
 
 //RUTAS:
 
-//REGISTER:
+//#REGISTER:
 
 //ruta para registrarse como usuario:
 router.post('/register' , passport.authenticate('register',{session:false, failureRedirect:'/failregister'}) ,addLogger, register);
@@ -40,7 +40,7 @@ router.post('/register' , passport.authenticate('register',{session:false, failu
 router.get('/failregister',addLogger, failRegister);
 
 
-//LOGIN:
+//#LOGIN:
 
 // //Ruta para logearse con SESSION:
 // router.post('/login', passport.authenticate('login',{failureRedirect:'/faillogin'}), loginSession);
@@ -52,7 +52,7 @@ router.post('/login', passport.authenticate('login',{session: false, failureRedi
 router.get('/faillogin',addLogger, failLogin);
 
 
-//CURRENT:
+//#CURRENT:
 
 //ruta para devolver al usuario que inicia sesion SESSION
 router.get('/current2',addLogger, async (req, res) => {
@@ -67,7 +67,7 @@ router.get('/current', passportCall('jwt'), authorization('user'),addLogger, (re
 })
 
 
-//LOGIN WITH GITHUB:
+//#LOGIN WITH GITHUB:
 
 //ruta para logearse con Git Hub:
 router.get('/github' , passport.authenticate('github',{scope:['user:email']}),addLogger, async(req,res) =>{
@@ -77,26 +77,26 @@ router.get('/github' , passport.authenticate('github',{scope:['user:email']}),ad
 })
 
 router.get('/githubcallback', passport.authenticate('github',{session:false, failureRedirect:'/login'}),addLogger, gitHubCallBack)
-  // Esta ruta maneja el callback después de que el usuario se autentica con éxito a través de GitHub
-    // Si la autenticación falla, redirige al usuario a '/login', de lo contrario, llegamos aquí
-    // Almacenamos el usuario autenticado en la sesión para mantener su estado de autenticación
-    //req.session.user = req.user;
-    // Redirigimos al usuario a la página de productos
-    //res.redirect('/products');
+// Esta ruta maneja el callback después de que el usuario se autentica con éxito a través de GitHub
+// Si la autenticación falla, redirige al usuario a '/login', de lo contrario, llegamos aquí
+// Almacenamos el usuario autenticado en la sesión para mantener su estado de autenticación
+//req.session.user = req.user;
+// Redirigimos al usuario a la página de productos
+//res.redirect('/products');
 
-//LOG OUT:
+//#LOG OUT:
 
 //ruta para logOut JWT:
-router.get('/logout',addLogger, logOutJwt);
+router.get('/logout',passportCall('jwt'),addLogger, logOutJwt);
 
 // //ruta para logOut SESSION:
 // router.get('/logout', logOutSession);
 
 
-//RESET PASSWORD:
+//#RESET PASSWORD:
 router.post('/resetpassword', resetPassword);
 
-//new PASSWORD:
+//#NEW PASSWORD:
 router.put('/newpassword', newPassword);
 
 

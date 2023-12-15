@@ -3,21 +3,21 @@ import { Router } from "express"; // Importando la clase Router del módulo "exp
 import __dirname from '../../utils.js'; // Importando la constante __dirname para acceder a las rutas locales.
 //importamos los controllers de cart:
 import { 
-	getCarts,
-	newCart, 
+	getAllCarts,
+	createNewCart, 
 	getCartById, 
 	addProductToCart,
 	deleteProdInCart, 
 	deleteAllProductsInCart, 
-	insertArrayProds,
-	modifyQuantity,
+	addProductsToCart,
+	modifyProductQuantity,
 	purchase
 } from "../controllers/cartController.js";
 //importamos middlewares:
 import { passportCall } from "../../utils.js";
-
 //importamos middleware para logger:
 import { addLogger } from "../utils/logger.js";
+
 
 //Creando una nueva instancia de Router.
 const router = Router();
@@ -26,10 +26,10 @@ const router = Router();
 //RUTAS O ENDPOINTS:
 
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
-router.get('/' , addLogger, getCarts);
+router.get('/' , addLogger, getAllCarts);
 
 // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
-router.post('/', addLogger, newCart);
+router.post('/', addLogger, createNewCart);
 
 // Ruta para manejar las solicitudes GET para obtener un carrito específico por su ID. (La misma sirve para mongoDB y file system)
 router.get('/:cid' , addLogger, getCartById);
@@ -44,10 +44,10 @@ router.delete('/:cid/product/:pid', addLogger, deleteProdInCart);
 router.delete('/:cid', addLogger, deleteAllProductsInCart);
 
 // Ruta para agregar un array de productos
-router.put('/:cid', addLogger, insertArrayProds);
+router.put('/:cid', addLogger, addProductsToCart);
 
 // Ruta para modificar cantidad del producto
-router.put('/:cid/product/:pid', addLogger, modifyQuantity);
+router.put('/:cid/product/:pid', addLogger, modifyProductQuantity);
 
 //Ruta para tickets (finalizar compra):
 router.get('/:cid/purchase',passportCall('jwt'), addLogger, purchase);

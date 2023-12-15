@@ -19,7 +19,6 @@ const customLevelsOptions = {
         info: 'blue',
         debug: 'white'
     }
-
 }
 
 const devLogger = winston.createLogger({
@@ -57,12 +56,12 @@ const prodLogger = winston.createLogger({
 })
 
 
-const environment = config.NODE_ENV ||'dev'
+const environment = config.NODE_ENV || 'DEVELOPMENT'
 
 export const addLogger = (req,res,next) => {
-    if (environment == 'dev') {
+    if (environment == 'DEVELOPMENT') {
         req.logger = devLogger;
-    } else if (environment == 'prod') {
+    } else if (environment == 'PRODUCTION') {
         req.logger = prodLogger;
     }
     next();

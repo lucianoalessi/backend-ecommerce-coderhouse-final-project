@@ -1,174 +1,256 @@
+// Importando servicios y modelos necesarios
 import cartService from "../services/cartService.js";
 import productService from "../services/productService.js";
 import { userModel } from "../models/user.js";
 import { ticketModel} from '../models/ticket.model.js'
+
+// Importando los gestores de MongoDB
 import ProductManager from "../dao/managersMongoDb/ProductManagerMongo.js";
 import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
 import UserManager from "../dao/managersMongoDb/UserManagerMongo.js"
 
+// Creando instancias de los gestores
 const productManager = new ProductManager()
 const cartManager = new CartManager()
 const userManager = new UserManager()
 
 
-//Controller para obtener todos los carritos
-export const getCarts = async (req, res) => {
-	try{
-		const carts = await cartService.getCarts(); // Llamamos al método getCarts de la instancia de CartManager para obtener los carritos y los guardamos en la variable carts
-		req.logger.info(`Carritos obtenidos: ${carts.length}`);
-		res.status(200).send({status:'success' , payload: carts });  // Enviando una respuesta con los carritos obtenidos.
-	}catch (error) {
+// Controlador para obtener todos los carritos
+export const getAllCarts = async (req, res) => {
+	try {
+		// Llamamos al método getAllCarts de la instancia de CartManager para obtener los carritos
+		const allCarts = await cartService.getAllCarts();
+		// Logueamos la cantidad de carritos obtenidos
+		req.logger.info(`Numero de carritos obtenidos: ${allCarts.length}`);
+		// Enviando una respuesta con los carritos obtenidos
+		res.status(200).json({ status: 'success', payload: allCarts });
+	} catch (error) {
+		// Logueamos el error
 		req.logger.error(`Error al obtener carritos: ${error.message}`);
-		res.status(400).send({ error: error.message });
+		// Enviando una respuesta con el error
+		res.status(400).json({ error: error.message });
 	}
-}
+};
 
-//Controller para crear un carrito nuevo
-export const newCart = async (req, res) => {
-	try{
-		const newCart = req.body; // Obteniendo los datos del carrito desde el cuerpo de la solicitud y los guardamos en la variable newCart. 
-		const addCart = await cartService.addCart(newCart); // Llamando al método addCart de la instancia de CartManager para agregar un carrito y lo guaramos en una variable.
-    	req.logger.info(`Carrito creado: ${addCart._id}`);
-		res.status(201).send({status:'success', payload: addCart}); // Enviando una respuesta indicando el éxito al agregar el carrito.
-	}catch (error) {
-		req.logger.error(`Error al crear carrito: ${error.message}`);
-		res.status(400).send({ error: error.message });
+// Controlador para crear un carrito nuevo
+export const createNewCart = async (req, res) => {
+	try {
+		// Obteniendo los datos del carrito desde el cuerpo de la solicitud
+		const cartData = req.body;
+		// Llamando al método createCart de la instancia de CartManager para agregar un carrito
+		const createdCart = await cartService.createCart(cartData);
+		// Logueamos el ID del carrito creado
+		req.logger.info(`ID del Carrito creado: ${createdCart._id}`);
+		// Enviando una respuesta indicando el éxito al agregar el carrito
+		res.status(201).json({ status: 'success', payload: createdCart });
+	} catch (error) {
+		// Logueamos el error
+		req.logger.error(`Error al crear un nuevo carrito: ${error.message}`);
+		// Enviando una respuesta con el error
+		res.status(400).json({ error: error.message });
 	}
-}
+};
 
-//Obtener un carrito por id
+// Controlador para obtener un carrito por id
 export const getCartById = async (req, res) => {
-	try{
-		const cartID = req.params.cid; // Obteniendo el ID del carrito desde el parámetro (params) de la URL.
-		const getCart = await cartService.getCartById(cartID); // Llamando al método getCartById de la instancia de CartManager. Agregamos un + en (+cart) para convertirlo en entero y que no se pase un string como parametro.
+	try {
+		// Obteniendo el ID del carrito desde el parámetro (params) de la URL
+		const cartID = req.params.cid;
+		// Llamando al método getCartById de la instancia de CartManager
+		const getCart = await cartService.getCartById(cartID);
+		// Si el carrito no existe, lanzamos un error
 		if (!getCart) {
 			throw new Error(`Carrito con el id ${cartID} no existe`);
 		}
-		const getProductsCart = getCart.products; // Obteniendo los productos del carrito recuperado.
+		// Obteniendo los productos del carrito recuperado
+		const getProductsCart = getCart.products;
+		// Logueamos la cantidad de productos obtenidos del carrito
 		req.logger.info(`Productos obtenidos del carrito ${cartID}: ${getProductsCart.length}`);
-		res.status(200).send({status:'success' , payload:getCart }); // Enviando una respuesta con los productos recuperados.
-	}catch (error) {
+		// Enviando una respuesta con los productos recuperados
+		res.status(200).json({ status: 'success', payload: getCart });
+	} catch (error) {
+		// Logueamos el error
 		req.logger.error(`Error al obtener carrito por ID: ${error.message}`);
-		res.status(400).send({ error: error.message });
+		// Enviando una respuesta con el error
+		res.status(400).json({ error: error.message });
 	}
-}
+};
 
-//agregar un producto al carrito
+//Agregar un producto al carrito
 export const addProductToCart = async (req, res) => {
 	try {
-		const cart = req.params.cid; // Obteniendo el ID del carrito desde el parámetro de la URL.
-		const productId = req.params.pid; // Obteniendo el ID del producto desde el parámetro de la URL.
-		const userId = req.user._id; //obteniendo el ID del usuario;
+		// Obteniendo el ID del carrito y del producto desde los parámetros de la URL.
+		const cartId = req.params.cid; 
+		const productId = req.params.pid;
+		//obteniendo el ID del usuario;
+		const userId = req.user._id; 
 
+		// Obteniendo el producto por su ID
 		const product = await productManager.getProductById(productId)
 
+		// Verificando si el usuario es premium y es el dueño del producto
 		if (product.owner == userId && req.user.role == 'premium') {
-			req.logger.info(`El usuario premium ${userId} intentó agregar su propio producto ${productId} al carrito ${cart}`);
-			res.status(400).send({status:'error: un usuario premium no puede agregar su propio producto al carrito'});
+			req.logger.info(`El usuario premium ${userId} intentó agregar su propio producto ${productId} al carrito ${cartId}`);
+			res.status(400).json({status:'error: un usuario premium no puede agregar su propio producto al carrito'});
 		}else{
-			const addProductToCart = await cartService.addProductToCart(cart, productId); // Llamando al método addProductToCart de la instancia de CartManager.
-			req.logger.info(`Producto ${productId} agregado al carrito ${cart}`);
-			res.status(200).send({status:'success: producto agregado al carrito correctamente'}); // Enviando una respuesta indicando el éxito al agregar el producto al carrito.
+			// Agregando el producto al carrito
+			const addProductToCart = await cartService.addProductToCart(cartId, productId);
+			req.logger.info(`Producto ${productId} agregado al carrito ${cartId}`);
+			// Enviando una respuesta indicando el éxito al agregar el producto al carrito.
+			res.status(200).json({status:'success: producto agregado al carrito correctamente'}); 
 		}
 	} catch (error) {
 		req.logger.error(`Error al agregar producto al carrito: ${error.message}`);
-		res.status(400).send({ error: error.message });
+		res.status(400).json({ error: error.message });
 	}
 }
 
-//eliminar un producto en el carrito
+// Controlador para eliminar un producto en el carrito
 export const deleteProdInCart = async (req, res) => {
-	const { cid, pid } = req.params;
+	const { cid: cartId, pid: productId } = req.params;
+
 	try {
-		//Busca el carrito
-		const getCartByID = await cartService.getCartById(cid)
-		if (!getCartByID) {
-			return res.status(404).send({ error: 'Cart not found' });
+		// Busca el carrito
+		const cart = await cartService.getCartById(cartId);
+
+		if (!cart) {
+			req.logger.error('Carrito no encontrado');
+			return res.status(404).json({ error: 'Carrito no encontrado' });
 		}
-		//Busca el producto en el carrito
-		const exist = getCartByID.products.find((prod) => prod.productID == pid);
-		if (!exist) {
-			return res.status(404).send({ error: 'Not found prod in cart' });
+
+		// Busca el producto en el carrito
+		const productExists = cart.products.find((product) => product.productID == productId);
+
+		if (!productExists) {
+			req.logger.error('Producto no encontrado en el carrito');
+			return res.status(404).json({ error: 'Producto no encontrado en el carrito' });
 		}
-		await cartService.deleteProdInCart(cid, pid);
-		req.logger.info(`Producto ${pid} eliminado del carrito ${cid}`);
-		res.status(200).send({ status: 'success', deletedToCart: exist });
+
+		await cartService.deleteProdInCart(cartId, productId);
+		req.logger.info(`Producto ${productId} eliminado del carrito ${cartId}`);
+		res.status(200).json({ status: 'success', payload: productExists });
 	} catch (error) {
 		req.logger.error(`Error al eliminar producto del carrito: ${error.message}`);
-		res.status(400).send({ error: error.message });
+		res.status(400).json({ error: error.message });
 	}
-}
+};
 
-//vaciar el carrito
+// Vaciar el carrito
 export const deleteAllProductsInCart = async (req, res) => {
-	const { cid } = req.params;
-	try {
-		const existCart = await cartService.getCartById(cid)
-		if (!existCart) {
-			return res
-				.status(404)
-				.send({ Status: 'error', message: 'Cart not found' });
-		}
-		const emptyCart = await cartService.deleteAllProductsInCart(cid);
-		req.logger.info(`Todos los productos eliminados del carrito ${cid}`);
-		res.status(200).send({ status: 'success', emptyCart: emptyCart });
-	} catch (err) {
-		req.logger.error(`Error al eliminar todos los productos del carrito: ${err.message}`);
-		res.status(400).send({ error: err.message });
-	}
+    const { cid } = req.params;
+
+    try {
+        const cart = await cartService.getCartById(cid);
+
+        if (!cart) {
+            res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+            return;
+        }
+
+        await cartService.deleteAllProductsInCart(cid);
+
+        req.logger.info(`Todos los productos han sido eliminados del carrito ${cid}`);
+        res.status(200).json({ status: 'success', message: 'Carrito vaciado con éxito' });
+    } catch (err) {
+        req.logger.error(`Error al eliminar todos los productos del carrito: ${err.message}`);
+        res.status(500).json({ status: 'error', message: 'Error del servidor' });
+    }
 }
 
-//agregar un array de productos al carrito
-export const insertArrayProds = async (req, res) => {
-	const { body } = req;
-	const { cid } = req.params;
-	try {
-		const existCart = cartService.getCartById(cid);
-		if (!existCart) {
-			req.logger.warning(`Carrito ${cid} no encontrado.`);
-			return res.status(404).send({ Status: 'error', message: 'Cart not found' });
-		}
-		body.forEach(async (item) => {
-			const existProd = await productService.getProductById(item.productID);
-			if (!existProd) {
-				req.logger.error(`Producto ${item.idx} no encontrado.`);
-				return res.status(404).send({ Status: 'error', message: `Prod ${item.idx} not found` });
-			}
-		});
-		const newCart = await cartService.insertArrayProds(cid, body);
-		req.logger.info(`Productos agregados al carrito ${cid}.`);
-		res.status(200).send({ status: 'success', newCart: newCart });
-	} catch (err) {
-		req.logger.error(`Error al agregar productos al carrito: ${err.message}`);
-		res.status(400).send({ error: err.message });
-	}
+// Agregar un array de productos al carrito
+export const addProductsToCart = async (req, res) => {
+    const { body: productsToAdd } = req;
+    const { cid: cartId } = req.params;
+
+    try {
+        const existingCart = await cartService.getCartById(cartId);
+
+        if (!existingCart) {
+            req.logger.warning(`Carrito ${cartId} no encontrado.`);
+            res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+            return;
+        }
+
+        for (const product of productsToAdd) {
+            const existingProduct = await productService.getProductById(product.productID);
+
+            if (!existingProduct) {
+                req.logger.error(`Producto ${product._id} no encontrado.`);
+                res.status(404).json({ status: 'error', message: `Producto ${product._id} no encontrado` });
+                return;
+            }
+        }
+
+        const updatedCart = await cartService.insertArrayProds(cartId, productsToAdd);
+
+        req.logger.info(`Productos agregados al carrito ${cartId}.`);
+        res.status(200).json({ status: 'success', message: 'Productos agregados con éxito', updatedCart });
+    } catch (err) {
+        req.logger.error(`Error al agregar productos al carrito: ${err.message}`);
+        res.status(500).json({ status: 'error', message: 'Error del servidor' });
+    }
 }
 
-//modificar cantidad de un producto
-export const modifyQuantity = async (req, res) => {
-	const { cid, pid } = req.params;
-	const { quantity } = req.body;
+// Función para modificar la cantidad de un producto en el carrito
+export const modifyProductQuantity = async (req, res) => {
+
+	const { cartId, productId } = req.params;
+	const { newQuantity } = req.body;
+
 	try {
-		//Busca el carrito
-		const getCartByID = await cartService.getCartById(cid);
-		if (!getCartByID) {
-			req.logger.error(`Carrito ${cid} no encontrado.`);
-			return res.status(404).send({ error: 'Cart not found' });
+		// Buscar el carrito por ID
+		const foundCart = await cartService.getCartById(cartId);
+		// Si el carrito no se encuentra, lanzar un error
+		if (!foundCart) {
+			throw new Error(`Carrito ${cartId} no encontrado.`);
 		}
-		//Busca el producto en el carrito
-		const exist = getCartByID.products.find((prod) => prod.productID.toJSON() === pid);
-		if (!exist) {
-			req.logger.error(`Producto ${pid} no encontrado en el carrito ${cid}.`);
-			return res.status(404).send({ error: 'Not found prod in cart' });
+
+		// Buscar el producto en el carrito
+		const productInCart = foundCart.products.find((product) => product.productID.toString() === productId);
+		// Si el producto no se encuentra en el carrito, lanzar un error
+		if (!productInCart) {
+			throw new Error(`Producto ${productId} no encontrado en el carrito ${cartId}.`);
 		}
-		const modStock = await cartService.modifyQuantity(cid, pid, +quantity);
-		req.logger.info(`Cantidad modificada para el producto ${pid} en el carrito ${cid}.`);
-		res.status(200).send({ status: 'success', deletedToCart: modStock });
+
+		// Modificar la cantidad del producto en el carrito
+		const updatedCart = await cartService.modifyQuantity(cartId, productId, Number(newQuantity));
+		// Registrar el éxito de la operación
+		request.logger.info(`Cantidad modificada para el producto ${productId} en el carrito ${cartId}.`);
+		// Enviar una respuesta de éxito con el carrito actualizado
+		return res.status(200).json({ status: 'success', updatedCart });
 	} catch (error) {
-		req.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
-		res.status(400).send({ error: error.message });
+		// Registrar el error
+		request.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
+		// Enviar una respuesta de error con el mensaje de error
+		return res.status(500).json({ error: error.message });
 	}
-}
+};
+
+// //modificar cantidad de un producto
+// export const modifyQuantity = async (req, res) => {
+// 	const { cid, pid } = req.params;
+// 	const { quantity } = req.body;
+// 	try {
+// 		//Busca el carrito
+// 		const getCartByID = await cartService.getCartById(cid);
+// 		if (!getCartByID) {
+// 			req.logger.error(`Carrito ${cid} no encontrado.`);
+// 			return res.status(404).send({ error: 'Cart not found' });
+// 		}
+// 		//Busca el producto en el carrito
+// 		const exist = getCartByID.products.find((prod) => prod.productID.toJSON() === pid);
+// 		if (!exist) {
+// 			req.logger.error(`Producto ${pid} no encontrado en el carrito ${cid}.`);
+// 			return res.status(404).send({ error: 'Not found prod in cart' });
+// 		}
+// 		const modStock = await cartService.modifyQuantity(cid, pid, +quantity);
+// 		req.logger.info(`Cantidad modificada para el producto ${pid} en el carrito ${cid}.`);
+// 		res.status(200).send({ status: 'success', deletedToCart: modStock });
+// 	} catch (error) {
+// 		req.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
+// 		res.status(400).send({ error: error.message });
+// 	}
+// }
 
 //finalizar proceso de compra:
 export const purchase = async (req,res) => {

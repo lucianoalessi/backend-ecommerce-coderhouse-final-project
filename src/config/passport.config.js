@@ -32,10 +32,13 @@ const initializePassport = async () => {
     //Estrategia de autenticación para el registro de usuarios:
     passport.use('register', new LocalStrategy(
         {passReqToCallback:true , usernameField: 'email' , session:false }, async (req, username, password, done) => {
-            const {first_name, last_name, email, age} = req.body; //El cliente pasa sus datos a travez de la vista por body.
-            try {
+            
+            //El cliente pasa sus datos a travez de la vista por body.
+            const {first_name, last_name, email, age} = req.body; 
 
-                if (!first_name || !last_name || !email || !age || !password) {
+            try {
+                //custom error:
+                if (!first_name || !last_name || !email || !age) {
                     CustomError.createError({
                         name:"User creation error",
                         cause: generateUserErrorInfo({first_name,last_name,email,age}),
@@ -50,15 +53,14 @@ const initializePassport = async () => {
                     console.log('User already exists')
                     return done(null, false);
                 }
-                // Si el usuario no existe, creamos un nuevo usuario en la base de datos (le agregamos el rol=user):
+                // Si el usuario no existe, creamos un nuevo usuario en la base de datos:
                 const newUser = {
                     first_name, 
                     last_name, 
                     email, 
                     age,
-                    cart: await cartManager.addCart(),
+                    cart: await cartManager.createCart(),
                     password: createHash(password),
-                    role: 'user'
                 }
                 let result = await userModel.create(newUser);
                 return done(null,result); 
@@ -83,7 +85,8 @@ const initializePassport = async () => {
             //Si se quiere loguear un usuario comun:
             const user = await userModel.findOne({email:username}) //busca el usuario ingresado por su email
             if(!user){
-                console.log("User doesn't exist") // si el usuario no existe envia un error.
+                // si el usuario no existe envia un error.
+                console.log("User doesn't exist")
                 return done(null, false ,{message: "No se encontro el usuario"}); // no se le envia un usuario = (false)
             }
             if(!isValidPassword(user,password)){
@@ -103,8 +106,10 @@ const initializePassport = async () => {
     }, async(accessToken, refreshToken, profile, done) => {
         try{
             console.log(profile); //console.log para la informacion que viene del perfil de GitHub. 
-            let user = await userModel.findOne({email:profile._json.email}) // Buscamos un usuario por su dirección de correo electrónico en la base de datos
-            if(!user){ // si el usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
+            // Buscamos un usuario por su dirección de correo electrónico en la base de datos
+            let user = await userModel.findOne({email:profile._json.email}) 
+            // si el usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
+            if(!user){ 
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
@@ -116,7 +121,8 @@ const initializePassport = async () => {
                 }
                 let result = await userModel.create(newUser);
                 done(null, result);
-            }else{ // Si el usuario ya existe, simplemente lo autenticamos
+            }else{ 
+                // Si el usuario ya existe, simplemente lo autenticamos
                 done(null, user);
             }
         }catch(error){

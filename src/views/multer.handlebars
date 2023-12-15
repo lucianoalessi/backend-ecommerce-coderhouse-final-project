@@ -1,0 +1,14 @@
+<form id="uploadForm" action="/api/users/{{uid}}/documents" method="post" enctype="multipart/form-data">
+  <input id="fileInput" type="file" name="documents" multiple>
+  <button type="submit">Subir documentos</button>
+</form>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput.files.length === 0) {
+    alert('Por favor, selecciona al menos un archivo.');
+    event.preventDefault();  // Evita que se envíe el formulario
+  }
+});
+</script>

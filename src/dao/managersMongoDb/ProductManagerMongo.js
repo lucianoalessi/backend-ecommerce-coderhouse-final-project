@@ -53,17 +53,17 @@ export default class ProductManager{
         try{
             return await productModel.find().lean()  //.lean() es un método que convierte los resultados en objetos JSON.
         }catch(error){
-            console.log(error);
+            console.error(error);
         }
     }
 
     //Obtiene un producto específico por su ID.
-    getProductById = async (idProduct) => {
+    getProductById = async (productId) => {
         try {
-            return await productModel.findById(idProduct)
-            //return await productModel.findOne({ _id: idProduct })
+            return await productModel.findById(productId)
+            //return await productModel.findOne({ _id: productId })
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 
@@ -72,26 +72,26 @@ export default class ProductManager{
         try {
             return await productModel.create(product)
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 
     // Actualiza un producto existente por su ID con los datos proporcionados en el objeto "product".
-    updateProduct = async (idProduct, product) =>{
+    updateProduct = async (productId, product) =>{
         try{
-            return await productModel.updateOne({ _id: idProduct } , product)
+            return await productModel.updateOne({ _id: productId } , product)
         }catch(error){
-            console.log(error);
+            console.error(error);
         }
     }
     
     // Elimina un producto existente por su ID.
-    deleteProduct = async (idProduct) => {
+    deleteProduct = async (productId) => {
         try{
-            return await productModel.findByIdAndDelete(idProduct)
-            //return await productModel.deleteOne({_id: idProduct})
+            return await productModel.findByIdAndDelete(productId)
+            //return await productModel.deleteOne({_id: productId})
         }catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 }

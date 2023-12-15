@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 
-dotenv.config()
+const environment = 'DEVELOPMENT';
+dotenv.config({
+    path: environment === 'DEVELOPMENT' ? './.env.development' : './.env.production'
+});
 
 export default {
     PORT: process.env.PORT,
@@ -11,5 +14,6 @@ export default {
     PERSISTENCE: process.env.PERSISTENCE,
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
-    NODE_ENV: process.env.PROD
-}
+    NODE_ENV: environment 
+};
+

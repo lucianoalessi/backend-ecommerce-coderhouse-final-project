@@ -3,28 +3,29 @@ import productService from "../services/productService.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
-//importamos el logger:
-import {addLogger} from '../utils/logger.js'; 
 
-//Controller para obtener los productos y filtrar por query
+
+// Controller para obtener los productos y filtrar por query
 export const getProductsQuery = async (req, res) => {
+
     const { limit, page, sort, query } = req.query;
+
 	try {
-		const prods = await productService.getProductsQuery(
-			limit,
-			page,
-			sort,
-			query
-		);
-        req.logger.info(`Productos obtenidos: ${prods.length}`); //logger de informacion
-		res.status(200).send({ status: 'success', prods: prods });
+        // Obtenemos los productos
+		const products  = await productService.getProductsQuery(limit, page, sort, query);
+        // Registramos la información de los productos obtenidos
+        req.logger.info(`Productos obtenidos: ${products.length}`);
+        // Enviamos la respuesta al cliente
+		res.status(200).send({ status: 'success', payload: products  });
 	} catch (err) {
-        req.logger.error(`Error al obtener productos: ${err.message}`); //logger de error
+        // Registramos el error
+        req.logger.error(`Error al obtener productos: ${err.message}`);
+        // Enviamos el error al cliente
 		res.status(400).send({ error: err.message });
 	}
 }
 
-//obtener productos por id
+//Controlador para obtener productos por id
 export const getProductById = async (req, res) => {
     try{
         //obtenemos el producto por ID
@@ -48,13 +49,15 @@ export const getProductById = async (req, res) => {
     }
 }
 
-//agregar un producto nuevo
+//Agregar un producto nuevo
 export const addProduct = async (req, res) => {
     try {
-        //const newProduct = req.body   // la informacion que enviara el cliente estara dentro del req.body.
-        const {title, description, price, thumbnail, code, stock, category} = req.body
+        // Obtenemos la informacion que envia el cliente a travez de req.body.
+        const {title, description, price, thumbnail, code, stock, category} = req.body 
+        
+        // Validacion de los datos del producto
         if(!title || !description || !price || isNaN(price) || !code  || !stock || isNaN(stock) || !category){
-            CustomError.createError({
+            throw CustomError.createError({
                 name:"Product creation error",
                 cause: generateProductErrorInfo({title,description,price,thumbnail,code,stock, category}),
                 message: "Error Trying to create Product",
@@ -71,47 +74,57 @@ export const addProduct = async (req, res) => {
             stock,
             category,
         }
-        
-        const result = await productService.addProduct(newProduct) //agregamos el producto enviado por el cliente.
-        console.log(result)
+
+        // Agregar el producto y registrar el resultado
+        const result = await productService.addProduct(newProduct)
         req.logger.info(`Producto agregado: ${newProduct.title}`);
-        res.status(201).send({status:"Sucess: Producto agregado" , payload: result})   //devolvemos un estado si se agrego correctamente.  
+
+        // Enviar respuesta exitosa
+        res.status(201).send({status:"Sucess: Producto agregado" , payload: result})
     } catch (error) {
         req.logger.error(`Error al agregar el producto: ${error.message}`);
+        // Enviar respuesta de error
         res.status(400).send({ error: 'Error al agregar el producto', details: error.message });
-
-        console.log(error)
-        return error;
     }
 }
 
-//modificar un producto por id 
+//Modificar un producto por ID
 export const updateProduct = async (req, res) => {
-    try {
-        const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
-        const updateData = req.body     //agregamos la informacion que actualizara el cliente en una variable
-        const update = await productService.updateProduct(productID, { $set: updateData }); // actualizamos el producto filtrado
-        const productUpdated = await productService.getProductById(productID)
 
+    const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
+    const updateData = req.body     //agregamos la informacion que actualizara el cliente en una variable
+
+    try{
+        // Actualizamos el producto
+        await productService.updateProduct(productID, { $set: updateData });
+        // Obtenemos el producto actualizado Y Registramos la información
+        const productUpdated = await productService.getProductById(productID);
         req.logger.info(`Producto actualizado: ${productUpdated.title}`);
+        // Enviamos la respuesta al cliente
         res.status(200).send({status:'Sucess: product updated', payload: productUpdated});
     } catch (error) {
+        // Registramos el error
         req.logger.error(`Error al modificar el producto: ${error.message}`);
+        // Enviamos el error al cliente
         res.status(400).send('Error al eliminar el producto: ' + error.message);
-        return error; 
     }
 }
 
-//eliminar un producto por id
+//Eliminar un producto por id
 export const deleteProduct = async (req, res) => {
     try {
-        let {pid} = req.params //obtenemos el id de producto ingresado el cliente por paramas
-        const productDeleted = await productService.deleteProduct(pid);  //eliminamos el producto deseado
-        
+        //obtenemos el id de producto ingresado el cliente por paramas
+        const {pid} = req.params 
+        // Eliminamos el producto y obtenemos el producto eliminado
+        const productDeleted = await productService.deleteProduct(pid);
+        // Registramos la información del producto eliminado
         req.logger.info(`Producto eliminado: ${productDeleted.title}`);
-        res.status(204).send({status:'Sucess: Producto eliminado'}); //devolvemos un estado si se elimino exitosamente
+        // Enviamos la respuesta al cliente
+        res.status(204).send({status:'Sucess: Producto eliminado'});
     } catch (error) {
+        // Registramos el error
         req.logger.error(`Error al eliminar el producto: ${error.message}`);
+        // Enviamos el error al cliente
         res.status(400).send(`Error al eliminar el producto: ${error.message}`);
     }
 }
