@@ -5,29 +5,23 @@ import { productModel } from '../../models/product.model.js';
 // Definimos una clase llamada CartManager para gestionar operaciones relacionadas con los carritos.
 export default class CartManager{
 
-    constructor(){
-        // Constructor vacío por ahora.
-    }
-
     // Método para obtener todos los carritos en la base de datos.
     getAllCarts = async () => {
         try{
-            const carts = await cartModel.find();
-            return carts;
+            return await cartModel.find();
         }catch(error){
             console.error('Error al obtener los carritos:', error.message);
-            return error
+            throw error
         }
     }
 
     // Método para obtener un carrito específico por su ID.
     getCartById = async (idCart) => {
         try{
-            const cart = await cartModel.findById(idCart).lean();
-            return cart;
+            return await cartModel.findById(idCart).lean();
         }catch(error){
             console.error('Carrito inexistente:',error.message);
-            return error;
+            throw error;
         }
     }
 
@@ -48,7 +42,7 @@ export default class CartManager{
             return newCart;
         }catch(error){
             console.error('Error al crear el carrito:', error.message);
-            return error;
+            throw error;
         }
     }
 
@@ -56,8 +50,9 @@ export default class CartManager{
     addProductToCart = async (cid, pid) => {
         try{
             const cart = await cartModel.findOne({_id: cid});
-            const addProduct = await productModel.findOne({_id: pid});
-            const productIndex = cart.products.findIndex(item => item.productID.toString() == addProduct._id.toString()); // Buscamos el producto en el carrito basado en el ID del producto.
+            const productToAdd = await productModel.findOne({_id: pid});
+            // Buscamos el producto en el carrito basado en el ID del producto.
+            const productIndex = cart.products.findIndex(item => item.productID.toString() == productToAdd._id.toString()); 
             
             if(productIndex !== -1){
                 cart.products[productIndex].quantity += 1; // Si el producto ya existe en el carrito, aumentamos su cantidad.
@@ -70,7 +65,7 @@ export default class CartManager{
 
         }catch(error){
             console.log('Error al agregar el producto al carrito:' ,error.message);
-            return error;
+            throw error;
         }
     }
 
@@ -85,16 +80,16 @@ export default class CartManager{
 			return updatedCart;
 		} catch (error) {
 			console.log('Error al agregar un producto al carrito:', error.message);
-            return error;
+            throw error;
 		}
 	};
 
     //metodo para agregar un array de productos en un carrito
-	insertArrayProds = async (cid, body) => {
+	insertArrayOfProducts = async (cid, arrayOfproducts) => {
 		try {
 			//A partir de los datos, buscar por idx los productos para obtener su _id para generar el populate
 			const arr = [];
-			for (const item of body) {
+			for (const item of arrayOfproducts) {
 				const object = await productModel.findById(item.productID);
 				arr.push({
 					productID: object._id,
@@ -112,6 +107,7 @@ export default class CartManager{
 			return updateCart;
 		} catch (error) {
 			console.log(error.message);
+            throw error
 		}
 	};
 
@@ -124,7 +120,7 @@ export default class CartManager{
 			await cartModel.updateOne({ _id: cid }, { products: filter });
 		} catch (error) {
 			console.log('Error al eleminar un producto del carrito:', error.message);
-            return error;
+            throw error;
 		}
 	};
 
@@ -139,6 +135,7 @@ export default class CartManager{
 			return updateCart;
 		} catch (error) {
 			console.log('Error al eliminar todos los productos:', error.message);
+            throw error
 		}
 	};
 

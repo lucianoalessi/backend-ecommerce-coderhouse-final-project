@@ -1,0 +1,14 @@
+[
+  {
+    "first_name": "Updated",
+    "last_name": "Updated",
+    "email": "testuser@example.com",
+    "password": "password",
+    "role": "user",
+    "age": null,
+    "cart": [],
+    "documents": [],
+    "last_connection": 1702939816651,
+    "_id": 1
+  }
+]

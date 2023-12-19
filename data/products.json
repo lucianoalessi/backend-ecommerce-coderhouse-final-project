@@ -6,7 +6,10 @@
     "thumbnail": "path/to/image1.jpg",
     "code": "PRD002yyyyyyffffffyy",
     "stock": 120,
-    "id": 1
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 1
   },
   {
     "title": "Samsung Galaxy S24",
@@ -15,7 +18,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "1234565",
     "stock": 15,
-    "id": 2
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 2
   },
   {
     "title": "Iphone 14 pro max",
@@ -24,7 +30,10 @@
     "thumbnail": "algo",
     "code": "12345",
     "stock": 114,
-    "id": 3
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 3
   },
   {
     "title": "Monitor samsung",
@@ -33,7 +42,10 @@
     "thumbnail": "path/to/image1.jpg",
     "code": "PRD004",
     "stock": 22,
-    "id": 4
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 4
   },
   {
     "title": "Samsung Galaxy S23 ultra",
@@ -42,7 +54,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "PRD005",
     "stock": 93,
-    "id": 5
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 5
   },
   {
     "title": "Monitores kkr 10",
@@ -51,7 +66,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "PRD006",
     "stock": 82,
-    "id": 6
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 6
   },
   {
     "title": "Teclado mecanico logitech",
@@ -60,7 +78,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "PRD007",
     "stock": 500,
-    "id": 7
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 7
   },
   {
     "title": "Parlante JBL Go 4",
@@ -69,7 +90,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "PRD008",
     "stock": 102,
-    "id": 8
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 8
   },
   {
     "title": "Go Pro Hero 9",
@@ -78,7 +102,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "PRD009",
     "stock": 12,
-    "id": 9
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 9
   },
   {
     "title": "Traje neopren Oneil",
@@ -87,7 +114,10 @@
     "thumbnail": "path/to/image2.jpg",
     "code": "PRD010",
     "stock": 5,
-    "id": 10
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 10
   },
   {
     "title": "Tabla Element",
@@ -96,7 +126,10 @@
     "thumbnail": "no hay",
     "code": "Abc1213",
     "stock": "20",
-    "id": 11
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 11
   },
   {
     "title": "Monitor Asus 27",
@@ -105,6 +138,21 @@
     "thumbnail": "path/to/image1.jpg",
     "code": "PRD0028945645645",
     "stock": 125,
-    "id": 12
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 12
+  },
+  {
+    "title": "Test Product",
+    "description": "This is a test product",
+    "price": 99.99,
+    "thumbnail": "test.jpg",
+    "code": "testfesfsgdrgdr",
+    "stock": 10,
+    "category": "PC",
+    "status": true,
+    "owner": "admin",
+    "_id": 13
   }
 ]

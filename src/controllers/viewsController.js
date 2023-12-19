@@ -1,8 +1,7 @@
-import cartService from "../services/cartService.js";
-import productService from "../services/productService.js";
-import UserManager from "../dao/managersMongoDb/UserManagerMongo.js";
+import { cartService } from "../services/index.js";
+import { productService } from "../services/index.js";
+import { userService } from "../services/index.js";
 
-const userManager = new UserManager();
 
 //Controllers para las vistas:
 
@@ -21,7 +20,7 @@ export const getProducts = async (req, res) => {
 export const pagination = async (req, res) => {
     const { limit, page, sort, query } = req.query;
     const user = req.user;
-    const userObject = await userManager.getUserById(user._id);
+    const userObject = await userService.getUserById(user._id);
     const cart = userObject.cart[0]._id;
 
     try {
@@ -52,7 +51,7 @@ export const cartView =  async (req, res) => {
 	//const carritoToObj = carrito.toObject() //convertimos el objeto que devuelve mongo en su formato a un objeto plano de javaScript. la alternativa de esto es agregar .lean() en mongo
     try {
         const userId = req.user._id;
-        const user = await userManager.getUserById(userId);
+        const user = await userService.getUserById(userId);
         const cartId = user.cart[0]._id;
         const cart = await cartService.getCartById(cartId);
 
@@ -114,7 +113,7 @@ export const newPasswordView = (req, res) => {
 export const profileView = async (req, res) => {
     try {
         const userId = req.user._id;
-        const user = await userManager.getUserById(userId);
+        const user = await userService.getUserById(userId);
         const cartId = user.cart[0]._id;
         res.render('profile', { user, cartId });
     } catch (error) {

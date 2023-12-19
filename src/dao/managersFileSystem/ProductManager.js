@@ -1,4 +1,6 @@
 import fs from 'fs';
+import path from 'path';
+import __dirname from '../../../utils.js';
 
 class ProductManager{
 
@@ -7,8 +9,7 @@ class ProductManager{
         this.products = [];
     }
 
-    //-------------------------------------------------------------------------------------//
-    //VERIFICAR EL SIGUIENTE METODO:
+    //# Metodo para obtener los productos y filtrar por query
     getProductsQuery = async (limit, page, sort, query) => {
         try {
             // Si no se proporciona un límite, se establece en 10 por defecto
@@ -24,9 +25,9 @@ class ProductManager{
             const filter = query ? JSON.parse(query) : {};
     
             // Leer todos los archivos de productos
-            const productFiles = await fs.readdir(path.join(__dirname, 'products'));
+            const productFiles = await fs.promises.readdir(path.join(__dirname, 'products'));
             let products = await Promise.all(productFiles.map(async file => {
-                const product = JSON.parse(await fs.readFile(path.join(__dirname, 'products', file), 'utf-8'));
+                const product = JSON.parse(await fs.promises.readFile(path.join(__dirname, 'products', file), 'utf-8'));
                 return product;
             }));
     
@@ -66,30 +67,42 @@ class ProductManager{
         } catch (error) {
             console.log('Error al obtener productos con consulta:', error.message);
         }
-    };
+    }
 
-    //-----------------------------------------------------------------------------------------------------//
-
+    //# Metodo para obtener todos los productos
     getProducts = async () => {
         //Leemos el contenido del archivo almacenado en la ruta (path) y lo almacenamos en una variable.Luego con Json.Parse()lo convertimos a formato objeto para poder manipularlo.
         try{
             const productsList = await fs.promises.readFile(this.path,"utf-8")
             const productsListParse = JSON.parse(productsList)
             return productsListParse
-        //en caso de que se genere un error debido a que no exista el archivo que se intenta leer debido a que todavia no se agrego ningun producto, devolvemos this.products, el cual seria un array vacio.
+        //en caso de que se genere un error debido a que no exista el archivo que se intenta leer debido a que todavia no se agrego ningun producto, devolvemos un array vacio.
         }catch{
-            return this.products;
+            return [];
         }
     }
 
-    addProduct = async (obj) => {
-        const {title, description, price, thumbnail, code, stock} = obj
-        //verificamos que se ingresen todos los datos.
-        if(!title || !description || !price || !thumbnail || !code || !stock){
-            console.error("ERROR: Datos del producto incompletos")
-            return 
+    //# Metodo para obtener un producto por ID
+    getProductById = async (productId) => {
+        //Almacenamos el contenido del archivo creado en una variable, el cual sera un array de objetos. con un for..of recorremos el arreglo hasta encontrar uno con el mismo id que se ingresa como parametro.
+        const products = await this.getProducts()
+        for(const item of products){
+            if(item._id === productId){
+                return item;
+            }
         }
-        const productList = await this.getProducts()
+        return 'Not found'
+    }
+
+    //# Metodo para crear un producto
+    addProduct = async (obj) => {
+        const {title, description, price, thumbnail, code, stock, category} = obj;
+        //verificamos que se ingresen todos los datos.
+        if(!title || !description || !price || !thumbnail || !code || !stock || !category){
+            console.error("ERROR: Datos del producto incompletos");
+            return;
+        }
+        const productList = await this.getProducts();
         //definimos el objeto con los datos ingresados.
         const product = {
             title,
@@ -97,7 +110,10 @@ class ProductManager{
             price,
             thumbnail,
             code,
-            stock
+            stock,
+            category,
+            status: true,
+            owner: 'admin'
         }
 
         //verificamos que no se ingrese un producto con un codigo existente.
@@ -110,41 +126,26 @@ class ProductManager{
         
         //Definimos un id para cada producto de forma ascendente, segun su posicion en la lista de productos. 
         if(productList.length === 0){
-            product.id = 1
+            product._id = 1
         }else{
-            product.id = productList[productList.length -1].id + 1;  //de esta forma accedemos al objeto que se encuentra al final del array y le sumamos 1, para que sea de codigo unico y ascendente segun su posicion. 
+            //accedemos al objeto que se encuentra al final del array y le sumamos 1, para que sea de codigo unico y ascendente segun su posicion. 
+            product._id = productList[productList.length -1]._id + 1;  
         }
 
         //En una sola linea seria asi(con operador ternario):
         //this.products.length > 0 ? this.products[this.products.length - 1].id + 1 : 1;
 
-
         productList.push(product);
-        
 
         //creamos el archivo en la ruta (path) y le pasamos el array de objetos products converido a json. 
         await fs.promises.writeFile(this.path,JSON.stringify(productList,null,2)) // el segundo parametro de stringify es opcional asi que le pusimos null para salterarlo y el 3er parametro es el espacio de sangria. al pasarle un 2 estamos indicando que queremos que la cadena JSON tenga un nivel de sangría de 2 espacios.
     }
 
-    
+    //# Metodo para actualizar un producto por ID
+    updateProduct = async (productId , productUpdate) => {
 
-    getProductById = async (searchId) => {
-
-        //Almacenamos el contenido del archivo creado en una variable, el cual sera un array de objetos. con un for..of recorremos el arreglo hasta encontrar uno con el mismo id que se ingresa como parametro.
-        const products = await this.getProducts()
-        for(const item of products){
-            if(item.id === searchId){
-                return item;
-            }
-        }
-        return 'Not found'
-    }
-
-    updateProduct = async (id , obj) => {
-
-        const pid = id
-
-        const {title, description, price, thumbnail, code, stock} = obj
+        const pid = productId
+        const {title, description, price, thumbnail, code, stock} = productUpdate
 
         //verificamos que se ingresen todos los datos. 
         if( !title || !description || !price || !thumbnail || !code || !stock){
@@ -156,7 +157,7 @@ class ProductManager{
 
         //verificamos que no se ingrese un producto con un codigo existente.
         for( const item of currentProductsList){
-            if(item.code === code && item.id !== pid){ // si el codigo del producto ya existe en otro producto, dara error. el && item.id !== pid nos permite modificar el producto deseado sin tener que cambiar el codigo del mismo.  
+            if(item.code === code && item._id !== pid){ // si el codigo del producto ya existe en otro producto, dara error. el && item.id !== pid nos permite modificar el producto deseado sin tener que cambiar el codigo del mismo.  
                 console.error('ERROR: Codigo existente');
                 return
             }
@@ -171,9 +172,9 @@ class ProductManager{
         
         //recorremos el array con objetos productos hasta encontrar uno con el id ingresado como parametro y se actualiza el objeto con los datos ingresados.
         let newProductsList = currentProductsList.map(item => {
-            if (item.id === pid) {
+            if (item._id === pid) {
                 const updatedProduct = {
-                    ...item, //esto copia el id
+                    _id: pid, // Mantén el mismo ID
                     title,
                     description,
                     price,
@@ -181,9 +182,11 @@ class ProductManager{
                     code,
                     stock,
                 };
-                return updatedProduct;
+                // Devuelve el producto actualizado si el ID coincide
+                return updatedProduct; 
             }else{
-                return item; // Devuelve el elemento original si no se ha actualizado
+                // Devuelve el producto actualizado si el ID coincide
+                return item;
             }     
            
         });
@@ -192,22 +195,21 @@ class ProductManager{
         await fs.promises.writeFile(this.path,JSON.stringify(newProductsList,null,2));
     }
             
-
+    //# Metodo para eliminar un producto por ID
     deleteProduct = async (searchId) => {
         // Leemos el contenido del archivo y lo guardamos en una variable. El contenido es un array de objetos.
         const productsList = await this.getProducts();
 
-
-        //verificamos que el codigo con el id pasado como parametro exista
-        const existingCode = productsList.find(product =>product.id===searchId)
+        // Verificamos que el producto con el ID pasado como parámetro exista
+        const existingCode = productsList.find(product =>product._id===searchId)
         if(!existingCode){
             console.error('ERROR: Codigo inexistente')
             return
         }
 
-        //caso contrario, guardamos en una variable todos los demas obajetos que posea un nuemero de id distinto al que pasamos por parametro. Osea lo eliminamos.
-        const updatedProductsList = productsList.filter(product => product.id !== searchId); 
-        //sobreescribimos el archivo con la lista de productos actualizada
+        // Si el producto existe, guardamos en una variable todos los demás productos que posean un número de ID distinto al que pasamos por parámetro. O sea, eliminamos el producto.
+        const updatedProductsList = productsList.filter(product => product._id !== searchId); 
+        // Sobreescribimos el archivo con la lista de productos actualizada
         await fs.promises.writeFile(this.path,JSON.stringify(updatedProductsList,null,2))
         console.log('Producto eliminado correctamente')
         return updatedProductsList;  
@@ -217,6 +219,47 @@ class ProductManager{
 export default ProductManager;
 
 // //Test
+
+// Crea una nueva instancia de ProductManager.
+const productManager = new ProductManager(path.join(__dirname,'./data/products.json'));
+
+// Ahora puedes usar los métodos de la clase ProductManager.
+// Por ejemplo, para agregar un nuevo producto:
+
+const newProduct = {
+    title: 'Test Product',
+    description: 'This is a test product',
+    price: 99.99,
+    thumbnail: 'test.jpg',
+    code: 'testfesfsgdrgdr',
+    stock: 10,
+    category: 'PC'
+};
+
+const anotherProduct = {
+    title: 'Test Product 2',
+    description: 'This is a test product 2 ',
+    price: 99.99,
+    thumbnail: 'test.jpg',
+    code: 'test 255 ',
+    stock: 15,
+    category: 'PC'
+};
+
+productManager.addProduct(newProduct).then(() => console.log('Producto agregado'));
+// productManager.addProduct(anotherProduct).then(() => console.log('Producto agregado'));
+
+// // O para obtener todos los productos:
+// productManager.getProducts().then(products => console.log(products));
+
+// // O para obtener un producto por ID:
+// productManager.getProductById(1).then(product => console.log(product));
+
+// O para eliminar un producto por ID:
+//productManager.deleteProduct(1).then(() => console.log('Producto eliminado'));
+
+
+
 
 // const productManager = new ProductManager('./products.json');
 // (async () => {

@@ -12,6 +12,7 @@ export default class UserManager{
             return users
         } catch (error) {
             console.log(error)
+            throw error
         }
     }
     //Metodo para obtener un usuario por ID
@@ -21,6 +22,7 @@ export default class UserManager{
             return user
         } catch (error) {
             console.log(error)
+            throw error
         }
     }
 
@@ -31,6 +33,7 @@ export default class UserManager{
             return user
         } catch (error) {
             console.log(error)
+            throw error
         }
     }
 
@@ -40,6 +43,7 @@ export default class UserManager{
             return await userModel.create(user)
         } catch (error) {
             console.log(error)
+            throw error
         }
     }
 
@@ -49,6 +53,7 @@ export default class UserManager{
             return await userModel.updateOne({ _id: idUser } , user)
         }catch(error){
             console.log(error);
+            throw error
         }
     }
 
@@ -58,6 +63,7 @@ export default class UserManager{
             return await userModel.updateOne({ email: userEmail } , user)
         }catch(error){
             console.log(error);
+            throw error
         }
     }
     
@@ -67,6 +73,7 @@ export default class UserManager{
             return await userModel.deleteOne({_id: idUser})
         }catch (error) {
             console.log(error)
+            throw error
         }
     }
 }

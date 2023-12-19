@@ -21,10 +21,10 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
 //Importamos los modelos de datos de producto y mensajes desde archivos separados.En este caso con mongoDB:
-//Import ProductManager from "./ProductManager.js"; //CON FILE SYSTEM
-import ProductManager from "./dao/managersMongoDb/ProductManagerMongo.js";
-import messageManager from "./dao/managersMongoDb/MessageManagerMongo.js";
-import UserManager from "./dao/managersMongoDb/UserManagerMongo.js";
+//Import productService from "./productService.js"; //CON FILE SYSTEM
+import { productService } from "./services/index.js";
+import { messageService } from "./services/index.js";
+import { userService } from "./services/index.js";
 
 //importamos dotenv:
 import config from './config/config.js';
@@ -38,7 +38,7 @@ import swaggerUiExpress from "swagger-ui-express";
 const app = express()
 
 //Iniciando el servidor Express para escuchar en el puerto 8080.
-const port = config.PORT
+const port = config.PORT || 3000;
 const httpServer = app.listen( port , () => {console.log('Server ON in port:', config.PORT)})
 
 //Creamos un servidor Socket viviendo dentro de nuestro servidor principal:
@@ -122,14 +122,8 @@ app.use('/', viewsRouter); //router handlebars para io con '/'.
 
 
 
-//creamos una instancia de ProductManager y Messagemanager con mongoDB.
-
-//const pManager = new ProductManager(__dirname +'/files/products.json');  //CON FILE SYSTEM.
-const pManager = new ProductManager();
-const mManager = new messageManager();
-const userManager = new UserManager();
-
-
+//creamos una instancia de productService y messageService con mongoDB.
+//const productService = new productService(__dirname +'/files/products.json');  //CON FILE SYSTEM.
 
 
 // Configurar el evento de conexión de Socket.IO
@@ -142,7 +136,7 @@ socketServer.on('connection', async (socket) => {
 
     //websockets para Productos:
 
-    const products = await pManager.getProducts()
+    const products = await productService.getProducts()
     socket.emit('productos', products); //enviamos al cliente un array con todos los productos.
 
     //#ADD PRODUCT:
@@ -151,11 +145,11 @@ socketServer.on('connection', async (socket) => {
 
         const product = data.product;
         const userId = data.userId;
-        const user = await userManager.getUserById(userId);
+        const user = await userService.getUserById(userId);
         if(user) product.owner = user._id
 
-        await pManager.addProduct(product)
-        const updateProductsList = await pManager.getProducts();
+        await productService.addProduct(product)
+        const updateProductsList = await productService.getProducts();
         socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
         socket.emit('productAdded'); //para el manejo de alertas
     })
@@ -166,15 +160,15 @@ socketServer.on('connection', async (socket) => {
         delete productData._id; // Eliminar el _id del objeto para evitar errores
     
         // Obtener el producto de la base de datos
-        const product = await pManager.getProductById(idProduct);
+        const product = await productService.getProductById(idProduct);
     
         // Verificar si el usuario es el propietario del producto o es un administrador
         if (userData.role === 'admin' || product.owner === userData._id) {
 
             // Actualizar el producto en la base de datos
-            await pManager.updateProduct(idProduct, { $set: productData });
+            await productService.updateProduct(idProduct, { $set: productData });
     
-            const updateProductsList = await pManager.getProducts();
+            const updateProductsList = await productService.getProducts();
             socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
             socket.emit('productUpdated');//para el manejor de alertas
         } else {
@@ -188,15 +182,15 @@ socketServer.on('connection', async (socket) => {
     //recibimos del cliente el id del producto a eliminar
     socket.on('deleteProduct', async (productId , userData) => {
         // Obtenemos el producto
-        const product = await pManager.getProductById(productId);
+        const product = await productService.getProductById(productId);
 
         if (product === null) {
             socket.emit('error', 'Producto no encontrado');
         }
         // Verificamos si el usuario es el propietario del producto o si es admin
         else if (userData.role === 'admin' || product.owner === userData._id) {
-            await pManager.deleteProduct(productId); //eliminamos el producto
-            const updateProducts = await pManager.getProducts(); //obtenemos la lista actualizada con el producto eliminado
+            await productService.deleteProduct(productId); //eliminamos el producto
+            const updateProducts = await productService.getProducts(); //obtenemos la lista actualizada con el producto eliminado
             socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista actualizada
             socket.emit('productDeleted')//para el manejo de alertas
         } else {
@@ -227,8 +221,8 @@ socketServer.on('connection', async (socket) => {
     //recibimos el usuario con su mensaje
     socket.on('message', async data => {
         console.log(data)
-        const addMessage = await mManager.addMessages(data); //agregamos el mensaje del usuario a la base de datos. 
-        const messages = await mManager.getMessages(); //obtenemos todos los mensajes de la base de datos.
+        const addMessage = await messageService.addMessages(data); //agregamos el mensaje del usuario a la base de datos. 
+        const messages = await messageService.getMessages(); //obtenemos todos los mensajes de la base de datos.
         socket.emit('messageLogs', messages); //enviamos al cliente la lista de todos los mensajes (array).
     })
 });

@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const RESET_CODES_COLLECTION = 'resetCodes';
+const RESET_CODES_COLLECTION = 'resetPasswordCodes';
 const EXPIRATION_TIME_SECONDS = 3600;
 
-const resetCodeSchema = new mongoose.Schema({
+const resetPasswordCodeSchema = new mongoose.Schema({
   email: { 
       type: String, 
       required: true,
@@ -14,4 +14,4 @@ const resetCodeSchema = new mongoose.Schema({
   expiresAt: { type: Date, expires: EXPIRATION_TIME_SECONDS }
 });
 
-export const resetCodeModel = mongoose.model(RESET_CODES_COLLECTION, resetCodeSchema);
+export const resetPasswordCodeModel = mongoose.model(RESET_CODES_COLLECTION, resetPasswordCodeSchema);

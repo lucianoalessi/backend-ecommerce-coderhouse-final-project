@@ -2,16 +2,16 @@ import passport from "passport";
 import local from "passport-local";
 import jwt from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
-import { userModel } from "../models/user.js";
+import { userService } from "../services/index.js";
+import { cartService } from "../services/index.js";
 import {cookieExtractor , createHash , isValidPassword} from '../../utils.js'
 import config from './config.js'
-import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
+
 //manejo de errores custom:
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import { generateUserErrorInfo } from "../services/errors/info.js";
 
-const cartManager = new CartManager()
 
 const admin = {
     first_name: 'Coder',
@@ -48,7 +48,8 @@ const initializePassport = async () => {
                     return done(null, false, { message: 'Incomplete Values' });
                 }
                 // Comprobamos si el usuario ya existe en la base de datos:
-                let exist = await userModel.findOne({email:username});
+                //let exist = await userModel.findOne({email:username});
+                let exist = await userService.getUserByEmail(username);
                 if(exist){
                     console.log('User already exists')
                     return done(null, false);
@@ -59,10 +60,11 @@ const initializePassport = async () => {
                     last_name, 
                     email, 
                     age,
-                    cart: await cartManager.createCart(),
+                    cart: await cartService.createCart(),
                     password: createHash(password),
                 }
-                let result = await userModel.create(newUser);
+                //let result = await userModel.create(newUser);
+                let result = await userService.addUser(newUser);
                 return done(null,result); 
             } catch (error) {
                 return done('Error al obtener el usuario:' + error)   
@@ -83,7 +85,8 @@ const initializePassport = async () => {
             }
 
             //Si se quiere loguear un usuario comun:
-            const user = await userModel.findOne({email:username}) //busca el usuario ingresado por su email
+            //const user = await userModel.findOne({email:username}) //busca el usuario ingresado por su email
+            const user = await userService.getUserByEmail(username) //busca el usuario ingresado por su email
             if(!user){
                 // si el usuario no existe envia un error.
                 console.log("User doesn't exist")
@@ -107,19 +110,21 @@ const initializePassport = async () => {
         try{
             console.log(profile); //console.log para la informacion que viene del perfil de GitHub. 
             // Buscamos un usuario por su dirección de correo electrónico en la base de datos
-            let user = await userModel.findOne({email:profile._json.email}) 
+            //let user = await userModel.findOne({email:profile._json.email})
+            let user = await userService.getUserByEmail(profile._json.email)
             // si el usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
             if(!user){ 
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
                     age: 18, ////rellenamos los datos que no vienen desde el perfil.
-                    cart: await cartManager.addCart(),
+                    cart: await cartService.addCart(),
                     email: profile._json.email,
                     password: '', //al ser una autenticacion de terceros, no podemos asignarle un password.
                     role: 'user'
                 }
-                let result = await userModel.create(newUser);
+                //let result = await userModel.create(newUser);
+                let result = await userService.addUser(newUser);
                 done(null, result);
             }else{ 
                 // Si el usuario ya existe, simplemente lo autenticamos
@@ -175,7 +180,8 @@ const initializePassport = async () => {
     // 'id' es el identificador único del usuario almacenado en la sesión
 
     passport.deserializeUser( async(id, done) => {
-        let user = await userModel.findById(id); // Buscamos al usuario en la base de datos
+        //let user = await userModel.findById(id); // Buscamos al usuario en la base de datos
+        let user = await userService.getUserById(id); // Buscamos al usuario en la base de datos
         done(null, user); // Pasamos el objeto de usuario encontrado a través de 'done' para autenticación
     });
     

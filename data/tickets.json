@@ -1,0 +1,9 @@
+[
+  {
+    "_id": 1,
+    "code": "bbcf7e8b-d151-43de-8b91-3227614a5883",
+    "purchase_datetime": 1702939783692,
+    "amount": 100,
+    "purchaser": "test@example.com"
+  }
+]

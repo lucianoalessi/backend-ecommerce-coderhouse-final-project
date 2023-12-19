@@ -1,18 +1,8 @@
-// Importando servicios y modelos necesarios
-import cartService from "../services/cartService.js";
-import productService from "../services/productService.js";
-import { userModel } from "../models/user.js";
-import { ticketModel} from '../models/ticket.model.js'
-
-// Importando los gestores de MongoDB
-import ProductManager from "../dao/managersMongoDb/ProductManagerMongo.js";
-import CartManager from "../dao/managersMongoDb/CartsManagerMongo.js";
-import UserManager from "../dao/managersMongoDb/UserManagerMongo.js"
-
-// Creando instancias de los gestores
-const productManager = new ProductManager()
-const cartManager = new CartManager()
-const userManager = new UserManager()
+// Importando servicios necesarios
+import { cartService } from "../services/index.js";
+import { productService } from "../services/index.js";
+import { userService } from "../services/index.js";
+import { ticketService } from "../services/index.js";
 
 
 // Controlador para obtener todos los carritos
@@ -86,7 +76,7 @@ export const addProductToCart = async (req, res) => {
 		const userId = req.user._id; 
 
 		// Obteniendo el producto por su ID
-		const product = await productManager.getProductById(productId)
+		const product = await productService.getProductById(productId)
 
 		// Verificando si el usuario es premium y es el dueño del producto
 		if (product.owner == userId && req.user.role == 'premium') {
@@ -181,7 +171,7 @@ export const addProductsToCart = async (req, res) => {
             }
         }
 
-        const updatedCart = await cartService.insertArrayProds(cartId, productsToAdd);
+        const updatedCart = await cartService.insertArrayOfProducts(cartId, productsToAdd);
 
         req.logger.info(`Productos agregados al carrito ${cartId}.`);
         res.status(200).json({ status: 'success', message: 'Productos agregados con éxito', updatedCart });
@@ -258,8 +248,8 @@ export const purchase = async (req,res) => {
 	let purchaseComplete = []  //array para los productos procesados correctamente.
 	let purchaseError = [] //array para los productos que no pudieron procesarse por falta de stock.
 	let precioTotal = 0
-	const user = req.user._id; 
-	const findUser = await userModel.findById(user);
+	const userId = req.user._id; 
+	const findUser = await userService.getUserById(userId);
 	const cartId = findUser.cart[0]._id  //cart[0] porque es el primer elemento dentro del array.
 	const cart = await cartService.getCartById(cartId)
 	const productsInCart = cart.products
@@ -290,7 +280,7 @@ export const purchase = async (req,res) => {
 		}
 
 		//Eliminamos los productos que se procesaron correctamente del carrito, e insertamos el array de productos no procesados:
-		const notPurchasedProductsInCart = await cartService.insertArrayProds(cartId,purchaseError);
+		const notPurchasedProductsInCart = await cartService.insertArrayOfProducts(cartId,purchaseError);
 
 		// Solo creamos el ticket si hay productos en purchaseComplete
         if (purchaseComplete.length > 0) {
@@ -300,7 +290,7 @@ export const purchase = async (req,res) => {
 				purchaser: req.user.email
 			}
 			//creamos el ticket en la base de datos:
-			const ticket = await ticketModel.create(ticketData);
+			const ticket = await ticketService.addTicket(ticketData);
 
 			//agregamos informacion adicional, los productos que se procesaron correctamente y los que no:
 			const purchaseData = {

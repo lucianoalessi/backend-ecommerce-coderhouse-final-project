@@ -1,14 +1,12 @@
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer'
 import config from "../config/config.js";
-import UserManager from "../dao/managersMongoDb/UserManagerMongo.js"
-import ResetCodeManager from "../dao/managersMongoDb/ResetCodeManager.js";
+import { userService } from "../services/index.js";
+import { resetPasswordCodeService } from "../services/index.js";
 import crypto from 'crypto';
 import { createHash } from "../../utils.js";
 
 
-const userManager = new UserManager()
-const resetCodeManager = new ResetCodeManager()
 
 // #Registro de usuarios
 export const register = async (req, res) => {
@@ -40,7 +38,7 @@ export const loginSession = async (req, res) => {
 
     // Una vez que el inicio de sesión es exitoso, actualiza last_connection
     req.user.last_connection = Date.now();
-    await userManager.updateUserById(req.user._id, req.user);
+    await userService.updateUserById(req.user._id, req.user);
     // Eliminamos el campo de contraseña del objeto de usuario en la sesión, ya que es información sensible
     delete req.user.password; 
 
@@ -68,7 +66,7 @@ export const loginJWT = async (req, res) => {
 
     // Actualizamos last_connection y guardamos el usuario
     req.user.last_connection = Date.now();
-    await userManager.updateUserByEmail(req.user.email, req.user);
+    await userService.updateUserByEmail(req.user.email, req.user);
     // Creamos un token JWT con los datos del usuario, una clave secreta y una duración de 1 hora
     const token = jwt.sign(serializedUser, process.env.JWT_SECRET , {expiresIn: '1h'})
     // Enviamos una cookie al cliente con el token JWT y respondemos con un estado de éxito y los datos del usuario
@@ -119,7 +117,7 @@ export const gitHubCallBack = async (req, res) => {
 
     // Actualizamos last_connection y guardamos el usuario
     req.user.last_connection = Date.now();
-    await userManager.updateUserByEmail(req.user.email, req.user);
+    await userService.updateUserByEmail(req.user.email, req.user);
 
     const token = jwt.sign(serializedUser, process.env.JWT_SECRET, { expiresIn: '1h' })
     res.cookie('coderCookie', token, { maxAge: 3600000, httpOnly: true });
@@ -137,7 +135,7 @@ export const logOutJwt = async (req, res) => {
     try {
         // Actualizamos last_connection y guardamos el usuario
         req.user.last_connection = Date.now();
-        await userManager.updateUserByEmail(req.user.email, req.user);
+        await userService.updateUserByEmail(req.user.email, req.user);
         res.clearCookie('coderCookie');
         req.logger.info('JWT logout exitoso');
         res.redirect('/');
@@ -171,7 +169,7 @@ export const resetPassword = async (req, res, next) => {
 
     try {
         // Buscar al usuario por su email
-        const user = await userManager.getUserByEmail(email);
+        const user = await userService.getUserByEmail(email);
         // Verificar si el usuario existe
         if (!user) {
             // Si el usuario no existe, enviar un mensaje de error
@@ -187,7 +185,7 @@ export const resetPassword = async (req, res, next) => {
         const code = generateRandomCode();
         console.log('Código generado:', code);
         // Guardar el código de recuperación, el modelo de los resetCode esta configurado para que expiren en una hora. 
-        const newCode = await resetCodeManager.saveCode(email, code);
+        const newCode = await resetPasswordCodeService.saveCode(email, code);
         console.log('Código guardado:', newCode);
 
         //enviamos mail de recuperacion de password
@@ -236,7 +234,7 @@ export const newPassword = async (req, res) => {
         const { code, password } = req.body;
 
         // Obtener el código de recuperación
-        const resetCode = await resetCodeManager.getCode(code);
+        const resetCode = await resetPasswordCodeService.getCode(code);
         if (!resetCode) {
             return res.status(400).json({ status: "error", message: "Código de recuperación inválido" });
         }
@@ -246,7 +244,7 @@ export const newPassword = async (req, res) => {
         // Definir los campos a actualizar
         const updates = { password: passwordHash };
         // Actualizar el usuario
-        const updatedUser = await userManager.updateUserByEmail(resetCode.email, updates);
+        const updatedUser = await userService.updateUserByEmail(resetCode.email, updates);
         if (!updatedUser) {
             return res.status(500).json({ status: "error", message: "Error al actualizar la contraseña del usuario" });
         }

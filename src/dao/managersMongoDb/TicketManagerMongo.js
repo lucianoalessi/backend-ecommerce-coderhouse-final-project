@@ -6,7 +6,7 @@ export default class TicketManager{
     }
 
     //Metodo para obtener usuarios
-    getTicket = async () => {
+    getTickets = async () => {
         try {
             await ticketModel.find().lean()
         } catch (error) {

@@ -1,4 +1,4 @@
-import productService from "../services/productService.js";
+import { productService } from "../services/index.js";
 //manejo de errores custom:
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
