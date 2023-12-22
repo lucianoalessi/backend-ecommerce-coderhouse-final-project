@@ -154,5 +154,29 @@
     "status": true,
     "owner": "admin",
     "_id": 13
+  },
+  {
+    "title": "nuevo",
+    "description": "este es un nuevo producto",
+    "price": "200",
+    "thumbnail": "no hay capo",
+    "code": "123",
+    "stock": "200",
+    "category": "nuevos",
+    "status": true,
+    "owner": "admin",
+    "_id": 14
+  },
+  {
+    "title": "2",
+    "description": "fds",
+    "price": "52",
+    "thumbnail": "dsvsd",
+    "code": "fsdf",
+    "stock": "52",
+    "category": "fds",
+    "status": true,
+    "owner": "admin",
+    "_id": 15
   }
 ]

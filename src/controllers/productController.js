@@ -9,10 +9,12 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 export const getProductsQuery = async (req, res) => {
 
     const { limit, page, sort, query } = req.query;
+    req.logger.info(`Obteniendo productos con los siguientes parámetros: limit=${limit}, page=${page}, sort=${sort}, query=${query}`);
 
 	try {
         // Obtenemos los productos
 		const products  = await productService.getProductsQuery(limit, page, sort, query);
+        console.log(products)
         // Registramos la información de los productos obtenidos
         req.logger.info(`Productos obtenidos: ${products.length}`);
         // Enviamos la respuesta al cliente
@@ -31,9 +33,9 @@ export const getProductById = async (req, res) => {
         //obtenemos el producto por ID
         const {pid} = req.params
         //Verificamos que sea un id de mongo valido
-        if (pid.length !== 24) {
-            throw new Error('El ID del producto no es válido');
-        }
+        // if (pid.length !== 24) {
+        //     throw new Error('El ID del producto no es válido');
+        // }
         
         const product = await productService.getProductById(pid)
 
@@ -93,7 +95,8 @@ export const updateProduct = async (req, res) => {
 
     const productID = req.params.pid //obtenemos el id de producto ingresado el cliente por paramas
     const updateData = req.body     //agregamos la informacion que actualizara el cliente en una variable
-
+    req.logger.info(`Actualizando producto con ID: ${productID} con los siguientes datos: ${JSON.stringify(updateData)}`)
+    
     try{
         // Actualizamos el producto
         await productService.updateProduct(productID, { $set: updateData });

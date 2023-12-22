@@ -7,8 +7,8 @@ const productManager = new ProductManager()
 
 class CartManager {
 
-    constructor(path){
-        this.path = path;  //ubicacion donde se guardara la informacion
+    constructor(){
+        this.path = path.join(__dirname, './data/carts.json');  //ubicacion donde se guardara la informacion
         this.carts = []; //array de carritos 
         this.productManager = productManager; //almacenamos productManager como una propiedad de la clase
     }
@@ -69,6 +69,7 @@ class CartManager {
             this.carts.push(carrito);
             // Finalmente, escribimos el array actualizado en el archivo
             await fs.promises.writeFile(this.path,JSON.stringify(this.carts,null,2)) // el segundo parametro de stringify es opcional asi que le pusimos null para salterarlo y el 3er parametro es el espacio de sangria. al pasarle un 2 estamos indicando que queremos que la cadena JSON tenga un nivel de sangría de 2 espacios.    
+            return carrito
         } catch (error) {
             throw error;
         }
@@ -213,7 +214,7 @@ export default CartManager;
 // agregarCarro()
 
 // Crea una nueva instancia de CartManager.
-const cartManager = new CartManager(path.join(__dirname, './data/carts.json'));
+// const cartManager = new CartManager(path.join(__dirname, './data/carts.json'));
 
 // Ahora puedes usar los métodos de la clase CartManager.
 // Por ejemplo, para crear un nuevo carrito:
@@ -223,7 +224,7 @@ const cartManager = new CartManager(path.join(__dirname, './data/carts.json'));
 // cartManager.createCart().then(() => console.log('Carrito creado'));
 // cartManager.createCart().then(() => console.log('Carrito creado'));
 // cartManager.createCart().then(() => console.log('Carrito creado'));
-cartManager.createCart().then(() => console.log('Carrito creado'));
+// cartManager.createCart().then(() => console.log('Carrito creado'));
 
 
 

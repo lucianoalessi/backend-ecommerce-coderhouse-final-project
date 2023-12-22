@@ -8,7 +8,7 @@ const request = supertest(app);
 describe('Cart Controller', () => {
     
     let cartID;
-    let productID = '65706478a36396c03438e54b';
+    let productID = '657b54fbd367add9795fa4ff';
     let cookie;
     let reqBody = {
         email: 'prueba@gmail.com',
@@ -69,8 +69,54 @@ describe('Cart Controller', () => {
         }
     });
 
-    it('should delete a product in a cart', async () => {
-        const res = await request.delete(`/api/carts/${cartID}/product/${productID}`).set('Cookie',[`${cookie.name}=${cookie.value}`] );
+    // it('should delete a product in a cart', async () => {
+    //     const res = await request.delete(`/api/carts/${cartID}/product/${productID}`).set('Cookie',[`${cookie.name}=${cookie.value}`] );
+    //     expect(res.body.status).to.equal('success');
+    // });
+
+    it('debería modificar la cantidad de un producto en un carrito', async () => {
+        const newQuantity = { newQuantity: 3 };
+        const res = await request.put(`/api/carts/${cartID}/product/${productID}`).send(newQuantity).set('Cookie',[`${cookie.name}=${cookie.value}`] );;
+        expect(res.statusCode).to.equal(200);
         expect(res.body.status).to.equal('success');
+    }).timeout(5000);
+    
+    it('should delete a product in a cart', async () => {
+        const res = await request.delete(`/api/carts/${cartID}/product/${productID}`).set('Cookie',[`${cookie.name}=${cookie.value}`]);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.status).to.equal('success');
+    });
+
+    it('debería agregar un array de productos a un carrito', async () => {
+        const productsToAdd = [{ productID: '657b3190dc980673ea79ff8b', quantity: 2 }, { productID: '657b5429d367add9795fa4ab', quantity: 1 }];
+        const res = await request.put(`/api/carts/${cartID}`).send(productsToAdd);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.status).to.equal('success');
+        expect(res.body.message).to.equal('Productos agregados con éxito');
+    });
+
+    it('should delete all products in a cart', async () => {
+        const res = await request.delete(`/api/carts/${cartID}`).set('Cookie',[`${cookie.name}=${cookie.value}`]);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.status).to.equal('success');
+        expect(res.body.message).to.equal('Carrito vaciado con éxito');
+    });
+
+    it('debería finalizar la compra y generar un ticket', async () => {
+        const res = await request.get(`/api/carts/${cartID}/purchase`).set('Cookie',[`${cookie.name}=${cookie.value}`]);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.status).to.equal('success');
+        expect(res.body.payload.ticket).to.be.ok;
+        expect(res.body.payload.productosProcesados).to.be.an('array');
+        expect(res.body.payload.productosNoProcesados).to.be.an('array');
+    });
+
+    it('debería finalizar la compra sin procesar productos por falta de stock', async () => {
+        // Aquí necesitarías configurar tu carrito para que tenga productos sin stock
+        const res = await request.get(`/api/carts/${cartID}/purchase`).set('Cookie',[`${cookie.name}=${cookie.value}`]);
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.status).to.equal('success');
+        expect(res.body.message).to.equal('No se procesaron productos, por falta de stock.');
+        expect(res.body.productosNoProcesados).to.be.an('array');
     });
 });

@@ -245,6 +245,7 @@ export const modifyProductQuantity = async (req, res) => {
 //finalizar proceso de compra:
 export const purchase = async (req,res) => {
 
+	req.logger.info('Iniciando el proceso de compra');
 	let purchaseComplete = []  //array para los productos procesados correctamente.
 	let purchaseError = [] //array para los productos que no pudieron procesarse por falta de stock.
 	let precioTotal = 0
@@ -291,6 +292,7 @@ export const purchase = async (req,res) => {
 			}
 			//creamos el ticket en la base de datos:
 			const ticket = await ticketService.addTicket(ticketData);
+			req.logger.info(`Ticket de compra creado con éxito. ID del ticket: ${ticket._id} , Monto total:${precioTotal} , Usuario: ${req.user.email}`);
 
 			//agregamos informacion adicional, los productos que se procesaron correctamente y los que no:
 			const purchaseData = {

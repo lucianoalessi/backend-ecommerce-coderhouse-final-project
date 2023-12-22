@@ -22,6 +22,7 @@ export const pagination = async (req, res) => {
     const user = req.user;
     const userObject = await userService.getUserById(user._id);
     const cart = userObject.cart[0]._id;
+    
 
     try {
         const products = await productService.getProductsQuery(limit, page, sort, query);

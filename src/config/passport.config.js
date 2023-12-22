@@ -2,8 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import jwt from 'passport-jwt';
 import GitHubStrategy from 'passport-github2';
-import { userService } from "../services/index.js";
-import { cartService } from "../services/index.js";
+import { userService, cartService } from "../services/index.js";
 import {cookieExtractor , createHash , isValidPassword} from '../../utils.js'
 import config from './config.js'
 
@@ -35,6 +34,7 @@ const initializePassport = async () => {
             
             //El cliente pasa sus datos a travez de la vista por body.
             const {first_name, last_name, email, age} = req.body; 
+            req.logger.info(`Passport - Registrando nuevo usuario con email: ${email}`);
 
             try {
                 //custom error:
@@ -45,14 +45,14 @@ const initializePassport = async () => {
                         message: "Error Trying to create User",
                         code: EErrors.INVALID_TYPES_ERROR
                     })
+                    req.logger.error('Passport - Valores incompletos para el registro de usuario');
                     return done(null, false, { message: 'Incomplete Values' });
                 }
                 // Comprobamos si el usuario ya existe en la base de datos:
-                //let exist = await userModel.findOne({email:username});
                 let exist = await userService.getUserByEmail(username);
                 if(exist){
-                    console.log('User already exists')
-                    return done(null, false);
+                    req.logger.warn('Passport - El usuario ya existe');
+                    return done(null, false, { message: 'User already exists' });
                 }
                 // Si el usuario no existe, creamos un nuevo usuario en la base de datos:
                 const newUser = {
@@ -63,10 +63,11 @@ const initializePassport = async () => {
                     cart: await cartService.createCart(),
                     password: createHash(password),
                 }
-                //let result = await userModel.create(newUser);
                 let result = await userService.addUser(newUser);
+                req.logger.info(`Passport - Usuario registrado con éxito: ${email}`);
                 return done(null,result); 
             } catch (error) {
+                req.logger.error(`Passport - Error al obtener el usuario: ${error}`);
                 return done('Error al obtener el usuario:' + error)   
             }
         }
@@ -75,11 +76,12 @@ const initializePassport = async () => {
     //Estrategia de autenticación para el inicio de sesión de usuarios(estrategia de autenticación local):
     passport.use('login', new LocalStrategy({ 
         usernameField: 'email', // Se define que el campo de nombre de usuario será el email
-        session: false // No se utilizarán sesiones
+        session: false, // No se utilizarán sesiones
     }, async (username, password, done) => {
         try {
             //si el usuario que quiere loguearse es coderadmin:
-            if (username === admin.email && password === admin.password) { 
+            if (username === admin.email && password === admin.password) {
+                //req.logger.info('Passport - Iniciando sesión como administrador');
                 const adminUser = admin
                 return done(null, adminUser) // se le envia el usuario = (adminUser)
             }
@@ -89,14 +91,17 @@ const initializePassport = async () => {
             const user = await userService.getUserByEmail(username) //busca el usuario ingresado por su email
             if(!user){
                 // si el usuario no existe envia un error.
-                console.log("User doesn't exist")
+                //req.logger.warn("Passport - El usuario no existe");
                 return done(null, false ,{message: "No se encontro el usuario"}); // no se le envia un usuario = (false)
             }
             if(!isValidPassword(user,password)){
+                //req.logger.warn("Passport - Contraseña incorrecta");
                 return done(null, false , {message: "Contraseña incorrecta"}) // si la contraseña es incorrecta, tampoco se le envia un usuario = (false).
-            }; 
+            };
+            //req.logger.info('Passport - Inicio de sesión exitoso');
             return done(null, user); // se le envia el usuario en forma de objeto con todos sus datos como sale de la base de datos = {user}
         } catch (error) {
+            req.logger.error(`Passport - Error al iniciar sesión: ${error}`);
             return done(error); 
         }
     }));
@@ -107,30 +112,35 @@ const initializePassport = async () => {
         clientSecret: "ddc4da16191d83e241c2c02310d931bf18450e5b",
         callbackURL:"http://localhost:8080/api/sessions/githubCallback"
     }, async(accessToken, refreshToken, profile, done) => {
+        req.logger.info(`Passport - Iniciando sesión con GitHub para el usuario: ${profile._json.email}`);
         try{
             console.log(profile); //console.log para la informacion que viene del perfil de GitHub. 
             // Buscamos un usuario por su dirección de correo electrónico en la base de datos
             //let user = await userModel.findOne({email:profile._json.email})
             let user = await userService.getUserByEmail(profile._json.email)
             // si el usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
-            if(!user){ 
+            if(!user){
+                req.logger.info('Passport - Creando nuevo usuario a partir de la cuenta de GitHub');
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
                     age: 18, ////rellenamos los datos que no vienen desde el perfil.
-                    cart: await cartService.addCart(),
+                    cart: await cartService.createCart(),
                     email: profile._json.email,
                     password: '', //al ser una autenticacion de terceros, no podemos asignarle un password.
                     role: 'user'
                 }
                 //let result = await userModel.create(newUser);
                 let result = await userService.addUser(newUser);
+                req.logger.info(`Passport - Usuario registrado con éxito: ${newUser.email}`);
                 done(null, result);
             }else{ 
                 // Si el usuario ya existe, simplemente lo autenticamos
+                req.logger.info('Passport - El usuario ya existe, autenticando');
                 done(null, user);
             }
         }catch(error){
+            req.logger.error(`Passport - Error al iniciar sesión con GitHub: ${error}`);
             done(error);
         }
     }))
@@ -150,15 +160,19 @@ const initializePassport = async () => {
         // 'done' es una función de callback que se llama al final de la función de verificación.
     }, async(jwt_payload, done) => {
         //NOTA: jwt_payload es el objeto que se obtiene después de decodificar el token JWT. Contiene la información del usuario que fue almacenada en el token cuando se creó. Esta información puede incluir detalles como el ID del usuario, el nombre de usuario, el correo electrónico, y cualquier otra información que se haya incluido al momento de la creación del token
+        //req.logger.info('Passport - Iniciando sesión con JWT');
         try {
             if(jwt_payload.email === admin.email){
+                //req.logger.info('Passport - Iniciando sesión como administrador JWT');
                 const adminUser = admin
                 return done(null, adminUser);
             }
             // Si no hay errores, se llama a 'done' con el objeto 'jwt_payload' como segundo argumento y se autentica el usuario.
+            //req.logger.info('Passport - Inicio de sesión exitoso con JWT');
             return done(null, jwt_payload);
         } catch (error) {
             // Si hay un error, se llama a 'done' con el error como primer argumento.
+            //req.logger.error(`Passport - Error al iniciar sesión con JWT: ${error}`);
             return done(error);
         }
     }))
@@ -171,6 +185,7 @@ const initializePassport = async () => {
     //El objeto 'user' es el usuario autenticado, 'done' es una función de callback
 
     passport.serializeUser((user, done) => {
+        //req.logger.info(`Passport - Serializando usuario con ID: ${user._id}`);
         done(null, user._id); // Almacenamos el '_id' del usuario en la sesión
     });
     
@@ -182,6 +197,7 @@ const initializePassport = async () => {
     passport.deserializeUser( async(id, done) => {
         //let user = await userModel.findById(id); // Buscamos al usuario en la base de datos
         let user = await userService.getUserById(id); // Buscamos al usuario en la base de datos
+        //req.logger.info(`Passport - Usuario deserializado: ${user.email}`);
         done(null, user); // Pasamos el objeto de usuario encontrado a través de 'done' para autenticación
     });
     

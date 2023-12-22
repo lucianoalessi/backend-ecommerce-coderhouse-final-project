@@ -4,8 +4,8 @@ import __dirname from '../../../utils.js';
 
 class ProductManager{
 
-    constructor(filePath){
-        this.path = filePath
+    constructor(){
+        this.path = path.join(__dirname,'./data/products.json');
         this.products = [];
     }
 
@@ -24,12 +24,8 @@ class ProductManager{
             // Se crea un filtro a partir de la consulta proporcionada, si no hay consulta, el filtro es un objeto vacío.
             const filter = query ? JSON.parse(query) : {};
     
-            // Leer todos los archivos de productos
-            const productFiles = await fs.promises.readdir(path.join(__dirname, 'products'));
-            let products = await Promise.all(productFiles.map(async file => {
-                const product = JSON.parse(await fs.promises.readFile(path.join(__dirname, 'products', file), 'utf-8'));
-                return product;
-            }));
+            // Leer todos los productos utilizando el método getProducts
+            let products = await this.getProducts();
     
             // Filtrar y ordenar los productos
             if (Object.keys(filter).length > 0) {
@@ -66,6 +62,7 @@ class ProductManager{
             };
         } catch (error) {
             console.log('Error al obtener productos con consulta:', error.message);
+            return 'Error al obtener productos con consulta: ' + error.message;
         }
     }
 
@@ -220,33 +217,33 @@ export default ProductManager;
 
 // //Test
 
-// Crea una nueva instancia de ProductManager.
-const productManager = new ProductManager(path.join(__dirname,'./data/products.json'));
+// // Crea una nueva instancia de ProductManager.
+// const productManager = new ProductManager(path.join(__dirname,'./data/products.json'));
 
-// Ahora puedes usar los métodos de la clase ProductManager.
-// Por ejemplo, para agregar un nuevo producto:
+// // Ahora puedes usar los métodos de la clase ProductManager.
+// // Por ejemplo, para agregar un nuevo producto:
 
-const newProduct = {
-    title: 'Test Product',
-    description: 'This is a test product',
-    price: 99.99,
-    thumbnail: 'test.jpg',
-    code: 'testfesfsgdrgdr',
-    stock: 10,
-    category: 'PC'
-};
+// const newProduct = {
+//     title: 'Test Product',
+//     description: 'This is a test product',
+//     price: 99.99,
+//     thumbnail: 'test.jpg',
+//     code: 'testfesfsgdrgdr',
+//     stock: 10,
+//     category: 'PC'
+// };
 
-const anotherProduct = {
-    title: 'Test Product 2',
-    description: 'This is a test product 2 ',
-    price: 99.99,
-    thumbnail: 'test.jpg',
-    code: 'test 255 ',
-    stock: 15,
-    category: 'PC'
-};
+// const anotherProduct = {
+//     title: 'Test Product 2',
+//     description: 'This is a test product 2 ',
+//     price: 99.99,
+//     thumbnail: 'test.jpg',
+//     code: 'test 255 ',
+//     stock: 15,
+//     category: 'PC'
+// };
 
-productManager.addProduct(newProduct).then(() => console.log('Producto agregado'));
+// productManager.addProduct(newProduct).then(() => console.log('Producto agregado'));
 // productManager.addProduct(anotherProduct).then(() => console.log('Producto agregado'));
 
 // // O para obtener todos los productos:

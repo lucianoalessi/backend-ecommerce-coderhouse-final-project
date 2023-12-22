@@ -10,5 +10,74 @@
     "documents": [],
     "last_connection": 1702939816651,
     "_id": 1
+  },
+  {
+    "first_name": "Luciano",
+    "last_name": "Alessi",
+    "email": "lucianoalessi9@hotmail.com",
+    "age": "27",
+    "password": "$2b$10$FDEbY4sjHyGPvGTgJrmCV.IVoBEcF.fSPNpabiRwEePhrtisKioDO",
+    "documents": [],
+    "role": "user",
+    "last_connection": 1703000649389,
+    "_id": 2
+  },
+  {
+    "first_name": "hoa",
+    "last_name": "fas",
+    "email": "fafasfa@fsd.com",
+    "age": "213",
+    "cart": [],
+    "password": "$2b$10$UxuVrTpW08CNURzspSooAe6LknZ0B2EaLWPsAElZSXoGsOtMMCoNW",
+    "documents": [],
+    "role": "user",
+    "last_connection": 1703000994427,
+    "_id": 3
+  },
+  {
+    "first_name": "hfghgfh",
+    "last_name": "gfhfghfg",
+    "email": "dfdfdf@hh.com",
+    "age": "545",
+    "cart": [],
+    "password": "$2b$10$9.2S5/H5P.PFgaZfBFzDZ.wKr.YWWpgo9yePvUypgkNQViDsyN4..",
+    "documents": [],
+    "role": "user",
+    "last_connection": 1703001151812,
+    "_id": 4
+  },
+  {
+    "first_name": "kapo",
+    "last_name": "capito",
+    "email": "kapo@capito.com",
+    "age": "32",
+    "cart": {
+      "products": [],
+      "_id": 9
+    },
+    "password": "$2b$10$ccr.NUpYDVAjrg6TCZ60beRfi.T8c4putJkWJPP533tQ5.ksR8WMa",
+    "documents": [],
+    "role": "user",
+    "last_connection": 1703002141401,
+    "_id": 5
+  },
+  {
+    "first_name": "jose",
+    "last_name": "capo",
+    "email": "capo@indave.com",
+    "age": "54",
+    "cart": [
+      {
+        "products": [],
+        "_id": 10
+      }
+    ],
+    "password": "$2b$10$V8WZIIJcahmywPOYRm6q0eitAPlGBeXN3mjUY7L0fiYoN0hkNmAS.",
+    "documents": [],
+    "role": "user",
+    "last_connection": 1703004776954,
+    "_id": 6,
+    "iat": 1703003335,
+    "exp": 1703006935
   }
 ]

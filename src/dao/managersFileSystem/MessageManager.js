@@ -4,8 +4,8 @@ import __dirname from '../../../utils.js';
 
 class messageManager{
 
-    constructor(path) {
-        this.path = path;
+    constructor() {
+        this.path = path.join(__dirname, './data/messages.json');
     }
 
     getNextId = async () => {
@@ -43,27 +43,27 @@ class messageManager{
 export default messageManager;
 
 //test: 
-console.log("Iniciando el test...");
+// console.log("Iniciando el test...");
 
-// Crear una instancia de messageManager
-const manager = new messageManager(path.join(__dirname, './data/messages.json'));
+// // Crear una instancia de messageManager
+// const manager = new messageManager(path.join(__dirname, './data/messages.json'));
 
-// Prueba: Guardar un mensaje
-manager.addMessages({user: 'testUser', message: 'Hola, mundo!'})
-    .then(() => {
-        console.log("Nuevo mensaje guardado.");
-    })
-    .catch(error => {
-        console.error("Error al guardar el mensaje:", error.message);
-    });
+// // Prueba: Guardar un mensaje
+// manager.addMessages({user: 'testUser', message: 'Hola, mundo!'})
+//     .then(() => {
+//         console.log("Nuevo mensaje guardado.");
+//     })
+//     .catch(error => {
+//         console.error("Error al guardar el mensaje:", error.message);
+//     });
 
-// Prueba: Obtener mensajes
-manager.getMessages()
-    .then(messages => {
-        console.log("Mensajes obtenidos:", messages);
-    })
-    .catch(error => {
-        console.error("Error al obtener los mensajes:", error.message);
-    });
+// // Prueba: Obtener mensajes
+// manager.getMessages()
+//     .then(messages => {
+//         console.log("Mensajes obtenidos:", messages);
+//     })
+//     .catch(error => {
+//         console.error("Error al obtener los mensajes:", error.message);
+//     });
 
-console.log("Test finalizado.");
+// console.log("Test finalizado.");

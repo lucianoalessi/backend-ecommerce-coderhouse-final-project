@@ -17,7 +17,7 @@ import {
 	purchaseView
 } from "../controllers/viewsController.js";
 //Importamos middlewares:
-import { applyPolicy,  privateAccess, redirectAdmin } from "../middlewares/auth.js";
+import { applyPolicy,  privateAccess, redirectAdmin } from "../middlewares/authMiddleware.js";
 import { passportCall } from "../../utils.js";
 
 

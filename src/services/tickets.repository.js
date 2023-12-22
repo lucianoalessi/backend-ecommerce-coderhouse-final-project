@@ -27,6 +27,4 @@ export default class TicketsRepository {
         const ticketToDeleted = await this.dao.deleteTicket(idTicket);
         return ticketToDeleted;
     }
-
-
 }

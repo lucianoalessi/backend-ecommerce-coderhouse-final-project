@@ -3,8 +3,8 @@ import path from 'path';
 import __dirname from '../../../utils.js';
 
 class ResetPasswordCodeManager {
-    constructor(path) {
-        this.path = path;
+    constructor() {
+        this.path = path.join(__dirname,'./data/resetPasswordCodes.json');
     }
     
     getNextId = async () => {
@@ -94,38 +94,38 @@ export default ResetPasswordCodeManager;
 
 //TEST
 
-console.log("Iniciando el test...");
+// console.log("Iniciando el test...");
 
-// Crear una instancia de resetPasswordCodeManager
-const resetPasswordCodeManager = new ResetPasswordCodeManager(path.join(__dirname,'./data/resetPasswordCodes.json'));
+// // Crear una instancia de resetPasswordCodeManager
+// const resetPasswordCodeManager = new ResetPasswordCodeManager(path.join(__dirname,'./data/resetPasswordCodes.json'));
 
-// Prueba: Guardar un código de reinicio
-resetPasswordCodeManager.saveCode('test@example.com', '123456')
-    .then(newCode => {
-        console.log("Nuevo código de reinicio guardado:", newCode);
+// // Prueba: Guardar un código de reinicio
+// resetPasswordCodeManager.saveCode('test@example.com', '123456')
+//     .then(newCode => {
+//         console.log("Nuevo código de reinicio guardado:", newCode);
 
-        // Prueba: Obtener un código de reinicio
-        resetPasswordCodeManager.getCode('123456')
-            .then(code => {
-                console.log("Código de reinicio obtenido:", code);
+//         // Prueba: Obtener un código de reinicio
+//         resetPasswordCodeManager.getCode('123456')
+//             .then(code => {
+//                 console.log("Código de reinicio obtenido:", code);
 
-                // // Prueba: Eliminar un código de reinicio
-                // resetPasswordCodeManager.deleteCode('test@example.com', '123456')
-                //     .then(() => {
-                //         console.log("Código de reinicio eliminado exitosamente.");
-                //     })
-                //     .catch(error => {
-                //         console.error("Error al eliminar el código de reinicio:", error.message);
-                //     });
+//                 // // Prueba: Eliminar un código de reinicio
+//                 // resetPasswordCodeManager.deleteCode('test@example.com', '123456')
+//                 //     .then(() => {
+//                 //         console.log("Código de reinicio eliminado exitosamente.");
+//                 //     })
+//                 //     .catch(error => {
+//                 //         console.error("Error al eliminar el código de reinicio:", error.message);
+//                 //     });
 
-            })
-            .catch(error => {
-                console.error("Error al obtener el código de reinicio:", error.message);
-            });
+//             })
+//             .catch(error => {
+//                 console.error("Error al obtener el código de reinicio:", error.message);
+//             });
 
-    })
-    .catch(error => {
-        console.error("Error al guardar el código de reinicio:", error.message);
-    });
+//     })
+//     .catch(error => {
+//         console.error("Error al guardar el código de reinicio:", error.message);
+//     });
 
-console.log("Test finalizado.");
+// console.log("Test finalizado.");

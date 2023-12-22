@@ -3,8 +3,8 @@ import path from 'path';
 import __dirname from '../../../utils.js';
 
 export default class UserManager{
-    constructor(path){
-        this.path = path;
+    constructor(){
+        this.path = path.join(__dirname,'./data/users.json');
     }
 
     getUsers = async () => {
@@ -47,7 +47,7 @@ export default class UserManager{
     addUser = async (user) => {
         try {
             const {first_name, last_name, email, age, password, cart, role, documents, last_connection} = user;
-            if(!first_name || !last_name || !email || !password || !role){
+            if(!first_name || !last_name || !email || !password ){
                 throw new Error("Datos del usuario incompletos");
             }
             // Añadir validaciones adicionales aquí
@@ -56,8 +56,9 @@ export default class UserManager{
                 throw new Error("Email ya en uso");
             }
             user.age = age || null;
-            user.cart = cart || [];
+            user.cart = [cart] || [];
             user.documents = documents || [];
+            user.role = role || 'user';
             user.last_connection = last_connection || Date.now();
             user._id = userList.length > 0 ? Math.max(...userList.map(u => u._id)) + 1 : 1; // Genera un nuevo _id
             userList.push(user);
@@ -108,57 +109,57 @@ export default class UserManager{
 
 
 //test:
-const userManager = new UserManager(path.join(__dirname,'./data/users.json'));
+// const userManager = new UserManager(path.join(__dirname,'./data/users.json'));
 
-const testUserManager = async () => {
-    console.log('Iniciando pruebas...');
+// const testUserManager = async () => {
+//     console.log('Iniciando pruebas...');
 
-    // // Prueba: getUsers
-    // console.log('getUsers:');
-    // const users = await userManager.getUsers();
-    // console.log(users);
+//     // // Prueba: getUsers
+//     // console.log('getUsers:');
+//     // const users = await userManager.getUsers();
+//     // console.log(users);
 
-    // // Prueba: getUserById
-    // console.log('getUserById:');
-    // const userById = await userManager.getUserById(users[0]._id);
-    // console.log(userById);
+//     // // Prueba: getUserById
+//     // console.log('getUserById:');
+//     // const userById = await userManager.getUserById(users[0]._id);
+//     // console.log(userById);
 
-    // // Prueba: getUserByEmail
-    // console.log('getUserByEmail:');
-    // const userByEmail = await userManager.getUserByEmail(users[0].email);
-    // console.log(userByEmail);
+//     // // Prueba: getUserByEmail
+//     // console.log('getUserByEmail:');
+//     // const userByEmail = await userManager.getUserByEmail(users[0].email);
+//     // console.log(userByEmail);
 
-    // Prueba: addUser
-    console.log('addUser:');
-    const newUser = {
-        first_name: 'Test',
-        last_name: 'User',
-        email: 'testuser@example.com',
-        password: 'password',
-        role: 'user'
-    };
-    const addedUser = await userManager.addUser(newUser);
-    console.log(addedUser);
+//     // Prueba: addUser
+//     console.log('addUser:');
+//     const newUser = {
+//         first_name: 'Test',
+//         last_name: 'User',
+//         email: 'testuser@example.com',
+//         password: 'password',
+//         role: 'user'
+//     };
+//     const addedUser = await userManager.addUser(newUser);
+//     console.log(addedUser);
 
-    // Prueba: updateUserById
-    console.log('updateUserById:');
-    const updatedUserById = await userManager.updateUserById(addedUser._id, { first_name: 'Updated' });
-    console.log(updatedUserById);
+//     // Prueba: updateUserById
+//     console.log('updateUserById:');
+//     const updatedUserById = await userManager.updateUserById(addedUser._id, { first_name: 'Updated' });
+//     console.log(updatedUserById);
 
-    // Prueba: updateUserByEmail
-    console.log('updateUserByEmail:');
-    const updatedUserByEmail = await userManager.updateUserByEmail(addedUser.email, { last_name: 'Updated' });
-    console.log(updatedUserByEmail);
+//     // Prueba: updateUserByEmail
+//     console.log('updateUserByEmail:');
+//     const updatedUserByEmail = await userManager.updateUserByEmail(addedUser.email, { last_name: 'Updated' });
+//     console.log(updatedUserByEmail);
 
-    // // Prueba: deleteUser
-    // console.log('deleteUser:');
-    // const remainingUsers = await userManager.deleteUser(addedUser._id);
-    // console.log(remainingUsers);
+//     // // Prueba: deleteUser
+//     // console.log('deleteUser:');
+//     // const remainingUsers = await userManager.deleteUser(addedUser._id);
+//     // console.log(remainingUsers);
 
-    console.log('Pruebas completadas.');
-};
+//     console.log('Pruebas completadas.');
+// };
 
-testUserManager().catch(console.error);
+// testUserManager().catch(console.error);
 
 
 

@@ -1,7 +1,5 @@
 // Importando los módulos y clases necesarios.
-import { Router } from "express"; // Importando la clase Router del módulo "express".
-import __dirname from '../../utils.js'; // Importando la constante __dirname para acceder a las rutas locales.
-//importamos los controllers de cart:
+import { Router } from "express"; 
 import { 
 	getAllCarts,
 	createNewCart, 

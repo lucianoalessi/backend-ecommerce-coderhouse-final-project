@@ -8,7 +8,7 @@ export default class TicketManager{
     //Metodo para obtener usuarios
     getTickets = async () => {
         try {
-            await ticketModel.find().lean()
+            return await ticketModel.find().lean()
         } catch (error) {
             console.log(error)
         }
@@ -16,16 +16,16 @@ export default class TicketManager{
     //Metodo para obtener un usuario por ID
     getTicketById = async (ticketId) => {
         try {
-            await ticketModel.findById(ticketId).lean()
+            return await ticketModel.findById(ticketId).lean()
         } catch (error) {
             console.log(error)
         }
     }
 
     //Agrega un nuevo usuario a la base de datos.
-    addTicket = async (ticket) => {
+    addTicket = async (ticketData) => {
         try {
-            await ticketModel.create(ticket)
+            return await ticketModel.create(ticketData);
         } catch (error) {
             console.log(error)
         }

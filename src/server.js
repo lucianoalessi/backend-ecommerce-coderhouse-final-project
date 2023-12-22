@@ -96,14 +96,13 @@ app.use(passport.session());
 
 app.use(cookieParser());
 
-
+//configuramos la carpeta public como estatica:
+app.use(express.static(__dirname +'/src/public'));
 
 //Configuraciones para plantillas handlebars:
-
 app.engine('handlebars' , handlebars.engine());
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'handlebars');
-app.use(express.static(__dirname +'/src/public'));
 
 //Rutas utilizadas:
 

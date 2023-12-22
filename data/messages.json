@@ -3,5 +3,20 @@
     "user": "testUser",
     "message": "Hola, mundo!",
     "_id": 1
+  },
+  {
+    "user": "testUser",
+    "message": "Hola, mundo!",
+    "_id": 2
+  },
+  {
+    "user": "hola",
+    "message": "hola",
+    "_id": 3
+  },
+  {
+    "user": "hola",
+    "message": "sdsa",
+    "_id": 4
   }
 ]

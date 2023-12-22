@@ -12,13 +12,13 @@ import { createHash } from "../../utils.js";
 export const register = async (req, res) => {
     // Esta ruta maneja la autenticación de registro a través de Passport.js
     // Si la autenticación falla, redirige al usuario a '/failregister', de lo contrario, llegamos aquí
-    req.logger.info('Registro de usuario iniciado');
-    res.send({status:"success", message: "User registered"});
-    req.logger.info('Registro de usuario completado exitosamente');
+    req.logger.info('Session controller - Registro de usuario iniciado');
+    res.status(200).send({status:"success", message: "User registered"});
+    req.logger.info('Session controller - Registro de usuario completado exitosamente');
 }
 
 export const failRegister = async(req,res)=>{
-    req.logger.error("Failed Strategy");
+    req.logger.error("Session controller - Failed Strategy");
     res.status(400).json({error:"Failed"});
 }
 
@@ -32,7 +32,7 @@ export const loginSession = async (req, res) => {
     if(!req.user){
         // Si no hay un usuario en req.user, significa que las credenciales son inválidas
         // Respondemos con un código de estado 400 y un mensaje de error
-        req.logger.error('Credenciales inválidas');
+        req.logger.error('Session controller - Credenciales inválidas');
         return res.status(400).json({status:'error' , error: 'Credenciales invalidas' })
     }
 
@@ -44,7 +44,7 @@ export const loginSession = async (req, res) => {
 
     //si el usuario existe y se loguea correctamente, crea la session:
     req.session.user = req.user // Almacenamos el usuario en la sesión
-    req.logger.info(`Usuario ${req.user._id} ha iniciado sesión`);
+    req.logger.info(`Session controller - Usuario ${req.user._id} ha iniciado sesión`);
     // Respondemos con un objeto JSON que indica un inicio de sesión exitoso y enviamos los datos del usuario en 'payload'
     res.json({status:'success', payload: req.session.user});
 }
@@ -53,7 +53,7 @@ export const loginSession = async (req, res) => {
 // #Login de usuarios con JWT:
 export const loginJWT = async (req, res) => {
     // Registramos en el logger que el inicio de sesión con JWT ha comenzado
-    req.logger.info('Inicio de sesión con JWT iniciado');
+    req.logger.info('Session controller - Inicio de sesión con JWT iniciado');
     // Creamos un objeto con los datos del usuario que queremos incluir en el token. el user es el que recibimos en el middleware de passport. (lo recibimos en el req)
     const serializedUser = {
         _id: req.user._id,
@@ -72,7 +72,7 @@ export const loginJWT = async (req, res) => {
     // Enviamos una cookie al cliente con el token JWT y respondemos con un estado de éxito y los datos del usuario
     res.cookie('coderCookie', token, {maxAge: 3600000, httpOnly: true, secure: true}).send({status:"success", payload: serializedUser});
     // Registramos en el logger que se ha generado un token JWT para el usuario
-    req.logger.info(`Token JWT generado para el usuario ${req.user._id}`);
+    req.logger.info(`Session controller - Token JWT generado para el usuario ${req.user._id}`);
 
     //enviamos un mail al usuario diciendo que ha iniciado session (esto es un extra, luego lo podemos usar para restablecer la contraseña):
     // const transport = nodemailer.createTransport({
@@ -105,7 +105,7 @@ export const loginJWT = async (req, res) => {
 
 // #Login con GITHUB:
 export const gitHubCallBack = async (req, res) => {
-    req.logger.info('Inicio de sesión con JWT en Git Hub iniciado');
+    req.logger.info('Session controller - Inicio de sesión con JWT en Git Hub iniciado');
     const serializedUser = {
         _id: req.user._id,
         first_name: req.user.first_name,
@@ -121,12 +121,12 @@ export const gitHubCallBack = async (req, res) => {
 
     const token = jwt.sign(serializedUser, process.env.JWT_SECRET, { expiresIn: '1h' })
     res.cookie('coderCookie', token, { maxAge: 3600000, httpOnly: true });
-    req.logger.info(`Token JWT generado con Git Hub para el usuario ${req.user._id}`);
+    req.logger.info(`Session controller - Token JWT generado con Git Hub para el usuario ${req.user._id}`);
     res.redirect('/products')
 }
 
 export const failLogin = async(req,res) => {
-    req.logger.error("Failed Strategy");
+    req.logger.error("Session controller - Failed Strategy");
     res.status(400).json({error:"Failed"}); // Respondiendo con un objeto JSON que indica el fallo
 }
 
@@ -137,10 +137,10 @@ export const logOutJwt = async (req, res) => {
         req.user.last_connection = Date.now();
         await userService.updateUserByEmail(req.user.email, req.user);
         res.clearCookie('coderCookie');
-        req.logger.info('JWT logout exitoso');
+        req.logger.info('Session controller - JWT logout exitoso');
         res.redirect('/');
     } catch (error) {
-        req.logger.error('Error al cerrar la sesión JWT:', error);
+        req.logger.error('Session controller - Error al cerrar la sesión JWT:', error);
         return res.status(500).json({ status: 'error', error: 'Internal Server Error' });
     }
 }
@@ -149,12 +149,12 @@ export const logOutSession = (req, res) => {
 	// Destruye la sesión actual
 	req.session.destroy((error) => {
 		if (error) {
-			req.logger.error('Error al cerrar la sesión:', error);
+			req.logger.error('Session controller - Error al cerrar la sesión:', error);
 			res.status(500).send('Error al cerrar la sesión');
 		} else {
 			// Redirige al usuario a la página de inicio de sesión
 			res.clearCookie('connect.sid');
-            req.logger.info('Logout de sesión exitoso');
+            req.logger.info('Session controller - Logout de sesión exitoso');
 			res.redirect('/login');
 		}
 	})
@@ -166,6 +166,7 @@ export const logOutSession = (req, res) => {
 export const resetPassword = async (req, res, next) => {
     // Extraer el email del cuerpo de la solicitud
     const { email } = req.body;
+    req.logger.info(`Restableciendo contraseña para el usuario: ${email}`);
 
     try {
         // Buscar al usuario por su email
@@ -173,6 +174,7 @@ export const resetPassword = async (req, res, next) => {
         // Verificar si el usuario existe
         if (!user) {
             // Si el usuario no existe, enviar un mensaje de error
+            req.logger.warn('El correo electrónico no está registrado');
             return res.status(400).json({ message: 'El correo electrónico no está registrado' });
         }
 
@@ -183,11 +185,11 @@ export const resetPassword = async (req, res, next) => {
 
         // Generar un código aleatorio
         const code = generateRandomCode();
-        console.log('Código generado:', code);
+        req.logger.info(`Código generado: ${code}`);
         // Guardar el código de recuperación, el modelo de los resetCode esta configurado para que expiren en una hora. 
         const newCode = await resetPasswordCodeService.saveCode(email, code);
-        console.log('Código guardado:', newCode);
-
+        req.logger.info(`Código guardado: ${newCode}`);
+        
         //enviamos mail de recuperacion de password
         const transport = nodemailer.createTransport({
             service: 'gmail',
@@ -211,10 +213,10 @@ export const resetPassword = async (req, res, next) => {
                 `,
                 attachments:[]
             })
-            //req.logger.info(`Correo de inicio de sesión enviado al usuario ${email}`);
+            req.logger.info(`Correo de inicio de sesión enviado al usuario ${email}`);
         } catch (error) { 
             console.log('Error:', error.message);
-            //req.logger.error('Error enviando correo electrónico:', error);
+            req.logger.error(`Error enviando correo electrónico: ${error.message}`);
             return res.status(500).json({ message: 'Error enviando correo electrónico' });
         }
 
@@ -229,6 +231,7 @@ export const resetPassword = async (req, res, next) => {
 
 // #Controller para reiniciar la contraseña
 export const newPassword = async (req, res) => {
+    req.logger.info('Reiniciando la contraseña');
     try {
         // Extraer el email y la contraseña del cuerpo de la solicitud
         const { code, password } = req.body;
@@ -236,6 +239,7 @@ export const newPassword = async (req, res) => {
         // Obtener el código de recuperación
         const resetCode = await resetPasswordCodeService.getCode(code);
         if (!resetCode) {
+            req.logger.warn('Código de recuperación inválido');
             return res.status(400).json({ status: "error", message: "Código de recuperación inválido" });
         }
         
@@ -246,12 +250,14 @@ export const newPassword = async (req, res) => {
         // Actualizar el usuario
         const updatedUser = await userService.updateUserByEmail(resetCode.email, updates);
         if (!updatedUser) {
+            req.logger.error('Error al actualizar la contraseña del usuario');
             return res.status(500).json({ status: "error", message: "Error al actualizar la contraseña del usuario" });
         }
         // Enviar una respuesta exitosa
+        req.logger.info('Contraseña actualizada con éxito');
         res.json({ status: "success", message: "Contraseña actualizada con éxito" });
     } catch (error) {
-        console.error(error);
+        req.logger.error(`Error al reiniciar la contraseña: ${error}`);
         res.status(500).json({ status: "error", message: "Error del servidor" });
     }
 }

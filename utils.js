@@ -59,6 +59,7 @@ export const passportCall = (strategy) => {
     }
 }
 
+//En desuso. Se esta utilizando applyPolicy desde authMiddleware.js
 export const authorization = (role) => {
     return async(req, res, next)=> {
         if (!req.user) {

@@ -1,6 +1,4 @@
 import { Router } from 'express';
-import __dirname from '../../utils.js'
-//import controller de productos:
 import { 
     getProductsQuery, 
     getProductById, 
@@ -10,6 +8,7 @@ import {
 } from '../controllers/productController.js';
 //Importamod middleware para logger:
 import { addLogger } from '../utils/logger.js';
+
 
 //Inicializamos la extencion de express: Router
 const router = Router()

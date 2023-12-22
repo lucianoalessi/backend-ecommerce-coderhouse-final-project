@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import __dirname from '../../../utils.js';
 
 class TicketManager {
-    constructor(path) {
-        this.path = path;
+    constructor() {
+        this.path = path.join(__dirname,'./data/tickets.json');
     }
 
     getTickets = async () => {
@@ -81,48 +81,48 @@ export default TicketManager;
 
 //test:
 
-console.log("Iniciando el test...");
+// console.log("Iniciando el test...");
 
-// Crear una instancia de TicketManager
-const ticketManager = new TicketManager(path.join(__dirname,'./data/tickets.json'));
+// // Crear una instancia de TicketManager
+// const ticketManager = new TicketManager(path.join(__dirname,'./data/tickets.json'));
 
-// Prueba: Guardar un ticket
-ticketManager.addTicket({amount: 100, purchaser: 'test@example.com'})
-    .then(newTicket => {
-        console.log("Nuevo ticket guardado:", newTicket);
+// // Prueba: Guardar un ticket
+// ticketManager.addTicket({amount: 100, purchaser: 'test@example.com'})
+//     .then(newTicket => {
+//         console.log("Nuevo ticket guardado:", newTicket);
 
-        // Prueba: Obtener un ticket
-        ticketManager.getTicketById(newTicket._id)
-            .then(ticket => {
-                console.log("Ticket obtenido:", ticket);
+//         // Prueba: Obtener un ticket
+//         ticketManager.getTicketById(newTicket._id)
+//             .then(ticket => {
+//                 console.log("Ticket obtenido:", ticket);
 
-                // Prueba: Actualizar un ticket
-                ticketManager.updateTicket(4, {code: 'newCode', purchase_datetime: Date.now(), amount: 5050510, purchaser: 'new@example.com'})
-                    .then(() => {
-                        console.log("Ticket actualizado exitosamente.");
+//                 // Prueba: Actualizar un ticket
+//                 ticketManager.updateTicket(4, {code: 'newCode', purchase_datetime: Date.now(), amount: 5050510, purchaser: 'new@example.com'})
+//                     .then(() => {
+//                         console.log("Ticket actualizado exitosamente.");
 
-                        // // Prueba: Eliminar un ticket
-                        // ticketManager.deleteTicket(newTicket._id)
-                        //     .then(() => {
-                        //         console.log("Ticket eliminado exitosamente.");
-                        //     })
-                        //     .catch(error => {
-                        //         console.error("Error al eliminar el ticket:", error.message);
-                        //     });
+//                         // // Prueba: Eliminar un ticket
+//                         // ticketManager.deleteTicket(newTicket._id)
+//                         //     .then(() => {
+//                         //         console.log("Ticket eliminado exitosamente.");
+//                         //     })
+//                         //     .catch(error => {
+//                         //         console.error("Error al eliminar el ticket:", error.message);
+//                         //     });
 
-                    })
-                    .catch(error => {
-                        console.error("Error al actualizar el ticket:", error.message);
-                    });
+//                     })
+//                     .catch(error => {
+//                         console.error("Error al actualizar el ticket:", error.message);
+//                     });
 
-            })
-            .catch(error => {
-                console.error("Error al obtener el ticket:", error.message);
-            });
+//             })
+//             .catch(error => {
+//                 console.error("Error al obtener el ticket:", error.message);
+//             });
 
-    })
-    .catch(error => {
-        console.error("Error al guardar el ticket:", error.message);
-    });
+//     })
+//     .catch(error => {
+//         console.error("Error al guardar el ticket:", error.message);
+//     });
 
-console.log("Test finalizado.");
+// console.log("Test finalizado.");
