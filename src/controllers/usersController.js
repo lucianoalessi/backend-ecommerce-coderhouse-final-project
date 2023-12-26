@@ -9,12 +9,17 @@ export const premiumController = async(req,res) =>{
     // Obtenemos el usuario por su uid
     const user = await userService.getUserById(uid)
 
-    // Definimos los documentos requeridos para ser usuario premium
-    const REQUIRED_DOCUMENTS = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+    //caso de que el usuario sea 'premium' y se quiera pasar a 'user' , no requiere chequeo de documentacion.
+    // if(user.role === 'premium'){
+    //     user.role = 'user'
+    //     const updateUser = await userService.updateUserById(uid, user);
+    // }
 
-    
+    // Definimos los documentos requeridos para ser usuario premium
+    const REQUIRED_DOCUMENTS = ['identification', 'address_proof', 'account_statement'];
+
     // Verificamos si el usuario tiene todos los documentos requeridos
-    if (user.documents.some(doc => REQUIRED_DOCUMENTS.includes(doc.name))) {
+    if (REQUIRED_DOCUMENTS.every(doc => user.documents.map(document => document.name.split('.')[0]).includes(doc))) {
         // Si el usuario tiene todos los documentos, cambiamos su rol
         switch (user.role) {
           case 'user':
@@ -25,7 +30,7 @@ export const premiumController = async(req,res) =>{
             break;
         }
         // Actualizamos el usuario en la base de datos
-        const updateUser = await userService.updateUser(uid, user);
+        const updateUser = await userService.updateUserById(uid, user);
         req.logger.info(`Usuario actualizado a rol: ${user.role}`);
         // Enviamos una respuesta con estado 200 y el usuario actualizado
         res.status(200).send({ status: 'success', user: user });
@@ -44,10 +49,16 @@ export const uploadDocuments = async (req, res) => {
         const user = await userService.getUserById(req.params.uid);
         // Si el usuario no existe, enviamos un error
         if (!user) {
-            req.logger.error('Usuario no encontrado');
+            // req.logger.error('Usuario no encontrado');
             return res.status(404).send('User not found');
         }
 
+        if(!req.files){
+            return res.status(400).send({status:'error' , error:'No se puede guardar el archivo'})
+        }
+
+        let documents = req.files
+        console.log('=====>',documents)
         // Añadimos los documentos subidos al usuario
         documents.forEach(doc => {
             user.documents.push({
@@ -58,11 +69,12 @@ export const uploadDocuments = async (req, res) => {
   
         // Guardamos el usuario actualizado en la base de datos
         await userService.updateUserById(req.params.uid, user);
-        req.logger.info('Documentos subidos con éxito');
+        // req.logger.info('Documentos subidos con éxito');
 
     } catch (error) {
-        // Si hay un error, lo imprimimos en la consola
-        req.logger.error(`Error al subir documentos: ${error}`);
+        // // Si hay un error, lo imprimimos en la consola
+        console.log(error)
+        // req.logger.error(`Error al subir documentos: ${error}`);
     }
 }
 

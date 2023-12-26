@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/server.js",
+    "start": "nodemon ./src/server.js",
     "dev": "nodemon ./src/server.js",
     "test": "mocha ./src/test/integral"
   },
@@ -34,6 +34,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "sweetalert2": "^11.7.27",
+    "tailwindcss": "^3.4.0",
     "uuid": "^9.0.1",
     "winston": "^3.11.0"
   },

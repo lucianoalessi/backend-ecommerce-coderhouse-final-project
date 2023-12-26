@@ -1,14 +1,37 @@
-<form id="uploadForm" action="/api/users/{{uid}}/documents" method="post" enctype="multipart/form-data">
-  <input id="fileInput" type="file" name="documents" multiple>
-  <button type="submit">Subir documentos</button>
-</form>
+<div class="container">
+  <div class="py-5 text-center">
+    <h2>Suba los archivos requeridos:</h2>
+    <p class="lead">ID de usuario: {{userId}}</p>
+  </div>
 
-<script>
-document.getElementById('uploadForm').addEventListener('submit', function(event) {
-  const fileInput = document.getElementById('fileInput');
-  if (fileInput.files.length === 0) {
-    alert('Por favor, selecciona al menos un archivo.');
-    event.preventDefault();  // Evita que se envíe el formulario
-  }
-});
-</script>
+  <div class="row">
+    <div class="col-md-12">
+      <form id="uploadForm" action="/api/users/{{userId}}/documents" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="fileInput" class="form-label">Seleccionar archivos</label>
+          <input id="fileInput" type="file" name="documents" multiple class="form-control" required>
+          <div class="invalid-feedback">
+            Por favor, selecciona al menos un archivo.
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Subir documentos</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4">
+    <h5>Recordatorio:</h5>
+    <h6>Actualización a Usuario Premium</h6>
+    <p>Para proceder con la actualización a usuario premium, es necesario que cargue los siguientes documentos:</p>
+    <ol class="list-group">
+        <li class="list-group-item"><strong>1- Identificación</strong> - Denominación del archivo: <strong>identification</strong></li>
+        <li class="list-group-item"><strong>2- Comprobante de domicilio</strong> - Denominación del archivo: <strong>address_proof</strong></li>
+        <li class="list-group-item"><strong>3- Comprobante de estado de cuenta</strong> - Denominación del archivo: <strong>account_statement</strong></li>
+    </ol>
+    <div class="d-flex justify-content-around my-3">
+        <a href="/api/users/premium/{{user._id}}" class="btn btn-outline-secondary"><i class="fas fa-star"></i> Actualizar a Premium</a>
+    </div>
+</div>
+
+<script src="/js/multer.js"></script>

@@ -1,29 +1,50 @@
-    <div class="container mt-4">
-        <h1 class="mb-3"><i class="fas fa-user-circle"></i> Tu perfil (sin datos sensibles):</h1>
-        <div class="card mb-3">
+<div class="container mt-4">
+    <h1 class="mb-3"><i class="fas fa-user-circle"></i> Mi Perfil</h1>
+    <div class="card mb-3">
+        <div class="card-body">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item"><i class="fas fa-user"></i> <strong>Nombre completo:</strong> {{user.first_name}} {{user.last_name}}</li>
-                <li class="list-group-item"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{user.email}}</li>
+                <li class="list-group-item"><i class="fas fa-user"></i> <strong>Nombre:</strong> {{user.first_name}} {{user.last_name}}</li>
+                <li class="list-group-item"><i class="fas fa-at"></i> <strong>Correo Electrónico:</strong> {{user.email}}</li>
+                <li class="list-group-item"><i class="fas fa-id-card"></i> <strong>ID de Usuario:</strong> {{user._id}}</li>
                 <li class="list-group-item"><i class="fas fa-birthday-cake"></i> <strong>Edad:</strong> {{user.age}}</li>
-                <li class="list-group-item"><i class="fas fa-user-tag"></i> <strong>Rol:</strong> {{user.role}}</li>
-                <li class="list-group-item"><i class="fas fa-shopping-cart"></i> <strong>Cart ID:</strong> {{cartId}}</li>
-                <li class="list-group-item"><i class="fas fa-shopping-cart"></i> <strong>documents:</strong> {{user.documents}}</li>
+                <li class="list-group-item"><i class="fas fa-user-tag"></i> <strong>Tipo de Usuario:</strong> {{user.role}}</li>
+                <li class="list-group-item"><i class="fas fa-shopping-cart"></i> <strong>ID de Carrito:</strong> {{cartId}}</li>
+                <li class="list-group-item"><i class="fas fa-file-alt"></i> <strong>Documentos:</strong> 
+                    <ul>
+                        {{#each user.documents}}
+                            <li>{{this.name}}</li>
+                        {{/each}}
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
+</div>
+<div class="container mt-4">
+    <h4>Actualización a Usuario Premium</h4>
+    <p>Para proceder con la actualización a usuario premium, es necesario que cargue los siguientes documentos:</p>
+    <ol class="list-group">
+        <li class="list-group-item"><strong>1- Identificación</strong> - Denominación del archivo: <strong>identification</strong></li>
+        <li class="list-group-item"><strong>2- Comprobante de domicilio</strong> - Denominación del archivo: <strong>address_proof</strong></li>
+        <li class="list-group-item"><strong>3- Comprobante de estado de cuenta</strong> - Denominación del archivo: <strong>account_statement</strong></li>
+    </ol>
+    <div class="d-flex justify-content-around my-3">
+        <a href="/api/users/{{user._id}}/documents" class="btn btn-outline-secondary"><i class="fas fa-upload"></i> Cargar Documentos</a>
+    </div>
+    <div class="d-flex justify-content-around my-3">
+        <a href="/api/users/premium/{{user._id}}" class="btn btn-outline-secondary"><i class="fas fa-star"></i> Actualizar a Premium</a>
+    </div>
+</div>
 
 
-{{!-- <div>
-    <h1>Tu perfil (sin datos sensibles):</h1>
-    <p>Nombre completo: {{user.first_name}} {{user.last_name}}</p>
-    <p>Email: {{user.email}}</p>
-    <p>Edad: {{user.age}}</p>
-    <p>Rol: {{user.role}}</p>
-    <p>Cart ID: {{cartId}}</p>
-    <form action="/products" method="get">
-		<button>Volver</button>
-	</form>
-    <form action="/api/sessions/logout" method="get">
-		<button>Salir</button>
-	</form>
+{{!-- <div class="container mt-4">
+    <h4>Sube tu Foto de Perfil</h4>
+    <form action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data" class="my-3">
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" name="profile" accept="image/*">
+            <label class="custom-file-label" for="customFile">Elige una imagen</label>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-upload"></i> Subir Foto de Perfil</button>
+    </form>
 </div> --}}
+

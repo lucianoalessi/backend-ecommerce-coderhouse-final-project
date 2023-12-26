@@ -125,5 +125,7 @@ export const profileView = async (req, res) => {
 
 // Vista para cargar documentos:
 export const uploadDocumentView = async (req, res) => {
-    res.render('multer');
+    const userId = req.user._id
+    console.log(userId)
+    res.render('multer' , {userId});
 }

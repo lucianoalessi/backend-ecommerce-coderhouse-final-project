@@ -112,15 +112,14 @@ const initializePassport = async () => {
         clientSecret: "ddc4da16191d83e241c2c02310d931bf18450e5b",
         callbackURL:"http://localhost:8080/api/sessions/githubCallback"
     }, async(accessToken, refreshToken, profile, done) => {
-        req.logger.info(`Passport - Iniciando sesión con GitHub para el usuario: ${profile._json.email}`);
+        //req.logger.info(`Passport - Iniciando sesión con GitHub para el usuario: ${profile._json.email}`);
         try{
             console.log(profile); //console.log para la informacion que viene del perfil de GitHub. 
             // Buscamos un usuario por su dirección de correo electrónico en la base de datos
-            //let user = await userModel.findOne({email:profile._json.email})
             let user = await userService.getUserByEmail(profile._json.email)
             // si el usuario no existia en nuestro sitio web, lo agregamos a la base de datos.
             if(!user){
-                req.logger.info('Passport - Creando nuevo usuario a partir de la cuenta de GitHub');
+                //req.logger.info('Passport - Creando nuevo usuario a partir de la cuenta de GitHub');
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: ' ', //rellenamos los datos que no vienen desde el perfil.
@@ -132,15 +131,15 @@ const initializePassport = async () => {
                 }
                 //let result = await userModel.create(newUser);
                 let result = await userService.addUser(newUser);
-                req.logger.info(`Passport - Usuario registrado con éxito: ${newUser.email}`);
+                //req.logger.info(`Passport - Usuario registrado con éxito: ${newUser.email}`);
                 done(null, result);
             }else{ 
                 // Si el usuario ya existe, simplemente lo autenticamos
-                req.logger.info('Passport - El usuario ya existe, autenticando');
+                //req.logger.info('Passport - El usuario ya existe, autenticando');
                 done(null, user);
             }
         }catch(error){
-            req.logger.error(`Passport - Error al iniciar sesión con GitHub: ${error}`);
+            //req.logger.error(`Passport - Error al iniciar sesión con GitHub: ${error}`);
             done(error);
         }
     }))
