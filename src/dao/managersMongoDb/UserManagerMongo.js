@@ -6,9 +6,9 @@ export default class UserManager{
     }
 
     //Metodo para obtener usuarios
-    getUsers = async () => {
+    getUsers = async (filter) => {
         try {
-            const users = await userModel.find().lean()
+            const users = await userModel.find(filter).lean()
             return users
         } catch (error) {
             console.log(error)
@@ -71,6 +71,16 @@ export default class UserManager{
     deleteUser = async (idUser) => {
         try{
             return await userModel.deleteOne({_id: idUser})
+        }catch (error) {
+            console.log(error)
+            throw error
+        }
+    }
+
+    //Eliminar usuarios
+    deleteUsers = async (filter) => {
+        try{
+            return await userModel.deleteMany(filter)
         }catch (error) {
             console.log(error)
             throw error

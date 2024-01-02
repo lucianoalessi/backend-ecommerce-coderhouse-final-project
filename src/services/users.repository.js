@@ -3,8 +3,8 @@ export default class UsersRepository {
         this.dao = dao
     }
 
-    getUsers = async () => {
-        const users = await this.dao.getUsers();
+    getUsers = async (filter) => {
+        const users = await this.dao.getUsers(filter);
         return users;
     }
 
@@ -35,6 +35,11 @@ export default class UsersRepository {
 
     deleteUser = async (userId) => {
         const result = await this.dao.deleteUser(userId);
+        return result;
+    }
+
+    deleteUsers = async (filter) => {
+        const result = await this.dao.deleteUsers(filter);
         return result;
     }
 }

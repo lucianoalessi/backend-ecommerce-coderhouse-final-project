@@ -14,7 +14,8 @@ import {
 	resetPasswordView,
 	newPasswordView,
 	uploadDocumentView,
-	purchaseView
+	purchaseView,
+	usersAdminManager
 } from "../controllers/viewsController.js";
 //Importamos middlewares:
 import { applyPolicy,  privateAccess, redirectAdmin } from "../middlewares/authMiddleware.js";
@@ -71,7 +72,8 @@ router.get('/api/users/:uid/documents', passportCall('jwt'),applyPolicy(['USER' 
 //NOTA: le agregamos el middleware passportcall('jwt) para que pueda obtener los datos del usuario en token a travez de req.user
 router.get('/profile', passportCall('jwt'),applyPolicy(['USER' , 'PREMIUM']), privateAccess, profileView);
 
-
+//Vista para administrar usuarios:
+router.get('/usersadminmanager', passportCall('jwt'),applyPolicy(['ADMIN']), privateAccess, usersAdminManager);
 
 export default router;
 

@@ -97,7 +97,7 @@ app.use(passport.session());
 app.use(cookieParser());
 
 //configuramos la carpeta public como estatica:
-app.use(express.static(__dirname +'/src/public'));
+app.use('/static' , express.static(__dirname +'/src/public'));
 
 //Configuraciones para plantillas handlebars:
 app.engine('handlebars' , handlebars.engine());
@@ -142,15 +142,29 @@ socketServer.on('connection', async (socket) => {
     //recibimos informacion del cliente, en este caso un nuevo producto y lo agregamos a nuestra base de datos. 
     socket.on('addProduct', async data => {
 
-        const product = data.product;
-        const userId = data.userId;
-        const user = await userService.getUserById(userId);
-        if(user) product.owner = user._id
+        // const product = data.product;
+        // const userId = data.userId;
+        // const userRole = data.userRole
 
-        await productService.addProduct(product)
+        // //caso que el administrador quiera crear un producto
+        // if (!userId && userRole === 'admin') {
+        //     await productService.addProduct(product)
+        //     const updateProductsList = await productService.getProducts();
+        //     socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+        //     socket.emit('productAdded'); //para el manejo de alertas
+        //     return;
+        // }
+        
+        // //caso que un usuario cree un producto
+        // const user = await userService.getUserById(userId);
+        // if(user) product.owner = user._id
+
+        // await productService.addProduct(product)
+        // const updateProductsList = await productService.getProducts();
+        // socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+        // socket.emit('productAdded'); //para el manejo de alertas
+
         const updateProductsList = await productService.getProducts();
-        socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
-        socket.emit('productAdded'); //para el manejo de alertas
     })
 
     //#UPDATE PRODUCT:
@@ -180,21 +194,25 @@ socketServer.on('connection', async (socket) => {
     //#DELETE PRODUCT:
     //recibimos del cliente el id del producto a eliminar
     socket.on('deleteProduct', async (productId , userData) => {
-        // Obtenemos el producto
-        const product = await productService.getProductById(productId);
 
-        if (product === null) {
-            socket.emit('error', 'Producto no encontrado');
-        }
-        // Verificamos si el usuario es el propietario del producto o si es admin
-        else if (userData.role === 'admin' || product.owner === userData._id) {
-            await productService.deleteProduct(productId); //eliminamos el producto
-            const updateProducts = await productService.getProducts(); //obtenemos la lista actualizada con el producto eliminado
-            socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista actualizada
-            socket.emit('productDeleted')//para el manejo de alertas
-        } else {
-            socket.emit('error', 'No tienes permiso para eliminar este producto');
-        }
+        const updateProducts = await productService.getProducts(); //obtenemos la lista actualizada con el producto eliminado
+        socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista actualizada
+
+        // // Obtenemos el producto
+        // const product = await productService.getProductById(productId);
+
+        // if (product === null) {
+        //     socket.emit('error', 'Producto no encontrado');
+        // }
+        // // Verificamos si el usuario es el propietario del producto o si es admin
+        // else if (userData.role === 'admin' || product.owner === userData._id) {
+        //     await productService.deleteProduct(productId); //eliminamos el producto
+        //     const updateProducts = await productService.getProducts(); //obtenemos la lista actualizada con el producto eliminado
+        //     socket.emit('updatedProducts', updateProducts ); //le enviamos al cliente la lista actualizada
+        //     socket.emit('productDeleted')//para el manejo de alertas
+        // } else {
+        //     socket.emit('error', 'No tienes permiso para eliminar este producto');
+        // }
     })
 
 })

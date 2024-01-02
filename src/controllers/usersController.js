@@ -1,4 +1,8 @@
 import { userService } from "../services/index.js"
+import { cartService } from "../services/index.js";
+import nodemailer from 'nodemailer'
+import moment from 'moment';
+import config from "../config/config.js";
 
 // Controlador para manejar la lógica de usuarios premium
 export const premiumController = async(req,res) =>{
@@ -79,10 +83,111 @@ export const uploadDocuments = async (req, res) => {
 }
 
 // Controlador para obtener todos los usuarios
-export const getUsers = async(req,res) => {
+export const getUsers = async (req,res) => {
     // Obtenemos todos los usuarios
     const users = await userService.getUsers()
     req.logger.info(`Usuarios obtenidos: ${users.length}`);
     // Enviamos una respuesta con estado 200 y la lista de usuarios
     res.status(200).send({ status: 'success', users: users })
 }
+
+// DELETE /api/users
+export const deleteUsers = async (req, res) => {
+    try {
+        // Creamos una constante que representa la fecha y hora de hace exactamente dos días a partir de ahora
+        const twoDaysAgo = moment().subtract(2, 'days').toDate();
+        req.logger.info(`Fecha y hora de hace dos días: ${twoDaysAgo}`);
+        // Recuperamos una lista de usuarios cuya última conexión fue antes de la fecha y hora almacenada en 'twoDaysAgo'
+        const usersToDelete = await userService.getUsers({ last_connection: { $lt: twoDaysAgo } });
+        req.logger.info(`Usuarios a eliminar: ${usersToDelete.length}`);
+
+        // Configuramos nodemailer
+        const transport = nodemailer.createTransport({
+            service: 'gmail',
+            port: 587,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            } 
+        });
+
+        for (const user of usersToDelete) {
+            // Enviamos correo electrónico
+            if (user.email) {
+                await transport.sendMail({
+                    from: `Coder App <${process.env.EMAIL_USER}>`,
+                    to: user.email,
+                    subject: 'Tu cuenta ha sido eliminada',
+                    text: `Hola ${user.first_name}, tu cuenta ha sido eliminada por inactividad.`,
+                });
+                req.logger.info(`Correo enviado a: ${user.email}`);
+            } else {
+                req.logger.warning(`No se pudo enviar correo a un usuario debido a que no tiene una dirección de correo electrónico definida.`);
+            }
+
+            console.log(user.cart[0]._id)
+            await cartService.deleteCart(user.cart[0]._id);
+            req.logger.info(`Carrito eliminado para el usuario: ${user._id}`);
+        }
+
+        await userService.deleteUsers({ _id: { $in: usersToDelete.map(user => user._id) } });
+        req.logger.info(`Usuarios eliminados correctamente. Total eliminados: ${usersToDelete.length}`);
+        res.json({ message: 'Usuarios eliminados correctamente' });
+        
+    } catch (error) {
+        req.logger.error(`Error al eliminar usuarios: ${error}`);
+        res.status(500).json({ message: 'Hubo un error al eliminar los usuarios' });  
+    }
+}
+// DELETE users by ID
+export const deleteUser = async (req, res) => {
+    try {
+        const { uid } = req.params;
+        // Recuperamos una lista de usuarios cuya última conexión fue antes de la fecha y hora almacenada en 'twoDaysAgo'
+        const userToDelete = await userService.getUserById(uid);
+
+        // Configuramos nodemailer
+        const transport = nodemailer.createTransport({
+            service: 'gmail',
+            port: 587,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            } 
+        });
+
+        // Enviamos correo electrónico
+        if (userToDelete.email) {
+            await transport.sendMail({
+                from: `Coder App <${process.env.EMAIL_USER}>`,
+                to: userToDelete.email,
+                subject: 'Tu cuenta ha sido eliminada',
+                text: `Hola ${userToDelete.first_name}, tu cuenta ha sido eliminada por inactividad.`,
+            });
+            req.logger.info(`Correo enviado a: ${userToDelete.email}`);
+        } else {
+            req.logger.warning(`No se pudo enviar correo a un usuario debido a que no tiene una dirección de correo electrónico definida.`);
+        }
+
+        console.log(userToDelete.cart[0]._id)
+        await cartService.deleteCart(userToDelete.cart[0]._id);
+        req.logger.info(`Carrito eliminado para el usuario: ${userToDelete._id}`);
+
+        await userService.deleteUser(uid);
+        res.json({ message: 'Usuario eliminado correctamente' });
+
+    }catch (error) {
+        req.logger.error(`Error al eliminar usuarios: ${error}`);
+        res.status(500).json({ message: 'Hubo un error al eliminar los usuarios' });  
+    }
+}
+
+// // Ruta de la vista del administrador (sólo un ejemplo, necesitarás un motor de plantillas o usar un framework en el lado del cliente)
+// router.get('/admin', async (req, res) => {
+//     if (req.user.role !== 'admin') {
+//         return res.status(403).send('Acceso denegado');
+//     }
+
+//     const users = await userModel.find();
+//     res.render('admin', { users });
+// });

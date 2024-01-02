@@ -1,0 +1,105 @@
+<div class="container">
+    <h1 class="my-4">Panel de administración de usuarios</h1>
+
+    <input class="form-control mb-3" id="searchInput" type="text" placeholder="Buscar por correo o ID...">
+    <button class="btn btn-danger mb-3" id="deleteInactiveUsers">Eliminar usuarios inactivos</button>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Correo</th>
+                <th scope="col">User ID</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Ultima Conexion</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+            {{#each users}}
+            <tr>
+                <td>{{this.first_name}} {{this.last_name}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this._id}}</td>
+                <td>{{this.role}}</td>
+                <td>{{this.last_connection}}</td>
+                <td>
+                    <button class="btn btn-primary edit-role" data-id="{{this._id}}">Editar rol</button>
+                    <button class="btn btn-danger delete-user" data-id="{{this._id}}">Eliminar usuario</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.getElementById('userTable').rows;
+
+        for (let i = 0; i < rows.length; i++) {
+            let email = rows[i].cells[1].textContent;
+            let id = rows[i].cells[2].textContent;
+            if (email.toUpperCase().indexOf(filter) > -1 || id.toUpperCase().indexOf(filter) > -1) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    });
+
+    document.querySelectorAll('.edit-role').forEach(function(button) {
+        button.addEventListener('click', function() {
+            let userId = this.getAttribute('data-id');
+            fetch(`api/users/premium/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    });
+
+    document.querySelectorAll('.delete-user').forEach(function(button) {
+        button.addEventListener('click', function() {
+            let userId = this.getAttribute('data-id');
+            fetch(`api/users/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    });
+
+    document.getElementById('deleteInactiveUsers').addEventListener('click', function() {
+        fetch('api/users', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+</script>

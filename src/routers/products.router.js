@@ -8,6 +8,8 @@ import {
 } from '../controllers/productController.js';
 //Importamod middleware para logger:
 import { addLogger } from '../utils/logger.js';
+import { passportCall } from '../../utils.js';
+import upload from '../middlewares/multerConfig.js'
 
 
 //Inicializamos la extencion de express: Router
@@ -23,13 +25,13 @@ router.get('/' ,addLogger, getProductsQuery );
 router.get('/:pid' ,addLogger, getProductById );
 
 // Ruta para agregar un producto. (Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.post('/' ,addLogger, addProduct );
+router.post('/' ,upload.single('product'), addLogger, passportCall('jwt'), addProduct );
 
 //Ruta para modificar un producto por ID. (Con put modificamos informacion del servidor).(mongoDB)
 router.put('/:pid' ,addLogger, updateProduct );
 
 //Ruta para eliminar un producto. (Con delete eliminamos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.delete('/:pid',addLogger, deleteProduct );
+router.delete('/:pid',passportCall('jwt') , addLogger, deleteProduct );
 
 export default router; 
 

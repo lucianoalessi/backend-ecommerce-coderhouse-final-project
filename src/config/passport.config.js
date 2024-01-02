@@ -17,7 +17,7 @@ const admin = {
     last_name: 'Admin',
     email: config.ADMIN_EMAIL,
     password: config.ADMIN_PASSWORD,
-    role: 'admin', 
+    role: 'admin'
 };
 
 const LocalStrategy = local.Strategy;

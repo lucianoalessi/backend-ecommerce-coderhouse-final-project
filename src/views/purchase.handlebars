@@ -1,4 +1,38 @@
 
+<h1>Resumen de la compra</h1>
+{{#if payload}}
+    <h2>Ticket de compra</h2>
+    <p>ID del ticket: {{payload.ticket._id}}</p>
+    <p>Monto total: {{payload.ticket.amount}}</p>
+    <p>Usuario: {{payload.ticket.purchaser}}</p>
+
+    <h2>Productos procesados correctamente</h2>
+    <ul>
+        {{#each payload.productosProcesados}}
+            <li>ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
+        {{/each}}
+    </ul>
+
+    <h2>Productos no procesados</h2>
+    <ul>
+        {{#each payload.productosNoProcesados}}
+            <li>ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
+        {{/each}}
+    </ul>
+{{else}}
+    <p>{{message}}</p>
+    <h2>Productos no procesados</h2>
+    <ul>
+        {{#each productosNoProcesados}}
+            <li>ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
+        {{/each}}
+    </ul>
+{{/if}}
+
+
+
+
+{{!-- 
 <div class="container">
     <h1>Finalizar Compra</h1>
     {{#if productosProcesados}}
@@ -22,4 +56,4 @@
         <p>Monto Total: {{ticket.amount}}</p>
         <p>Comprador: {{ticket.purchaser}}</p>
     {{/if}}
-</div>
+</div> --}}

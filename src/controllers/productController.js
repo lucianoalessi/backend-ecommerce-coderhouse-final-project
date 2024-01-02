@@ -1,8 +1,11 @@
 import { productService } from "../services/index.js";
+import { userService } from "../services/index.js";
+import nodemailer from 'nodemailer';
 //manejo de errores custom:
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
+
 
 
 // Controller para obtener los productos y filtrar por query
@@ -55,10 +58,10 @@ export const getProductById = async (req, res) => {
 export const addProduct = async (req, res) => {
     try {
         // Obtenemos la informacion que envia el cliente a travez de req.body.
-        const {title, description, price, thumbnail, code, stock, category} = req.body 
+        const {title, description, category, price, stock, code, } = req.body 
         
         // Validacion de los datos del producto
-        if(!title || !description || !price || isNaN(price) || !code  || !stock || isNaN(stock) || !category){
+        if(!title || !description || !category || !price || isNaN(price) || !stock || isNaN(stock) || !code   ){
             throw CustomError.createError({
                 name:"Product creation error",
                 cause: generateProductErrorInfo({title,description,price,thumbnail,code,stock, category}),
@@ -70,12 +73,30 @@ export const addProduct = async (req, res) => {
         const newProduct = {
             title,
             description,
-            price,
-            thumbnail,
-            code,
-            stock,
             category,
+            price,
+            stock,
+            code,
+            thumbnail: `/static/products/${req.file.filename}`,
+        }   
+
+        
+        console.log(newProduct)
+
+        const userId = req.user._id;
+        const userRole = req.user.role
+
+        //caso que el administrador quiera crear un producto
+        if (!userId && userRole === 'admin') {
+            const result = await productService.addProduct(newProduct)
+            // Enviar respuesta exitosa
+            res.status(201).send({status:"Sucess: Producto agregado" , payload: result})
+            return;
         }
+
+        //caso que un usuario cree un producto
+        const user = await userService.getUserById(userId);
+        if(user) newProduct.owner = user._id
 
         // Agregar el producto y registrar el resultado
         const result = await productService.addProduct(newProduct)
@@ -116,18 +137,63 @@ export const updateProduct = async (req, res) => {
 //Eliminar un producto por id
 export const deleteProduct = async (req, res) => {
     try {
-        //obtenemos el id de producto ingresado el cliente por paramas
-        const {pid} = req.params 
-        // Eliminamos el producto y obtenemos el producto eliminado
-        const productDeleted = await productService.deleteProduct(pid);
-        // Registramos la información del producto eliminado
-        req.logger.info(`Producto eliminado: ${productDeleted.title}`);
+        // Obtenemos el id de producto ingresado el cliente por params
+        const { pid } = req.params;
+
+        // Obtenemos el producto y el usuario propietario
+        const product = await productService.getProductById(pid);
+
+        // Verificamos si el producto existe
+        if (!product) {
+            return res.status(404).send('El producto no existe');
+        }
+
+        if(req.user.role == 'admin'){
+            await productService.deleteProduct(pid);
+            req.logger.info(`Producto eliminado: ${product.title}`);
+            return res.status(204).send({ status: 'Success: Producto eliminado' });
+        }
+
+        const user = await userService.getUserById(product.owner);
+        
+        // Verificamos si el usuario es el propietario del producto o si es admin
+        if (req.user.role != 'admin' && product.owner != user._id) {
+            return res.status(403).send('No tienes permiso para eliminar este producto');
+        }
+
+        // Eliminamos el producto
+        await productService.deleteProduct(pid);
+        req.logger.info(`Producto eliminado: ${product.title}`);
+
+        // Si el usuario es premium, enviamos un correo electrónico
+        if (user.role === 'premium') {
+            // Configuramos nodemailer
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                port: 587,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD
+                }
+            });
+
+            // Enviamos el correo electrónico
+            await transporter.sendMail({
+                from: `Coder App: Ecommerce <${process.env.EMAIL_USER}>`,
+                to: user.email,
+                subject: 'Tu producto ha sido eliminado',
+                text: `Hola ${user.first_name}, tu producto "${product.title}" con ID: ${product._id} ha sido eliminado.`,
+            });
+
+            req.logger.info(`Correo enviado de Producto eliminado a: ${user.email}`);
+        }
+
         // Enviamos la respuesta al cliente
-        res.status(204).send({status:'Sucess: Producto eliminado'});
+        return res.status(204).send({ status: 'Success: Producto eliminado' });
     } catch (error) {
         // Registramos el error
         req.logger.error(`Error al eliminar el producto: ${error.message}`);
         // Enviamos el error al cliente
-        res.status(400).send(`Error al eliminar el producto: ${error.message}`);
+        return res.status(400).send(`Error al eliminar el producto: ${error.message}`);
     }
-}
+};

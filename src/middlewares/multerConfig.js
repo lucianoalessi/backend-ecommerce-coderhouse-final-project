@@ -15,9 +15,12 @@ const storage = multer.diskStorage({
   //filename hace referencia al nombre final que tendra el archivo
   filename: function (req, file, cb) {
     console.log(file)
-    cb(null, `${Date.now()} - ${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname.replace(/\s/g, '')}`); //elimina los espacios en blanco
   }
 });
+
+const upload = multer({storage});
+export default upload;
 
 
 // const storage = multer.diskStorage({
@@ -37,5 +40,4 @@ const storage = multer.diskStorage({
 //   }
 // });
 
-const upload = multer({storage});
-export default upload;
+

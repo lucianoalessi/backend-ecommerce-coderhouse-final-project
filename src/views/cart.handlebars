@@ -1,37 +1,201 @@
-<div class="container py-5">
-	<div class="row justify-content-center">
-		<div class="col-12">
-			<h1 class="text-center"><i class="bi bi-cart-fill"></i> ID del Carrito: <span id='cart-id' class='text-primary'>{{cart._id}}</span></h1>
-		</div>
-	</div>
-	<div class="row mt-4">
-		<div class="col-12">
-			<h2><i class="bi bi-basket-fill"></i> Productos en el carrito:</h2>
-			<ul class='list-group'>
-				{{#each cart.products}}
-					<li class='list-group-item'>
-						<div class='product-detail'>
-							<p><i class="bi bi-hash"></i> ID del Producto: <span class='text-info'>{{this.productID}}</span></p>
-							<p><i class="bi bi-stack"></i> Cantidad: <span class='text-info'>{{this.quantity}}</span></p>
-						</div>
-					</li>
-				{{/each}}
-			</ul>			
-		</div>
-	</div>
-	<div class="row mt-4">
-		<div class="col-12">
-			<button id="empty-cart" class='btn btn-danger'><i class="bi bi-cart-x-fill"></i> Vaciar Carrito</button>
-			<form action="/api/carts/{{cart._id}}/purchase" method="get" class='d-inline-block ml-2'>
-				<button class='btn btn-success'><i class="bi bi-cash-coin"></i> Confirmar Compra</button>
-			</form>
-			<form action="/products" method="get" class='d-inline-block ml-2'>
-				<button class='btn btn-primary'><i class="bi bi-arrow-left-circle"></i> Volver</button>
-			</form>
-		</div>
-	</div>
+{{!-- <div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <h2 class="text-center text-primary">
+                <i class="bi bi-cart-fill"></i> Carrito de Compras
+            </h2>
+            <p class="text-center">ID del Carrito: <span id='cart-id'>{{cart._id}}</span></p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="text-primary">
+                <i class="bi bi-basket-fill"></i> Productos en el Carrito:
+            </h3>
+            {{#each cartDetail}}
+                <div class='card mb-3'>
+                    <div class='row no-gutters'>
+                        <div class='col-md-4'>
+                            <img src="{{this.thumbnail}}" class="card-img" alt="{{this.title}}" style="object-fit: contain; height: 200px;">
+                        </div>
+                        <div class='col-md-8'>
+                            <div class='card-body'>
+                                <h5 class='card-title'>{{this.title}}</h5>
+                                <p>ID del Producto: <span class='text-info'>{{this._id}}</span></p>
+                                <p>Precio Unitario: <span class='text-info'>{{this.price}}</span></p>
+                                <form class="edit-quantity-form" action="/api/carts/{{../cart._id}}/product/{{this._id}}" method="put" class='d-inline-block ml-2'>
+                                    <label for="quantity">Cantidad:</label>
+                                    <input type="number" id="quantity" name="newQuantity" min="1" value="{{this.quantity}}">
+                                    <button type="submit" class='btn btn-info'>
+                                        <i class="bi bi-pencil-square"></i> Editar Cantidad
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}           
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="text-success">Total: <span id="total-price">{{totalPrice}}</span> USD </h3>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <button id="empty-cart" class='btn btn-danger'>
+                <i class="bi bi-cart-x-fill"></i> Vaciar Carrito
+            </button>
+            <form action="/api/carts/{{cart._id}}/purchase" method="get" class='d-inline-block ml-2'>
+                <button class='btn btn-success'>
+                    <i class="bi bi-cash-coin"></i> Confirmar Compra
+                </button>
+            </form>
+            <form action="/products" method="get" class='d-inline-block ml-2'>
+                <button class='btn btn-primary'>
+                    <i class="bi bi-arrow-left-circle"></i> Continuar Comprando
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
-<script src="/js/cart.js"></script>
+<script src="/static/js/cart.js"></script> --}}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <h2 class="text-center text-primary">
+                <i class="bi bi-cart-fill"></i> Carrito de Compras
+            </h2>
+            <p class="text-center">ID del Carrito: <span id='cart-id'>{{cart._id}}</span></p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="text-primary">
+                <i class="bi bi-basket-fill"></i> Productos en el Carrito:
+            </h3>
+            {{#each cartDetail}}
+                <div class='card mb-3'>
+                    <div class='row no-gutters'>
+                        <div class='col-md-4'>
+                            <img src="{{this.thumbnail}}" class="card-img" alt="{{this.title}}" style="object-fit: contain; height: 200px;">
+                        </div>
+                        <div class='col-md-8'>
+                            <div class='card-body'>
+                                <h5 class='card-title'>{{this.title}}</h5>
+                                <p>ID del Producto: <span class='text-info'>{{this._id}}</span></p>
+                                <p>Precio Unitario: <span class='text-info'>{{this.price}}</span></p>
+                                <p>Cantidad: <span class='text-info'>{{this.quantity}}</span></p>
+                                <p>Cantidad: <span class='text-info'>{{this.quantity}}</span></p>
+                                {{!-- <form action="/api/carts/{{../cart._id}}/product/{{this._id}}" method="put">
+                                    <input type="number" name="newQuantity" min="1" value="{{this.quantity}}">
+                                    <button type="submit" class='btn btn-primary'>Actualizar Cantidad</button>
+                                </form> --}}
+                                <button class='btn btn-danger delete-product' data-product-id='{{this._id}}'>
+                                    <i class="bi bi-trash-fill"></i> Eliminar Producto
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}           
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="text-success">Total: {{totalPrice}} USD </h3>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <button id="empty-cart" class='btn btn-danger'>
+                <i class="bi bi-cart-x-fill"></i> Vaciar Carrito
+            </button>
+            <form action="/api/carts/{{cart._id}}/purchase" method="get" class='d-inline-block ml-2'>
+                <button class='btn btn-success'>
+                    <i class="bi bi-cash-coin"></i> Confirmar Compra
+                </button>
+            </form>
+            <form action="/products" method="get" class='d-inline-block ml-2'>
+                <button class='btn btn-primary'>
+                    <i class="bi bi-arrow-left-circle"></i> Continuar Comprando
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/static/js/cart.js"></script>
+<style>
+	body {
+    background: linear-gradient(to bottom left, #800080 0%, black 30%, #000080 100%);
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+.container {
+    max-width: 960px;
+    margin: auto;
+    padding: 20px;
+}
+
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .2s;
+}
+
+.list-group-item:hover {
+    transform: scale(1.02);
+}
+
+.btn {
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    transition: background-color .2s;
+}
+
+.btn-outline-success {
+    background-color: transparent;
+    color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+</style>
+
 
 {{!-- <div class='cart-container'>
 	<div class='tittle-container'>

@@ -9,18 +9,23 @@ addToCartButtons.forEach((button) => {
       // Encuentra el elemento padre más cercano con la clase 'card' al botón actual.
       const card = button.closest('.card');
       // Encuentra el elemento con la clase 'card-id' dentro de la tarjeta y obtiene su contenido de texto. 
-      const productID = card.querySelector('.card-id').textContent.trim();
+      const productID = card.querySelector('.card-id').textContent.replace('Product ID: ', '').trim();
+      console.log('====<',productID)
       //obtenemos el id del carrito
       const cartID = document.getElementById('cart-id').textContent.trim();
+      console.log('====<',cartID)
+    
 
       // Primero, verifica si el producto está en stock
-      const response = await fetch(`api/products/${productID}`);
+      const response = await fetch(`/api/products/${productID}`);
+      console.log(response)
       const productData = await response.json();
+      console.log('===>', productData)
       console.log(productData.payload.stock)
 
       if (productData.payload.stock > 0) {
         // Si el producto está en stock, realiza una solicitud (POST) a una API para agregar un producto al carrito.
-        const response = await fetch(`api/carts/${cartID}/product/${productID}`, {
+        const response = await fetch(`/api/carts/${cartID}/product/${productID}`, {
           method: 'POST',
         });
         const data = await response.json();

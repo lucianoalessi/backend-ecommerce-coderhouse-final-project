@@ -11,9 +11,62 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/chat.js"></script>
+<script src="/static/js/chat.js"></script>
 
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
 
+h1 {
+    color: #333;
+}
+
+#chat-container {
+    background-color: #fff;
+    border-radius: 15px; /* Añade bordes redondeados al contenedor del chat */
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#messages-log {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#message-input {
+    flex-grow: 1;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+#send-button {
+    border-radius: 50px;
+    border-color: #3483fa;
+    color: #3483fa;
+    background-color: #fff;
+    padding: 10px 20px;
+}
+
+#send-button:hover {
+    background-color: #3483fa;
+    color: #fff;
+}
+</style>
 
 
 

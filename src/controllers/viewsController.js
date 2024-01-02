@@ -20,13 +20,13 @@ export const getProducts = async (req, res) => {
 export const pagination = async (req, res) => {
     const { limit, page, sort, query } = req.query;
     const user = req.user;
+    const userPremiumOrAdmin = user.role === 'premium' || user.role === 'admin'
     const userObject = await userService.getUserById(user._id);
     const cart = userObject.cart[0]._id;
     
-
     try {
         const products = await productService.getProductsQuery(limit, page, sort, query);
-        res.render('products', { products, user, cart });
+        res.render('products', { products, user, userPremiumOrAdmin, cart });
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: error.message });
@@ -38,7 +38,10 @@ export const getProductsInRealTime = async (req, res) => {
     try {
         const listaProductos = await productService.getProducts({});
         const user = req.user;
-        res.render('realTimeProducts', { listaProductos, user, style: 'style.css' });
+        const userAdmin = user.role === 'admin'
+        const userObject = await userService.getUserById(user._id);
+        //const cart = userObject.cart[0]._id;
+        res.render('realTimeProducts', { listaProductos, user, userAdmin, style: 'style.css' });
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: error.message });
@@ -55,12 +58,26 @@ export const cartView =  async (req, res) => {
         const user = await userService.getUserById(userId);
         const cartId = user.cart[0]._id;
         const cart = await cartService.getCartById(cartId);
-
+  
         if (!cart) {
             return res.status(404).send({ error: 'Cart not found' });
         }
 
-        res.render("cart", { cart, style: 'style.css' });
+        const productsInCart = cart.products
+
+        const cartDetail = []
+        let totalPrice = 0;
+
+        for (let product of productsInCart ) {
+            let productDetail = await productService.getProductById(product.productID);
+            productDetail = productDetail.toObject(); // Convertir a objeto plano
+            productDetail.quantity = product.quantity
+            cartDetail.push(productDetail)
+            totalPrice += productDetail.price * productDetail.quantity
+        }
+
+        console.log(totalPrice)
+        res.render("cart", { cart, cartDetail, totalPrice, style: 'style.css' });
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: error.message });
@@ -69,7 +86,7 @@ export const cartView =  async (req, res) => {
 
 // Vista para purchase:
 export const purchaseView = (req, res) => {
-    res.render('purchase');
+    res.status(200).render('purchase' , { status: 'success', payload: purchaseData });
 }
 
 // Vista para el chat (handlebars + websockets):
@@ -128,4 +145,10 @@ export const uploadDocumentView = async (req, res) => {
     const userId = req.user._id
     console.log(userId)
     res.render('multer' , {userId});
+}
+
+//vista para administrar usuarios por el administrador:
+export const usersAdminManager = async (req, res) => {
+    const users = await userService.getUsers()
+    res.render('admin' , {users});
 }

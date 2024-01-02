@@ -72,12 +72,19 @@ export default class CartManager{
     //metodo para agregar un producto a un carrito y especificar la cantidad por body. 
     modifyQuantity = async (cid, pid, quantity) => {
 		try {
+            
+            if (typeof quantity !== 'number' || quantity <= 0) {
+                throw new CustomError(400, 'La cantidad debe ser un número mayor que cero.');
+            }
 			// Filtrar por el índice del carrito y el índice del producto
 			const filter = { _id: cid, 'products.productID': pid };
 			// Actualizar la cantidad del producto específico
 			const update = { $set: { 'products.$.quantity': quantity } };
 			const updatedCart = await cartModel.findOneAndUpdate(filter, update, {new: true}); // new: true devuelve el documento actualizado
-			return updatedCart;
+            if (!updatedCart) {
+                throw new CustomError(404, `Producto ${pid} no encontrado en el carrito ${cid}.`);
+            }
+            return updatedCart;
 		} catch (error) {
 			console.log('Error al agregar un producto al carrito:', error.message);
             throw error;
@@ -139,4 +146,13 @@ export default class CartManager{
 		}
 	};
 
+    //metodo para eliminar un carrito por ID
+    deleteCart = async (cartId) => {
+        try {
+            return await cartModel.findByIdAndDelete(cartId)
+        } catch (error) {
+            console.log('Error al eliminar el carrito:', error.message)
+            throw error
+        }
+    }
 }

@@ -5,7 +5,7 @@ form.addEventListener('submit', e => {
     const data = new FormData(form);
     const obj = {};
     data.forEach((value, key) => obj[key] = value); //transformamos el array de data a objeto con un forEach.
-    fetch('api/sessions/login', {            //realizamos un post a la url indicada, enviandole el objeto por body. 
+    fetch('/api/sessions/login', {            //realizamos un post a la url indicada, enviandole el objeto por body. 
         method: 'POST',
         body: JSON.stringify(obj),
         headers: {

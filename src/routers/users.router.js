@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { addLogger } from '../utils/logger.js';
-import { premiumController, getUsers , uploadDocuments} from '../controllers/usersController.js';
+import { premiumController, getUsers , uploadDocuments , deleteUsers , deleteUser} from '../controllers/usersController.js';
 import upload from '../middlewares/multerConfig.js'
 
 
@@ -14,6 +14,13 @@ router.post('/:uid/documents', upload.array('documents'), uploadDocuments);
 
 //Ruta para obtener usuarios:
 router.get('/' , addLogger , getUsers);
+
+//Ruta para Eliminar usuarios sin conexion mayor a 2 dias:
+router.delete('/' , addLogger , deleteUsers);
+
+//Ruta para Eliminar usuarios por id:
+router.get('/:uid' , addLogger , deleteUser);
+
 
 
 export default router;

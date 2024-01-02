@@ -205,12 +205,12 @@ export const modifyProductQuantity = async (req, res) => {
 		// Modificar la cantidad del producto en el carrito
 		const updatedCart = await cartService.modifyQuantity(cartId, productId, Number(newQuantity));
 		// Registrar el éxito de la operación
-		request.logger.info(`Cantidad modificada para el producto ${productId} en el carrito ${cartId}.`);
+		//request.logger.info(`Cantidad modificada para el producto ${productId} en el carrito ${cartId}.`);
 		// Enviar una respuesta de éxito con el carrito actualizado
 		return res.status(200).json({ status: 'success', updatedCart });
 	} catch (error) {
 		// Registrar el error
-		request.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
+		//request.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
 		// Enviar una respuesta de error con el mensaje de error
 		return res.status(500).json({ error: error.message });
 	}

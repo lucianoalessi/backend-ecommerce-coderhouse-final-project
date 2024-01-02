@@ -49,37 +49,66 @@ const updateProductList = (products) => {
 // Obtener referencia al formulario y agregar un evento para cuando se envíe
 let form = document.getElementById("formProduct");
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault(); // Evitar que el formulario recargue la página
 
-  // Obtener valores de los campos del formulario
-  let title = form.elements.title.value;
-  let description = form.elements.description.value;
-  let stock = form.elements.stock.value;
-  let thumbnail = form.elements.thumbnail.value;
-  let price = form.elements.price.value;
-  let code = form.elements.code.value;
-  let category = form.elements.category.value;
+  // Crear un objeto FormData y agregar todos los campos del formulario
+  let formData = new FormData(form);
+
+  // // Obtener valores de los campos del formulario
+  // let title = form.elements.title.value;
+  // let description = form.elements.description.value;
+  // let category = form.elements.category.value;
+  // let price = form.elements.price.value;
+  // let stock = form.elements.stock.value;
+  // let code = form.elements.code.value;
+  // //let thumbnail = form.elements.thumbnail.value;
   
-  const product = {
-    title,
-    description,
-    stock,
-    thumbnail,
-    price,
-    code,
-    category,    
+  
+  // const product = {
+  //   title,
+  //   description,
+  //   category,
+  //   price,
+  //   stock,
+  //   code,
+  //   //thumbnail,   
+  // }
+
+  try {
+    // Crear una solicitud POST
+    const response = await fetch('/api/products', {
+      method: 'POST',
+      body: formData, // Enviar los datos del formulario como FormData
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const product = await response.json(); // Obtener el producto de la respuesta
+
+    if (response.status == 201) {
+      socketCliente.emit('addProduct' , {product , userId , userRole});
+      alert('Producto Agregado Correctamente');
+      form.reset(); // Restablecer los campos del formulario
+    } else {
+      alert('Error al agregar el producto.');
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
   }
 
-  // Emitir un evento "addProduct" al servidor con la información del nuevo producto
-  socketCliente.emit("addProduct", {product , userId});
+  // // Emitir un evento "addProduct" al servidor con la información del nuevo producto
+  // socketCliente.emit("addProduct", {product , userId , userRole});
 });
 
-// Escuchar el evento de producto agregado
-socketCliente.on('productAdded', () => {
-  alert('Producto Agregado Correctamente');
-  form.reset(); // Restablecer los campos del formulario
-});
+// // Escuchar el evento de producto agregado
+// socketCliente.on('productAdded', () => {
+//   alert('Producto Agregado Correctamente');
+//   form.reset(); // Restablecer los campos del formulario
+// });
 
 
 
@@ -134,24 +163,72 @@ socketCliente.on('productUpdated', () => {
 const deleteButton =  document.getElementById('delete-btn');
 
 // Agregar un evento para cuando se haga clic en el botón de eliminación
-deleteButton.addEventListener('click', () => {
+deleteButton.addEventListener('click', async () => {
 
   // obtenemos el input donde se ingresa el id
-  const productId = document.getElementById('productID-delete').value;
+  let productId = document.getElementById('productID-delete').value;
+
   // Crear un objeto con los datos del usuario
   let userData = {
     _id: userId,
     role: userRole
   } 
-  //enviamos el valor al servidor
-  socketCliente.emit('deleteProduct' , productId , userData);
-  productId = "" // Restablecer el valor del input 
+
+  try {
+    // Crear una solicitud DELETE
+    const response = await fetch(`/api/products/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+    console.log(response)
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    if (response.status == 204) {
+      socketCliente.emit('deleteProduct' , productId , userData);
+      alert('Producto eliminado correctamente!');
+      document.getElementById('productID-delete').value = ""; // Restablecer el valor del input 
+    } else {
+      alert('Error al eliminar el producto.');
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+
 });
 
+
+
+
+
+
+// // Obtener referencia al botón de eliminación
+// const deleteButton =  document.getElementById('delete-btn');
+
+// // Agregar un evento para cuando se haga clic en el botón de eliminación
+// deleteButton.addEventListener('click', () => {
+
+//   // obtenemos el input donde se ingresa el id
+//   const productId = document.getElementById('productID-delete').value;
+//   // Crear un objeto con los datos del usuario
+//   let userData = {
+//     _id: userId,
+//     role: userRole
+//   } 
+//   //enviamos el valor al servidor
+//   socketCliente.emit('deleteProduct' , productId , userData);
+//   productId = "" // Restablecer el valor del input 
+// });
+
 // Escuchar el evento de producto eliminado
-socketCliente.on('productDeleted', () => {
-  alert('Producto eliminado correctamente!');
-});
+// socketCliente.on('productDeleted', () => {
+//   alert('Producto eliminado correctamente!');
+// });
 
 
 //ALERTAS DE ERRORES:
