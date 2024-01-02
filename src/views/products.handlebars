@@ -47,6 +47,24 @@
     </div>
 </div>
 
+<div class='container mt-4'></div>
+    <form id="searchForm">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar productos" id="queryInput">
+            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="sortSelect">Ordenar por</label>
+            <select class="form-select" id="sortSelect">
+                <option selected>Elige...</option>
+                <option value="priceAsc">Precio: Menor a Mayor</option>
+                <option value="priceDesc">Precio: Mayor a Menor</option>
+                <!-- Agrega más opciones de ordenamiento si lo necesitas -->
+            </select>
+        </div>
+    </form>
+</div>
+
 <div class='container productsList mt-4'>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {{#each products.docs}}

@@ -184,26 +184,28 @@ export const addProductsToCart = async (req, res) => {
 // Función para modificar la cantidad de un producto en el carrito
 export const modifyProductQuantity = async (req, res) => {
 
-	const { cartId, productId } = req.params;
+	const { cid, pid } = req.params;
 	const { newQuantity } = req.body;
-
+	
 	try {
 		// Buscar el carrito por ID
-		const foundCart = await cartService.getCartById(cartId);
+		const foundCart = await cartService.getCartById(cid);
+		console.log('hola')
+		console.log(foundCart)
 		// Si el carrito no se encuentra, lanzar un error
 		if (!foundCart) {
-			throw new Error(`Carrito ${cartId} no encontrado.`);
+			throw new Error(`Carrito ${cid} no encontrado.`);
 		}
 
 		// Buscar el producto en el carrito
-		const productInCart = foundCart.products.find((product) => product.productID.toString() === productId);
+		const productInCart = foundCart.products.find((product) => product.productID.toString() === pid);
 		// Si el producto no se encuentra en el carrito, lanzar un error
 		if (!productInCart) {
-			throw new Error(`Producto ${productId} no encontrado en el carrito ${cartId}.`);
+			throw new Error(`Producto ${pid} no encontrado en el carrito ${cid}.`);
 		}
 
 		// Modificar la cantidad del producto en el carrito
-		const updatedCart = await cartService.modifyQuantity(cartId, productId, Number(newQuantity));
+		const updatedCart = await cartService.modifyQuantity(cid, pid, Number(newQuantity));
 		// Registrar el éxito de la operación
 		//request.logger.info(`Cantidad modificada para el producto ${productId} en el carrito ${cartId}.`);
 		// Enviar una respuesta de éxito con el carrito actualizado

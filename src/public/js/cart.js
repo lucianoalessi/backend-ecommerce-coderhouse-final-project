@@ -56,6 +56,35 @@ document.querySelectorAll('.delete-product').forEach(button => {
 
 // //para editar cantidad
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const quantityInputs = document.querySelectorAll('#quantityInput');
+    quantityInputs.forEach(input => {
+        input.addEventListener('change', (event) => {
+            console.log(`La nueva cantidad del producto es: ${event.target.value}`);
+            // Aquí puedes agregar el código para manejar la nueva cantidad
+            const newQuantity = event.target.value;
+            const productId = event.target.dataset.productid;
+            console.log('===>>',productId)
+            //const cartId = event.target.dataset.cartId;
+
+            fetch(`/api/carts/${cartID}/product/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ newQuantity }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                location.reload(); // Aquí se recarga la página
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
 // $('form').on('submit', function(e) {
 //     e.preventDefault();
 //     var url = $(this).attr('action');
