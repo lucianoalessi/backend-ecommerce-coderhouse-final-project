@@ -15,23 +15,26 @@ import upload from '../middlewares/multerConfig.js'
 //Inicializamos la extencion de express: Router
 const router = Router()
 
+// Middleware global para el logger
+router.use(addLogger);
+
 
 //RUTAS:
 
 //Ruta para manejar las solicitudes GET para obtener todos los productos y filtrar por query. (Solo sirve para MONGO DB)
-router.get('/' ,addLogger, getProductsQuery );
+router.get('/' , getProductsQuery );
 
 //Ruta para manejar las solicitudes GET para recuperar un producto específico por su ID. (La misma sirve para mongoDB)
-router.get('/:pid' ,addLogger, getProductById );
+router.get('/:pid' , getProductById );
 
 // Ruta para agregar un producto. (Con .post enviamos informacion al servidor. Con .get obtenemos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.post('/' ,upload.single('product'), addLogger, passportCall('jwt'), addProduct );
+router.post('/' ,upload.single('product'), passportCall('jwt'), addProduct );
 
 //Ruta para modificar un producto por ID. (Con put modificamos informacion del servidor).(mongoDB)
-router.put('/:pid' ,addLogger, updateProduct );
+router.put('/:pid' , updateProduct );
 
 //Ruta para eliminar un producto. (Con delete eliminamos informacion del servidor). (La misma ruta sirve para mongoDB y file system)
-router.delete('/:pid',passportCall('jwt') , addLogger, deleteProduct );
+router.delete('/:pid',passportCall('jwt') , deleteProduct );
 
 export default router; 
 

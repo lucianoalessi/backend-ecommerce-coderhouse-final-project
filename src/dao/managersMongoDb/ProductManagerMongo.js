@@ -12,7 +12,7 @@ export default class ProductManager{
 	getProductsQuery = async (limit, page, sort, query) => {
 		try {
             // Si no se proporciona un límite, se establece en 10 por defecto
-            !limit && (limit = 10);
+            !limit && (limit = 9);
             // Si no se proporciona una página, se establece en 1 por defecto
             !page && (page = 1);
             // Si el ordenamiento es 'asc', se establece en 1

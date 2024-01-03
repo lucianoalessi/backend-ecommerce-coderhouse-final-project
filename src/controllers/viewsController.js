@@ -77,7 +77,7 @@ export const cartView =  async (req, res) => {
         }
 
         console.log(totalPrice)
-        res.render("cart", { cart, cartDetail, totalPrice, style: 'style.css' });
+        res.render("cart", { cart, cartDetail, totalPrice });
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: error.message });

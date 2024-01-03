@@ -1,61 +1,53 @@
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-12">
-            <h2 class="text-center text-primary display-4">
-                <i class="bi bi-cart-fill"></i> Carrito de Compras
-            </h2>
-            <p class="text-center lead">ID del Carrito: <span id='cart-id'>{{cart._id}}</span></p>
+        <div class="col-12 text-center">
+            <h2 class="text-primary">🛒 Carrito de Compras</h2>
+            <p>Cart ID: <span id='cart-id'>{{cart._id}}</span></p>
         </div>
     </div>
+
     <div class="row mt-4">
         <div class="col-12">
-            <h3 class="text-primary display-5">
-                <i class="bi bi-basket-fill"></i> Productos en el Carrito:
-            </h3>
+            <h4 class="text-primary">🧺 Productos en el Carrito:</h4>
             {{#each cartDetail}}
                 <div class='card mb-3 shadow-sm'>
-                    <div class='row no-gutters'>
-                        <div class='col-md-4'>
-                            <img src="{{this.thumbnail}}" class="card-img-top" alt="{{this.title}}" style="object-fit: contain; height: 200px;">
+                    <div class='row no-gutters align-items-center'>
+                        <div class='col-md-4 card-img-container'>
+                            <img src="{{this.thumbnail}}" class="card-img" alt="{{this.title}}">
                         </div>
                         <div class='col-md-8'>
                             <div class='card-body'>
                                 <h5 class='card-title'>{{this.title}}</h5>
                                 <p>ID del Producto: <span class='text-info' id="product-id">{{this._id}}</span></p>
-                                <p>Precio Unitario: <span class='text-info'>{{this.price}}</span></p>
-                                <p>Cantidad: <span class='text-info'>{{this.quantity}}</span></p>
-                                <input type="number" id="quantityInput" name="newQuantity" min="1" value="{{this.quantity}}" data-productId="{{this._id}}" data-cartId="{{../cart._id}}" class="form-control">
-                                <button class='btn btn-danger delete-product mt-2' data-product-id='{{this._id}}'>
-                                    <i class="bi bi-trash-fill"></i> Eliminar Producto
-                                </button>
+                                <p>Precio Unitario: <span class='text-info'>{{this.price}} USD</span></p>
+                                <p>
+                                    Modifica cantidad: <input type="number" id="quantityInput" name="newQuantity" min="1" value="{{this.quantity}}" data-productId="{{this._id}}" data-cartId="{{../cart._id}}" class="form-control" style="display: inline-block;">
+                                </p>
+                                <button class='btn btn-danger delete-product mt-2' data-product-id='{{this._id}}'>🗑️ Eliminar</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            {{/each}}           
+            {{/each}}    
         </div>
     </div>
 
     <div class="row mt-4">
-        <div class="col-12">
-            <h3 class="text-success display-5">Total: {{totalPrice}} USD </h3>
+        <div class="col-12 text-center">
+            <div class="total-container">
+                <h3 class="text-total">Total: {{totalPrice}} USD </h3>
+                <form action="/api/carts/{{cart._id}}/purchase" method="get">
+                    <button class='btn btn-success btn-lg'>💰 Confirmar Compra</button>
+                </form>
+            </div>
         </div>
     </div>
 
     <div class="row mt-4">
-        <div class="col-12">
-            <button id="empty-cart" class='btn btn-danger btn-lg'>
-                <i class="bi bi-cart-x-fill"></i> Vaciar Carrito
-            </button>
-            <form action="/api/carts/{{cart._id}}/purchase" method="get" class='d-inline-block ml-2'>
-                <button class='btn btn-success btn-lg'>
-                    <i class="bi bi-cash-coin"></i> Confirmar Compra
-                </button>
-            </form>
+        <div class="col-12 text-center">
+            <button id="empty-cart" class='btn btn-danger btn-lg'><i class="bi bi-cart-x-fill"></i> Vaciar Carrito</button>
             <form action="/products" method="get" class='d-inline-block ml-2'>
-                <button class='btn btn-primary btn-lg'>
-                    <i class="bi bi-arrow-left-circle"></i> Continuar Comprando
-                </button>
+                <button class='btn btn-primary btn-lg'>🔙 Continuar Comprando</button>
             </form>
         </div>
     </div>
@@ -64,46 +56,59 @@
 
 <style>
 body {
-    background: linear-gradient(to bottom left, #800080 0%, black 30%, #000080 100%);
+    background: linear-gradient(45deg,#06c -52%,#000 81%,#a044e3 95%);
     color: white;
     font-family: 'Roboto', sans-serif;
 }
 
-.container {
-    max-width: 960px;
-    margin: auto;
-    padding: 20px;
-}
-
 .card {
-    height: 200px; /* Set the height of the card */
-    margin: 20px auto; /* Center the card */
+    min-height: 200px;
+    margin: 20px auto;
     border-radius: 10px;
     overflow: hidden;
     transition: transform .2s;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    transform: scale(1.00);
+    box-shadow: 0 8px 16px 0 rgba(255,255,255,0.2);
+}
+
+.card-img-container {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
 .card-img {
-    height: 100%; /* Make the image fill the card */
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 .card-body {
+    width: 600px;
     padding: 20px;
-    overflow: auto; /* Add scroll if the content is too big */
+    overflow: auto;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .card-title {
-    font-size: 1.5em;
+    font-size: 1.2em;
     color: #28a745;
     font-weight: bold;
 }
+
 
 .btn {
     border: none;
@@ -114,7 +119,6 @@ body {
 }
 
 .btn:hover {
-    background-color: #28a745;
     color: white;
     transform: scale(1.1);
 }
@@ -123,80 +127,60 @@ body {
     color: #28a745;
 }
 
-.text-success {
-    color: #28a745;
-    font-size: 2em;
-}
-
 .btn-group {
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
-</style>
 
-
-{{!-- <style>
-	body {
-    background: linear-gradient(to bottom left, #800080 0%, black 30%, #000080 100%);
-    color: white;
-    font-family: 'Roboto', sans-serif;
-}
-
-.container {
-    max-width: 960px;
-    margin: auto;
+.total-container {
+    border: 2px solid #8000ff;
+    border-radius: 25px;
     padding: 20px;
-}
-
-.list-group-item {
-    background-color: rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #8000ff;
     color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
 }
 
-.list-group-item:hover {
-    transform: scale(1.02);
+.text-total {
+    color: rgb(255, 255, 255);
+    font-size: 1.5em;
+    margin: 0;
+    font-style: normal;
 }
 
-.btn {
-    border: none;
-    border-radius: 50px;
-    padding: 10px 20px;
-    transition: background-color .2s;
-}
-
-.btn-outline-success {
-    background-color: transparent;
-    color: #28a745;
-}
-
-.btn-outline-success:hover {
+.btn-success {
+    padding: 10px 30px;
+    font-size: 1.2em;
     background-color: #28a745;
     color: white;
 }
 
-.btn-outline-secondary {
-    background-color: transparent;
-    color: #6c757d;
-}
+#quantityInput {
 
-.btn-outline-secondary:hover {
-    background-color: #6c757d;
-    color: white;
+    border-collapse: collapse;
+    -webkit-font-smoothing: antialiased;
+    display: block;
+    background: transparent;
+    color: rgba(0,0,0,.9);
+    font-family: inherit;
+    overflow: hidden;
+    resize: none;
+    border-radius: .375em;
+    height: 30px;
+    line-height: 22px;
+    margin: 0;
+    flex-grow: 1;
+    width: 74px;
+    align-items: center;
+    background-color: inherit;
+    font-size: 16px;
+    outline: none;
+    padding: 0;
+    text-align: center;
 }
+</style>
 
-.btn-outline-danger {
-    background-color: transparent;
-    color: #dc3545;
-}
-
-.btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-}
-
-</style> --}}

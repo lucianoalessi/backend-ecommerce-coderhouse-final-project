@@ -1,9 +1,25 @@
-<div class="container">
-    <h1 class="my-4">Panel de administración de usuarios</h1>
+<div class="container py-5">
+    <!-- Título -->
+    <h2 class="text-center mb-5">Panel de administración de usuarios</h2>
 
-    <input class="form-control mb-3" id="searchInput" type="text" placeholder="Buscar por correo o ID...">
-    <button class="btn btn-danger mb-3" id="deleteInactiveUsers">Eliminar usuarios inactivos</button>
+    <!-- Barra de búsqueda y botón para eliminar usuarios inactivos -->
+    <div class="d-flex justify-content-between mb-3">
+        <input 
+            class="form-control" 
+            id="searchInput" 
+            type="text" 
+            placeholder="Buscar por correo o ID..."
+            style="flex: 1; margin-right: 15px;"
+        >
+        <button 
+            class="btn btn-danger" 
+            id="deleteInactiveUsers"
+        >
+            Eliminar usuarios inactivos
+        </button>
+    </div>
 
+    <!-- Tabla de usuarios -->
     <table class="table table-striped">
         <thead>
             <tr>
@@ -24,8 +40,20 @@
                 <td>{{this.role}}</td>
                 <td>{{this.last_connection}}</td>
                 <td>
-                    <button class="btn btn-primary edit-role" data-id="{{this._id}}">Editar rol</button>
-                    <button class="btn btn-danger delete-user" data-id="{{this._id}}">Eliminar usuario</button>
+                    <!-- Botón para editar el rol del usuario -->
+                    <button 
+                        class="btn btn-primary edit-role mr-2" 
+                        data-id="{{this._id}}"
+                    >
+                        Editar rol
+                    </button>
+                    <!-- Botón para eliminar el usuario -->
+                    <button 
+                        class="btn btn-danger delete-user" 
+                        data-id="{{this._id}}"
+                    >
+                        Eliminar usuario
+                    </button>
                 </td>
             </tr>
             {{/each}}

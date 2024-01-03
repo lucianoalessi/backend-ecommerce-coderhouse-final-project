@@ -6,12 +6,30 @@ import config from "../config/config.js";
 
 // Controlador para manejar la lógica de usuarios premium
 export const premiumController = async(req,res) =>{
+    console.log('holaaaaaaa')
 
     // Extraemos el uid del usuario desde los parámetros de la petición
     const {uid} = req.params;
     req.logger.info(`Manejando lógica de usuarios premium para el usuario con ID: ${uid}`);
     // Obtenemos el usuario por su uid
     const user = await userService.getUserById(uid)
+
+    if(req.user.role === 'admin'){
+        switch (user.role) {
+            case 'user':
+              user.role = 'premium';
+              break;
+            case 'premium':
+              user.role = 'user';
+              break;
+        }
+        // Actualizamos el usuario en la base de datos
+        const updateUser = await userService.updateUserById(uid, user);
+        req.logger.info(`Usuario actualizado a rol: ${user.role}`);
+        // Enviamos una respuesta con estado 200 y el usuario actualizado
+        res.status(200).send({ status: 'success', user: user });
+        return;
+    }
 
     //caso de que el usuario sea 'premium' y se quiera pasar a 'user' , no requiere chequeo de documentacion.
     // if(user.role === 'premium'){

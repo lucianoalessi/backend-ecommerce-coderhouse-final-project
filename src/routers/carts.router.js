@@ -20,35 +20,38 @@ import { addLogger } from "../utils/logger.js";
 //Creando una nueva instancia de Router.
 const router = Router();
 
+// Middleware global para el logger
+router.use(addLogger);
+
 
 //RUTAS O ENDPOINTS:
 
 // Ruta para manejar las solicitudes GET para obtener todos los carritos. (La misma sirve para mongoDB y file system)
-router.get('/' , addLogger, getAllCarts);
+router.get('/' , getAllCarts);
 
 // Ruta para manejar las solicitudes POST para agregar un nuevo carrito. (La misma sirve para mongoDB y file system)
-router.post('/', addLogger, createNewCart);
+router.post('/', createNewCart);
 
 // Ruta para manejar las solicitudes GET para obtener un carrito específico por su ID. (La misma sirve para mongoDB y file system)
-router.get('/:cid' , addLogger, getCartById);
+router.get('/:cid' , getCartById);
 
 // Ruta para manejar las solicitudes POST para agregar un producto a un carrito específico. (La misma sirve para mongoDB y file system)
-router.post('/:cid/product/:pid' , passportCall('jwt'), addLogger, addProductToCart);
+router.post('/:cid/product/:pid' , passportCall('jwt'), addProductToCart);
 
 // Ruta para eliminar un producto de un carrito
-router.delete('/:cid/product/:pid', addLogger, deleteProdInCart);
+router.delete('/:cid/product/:pid', deleteProdInCart);
 
 // Ruta para vaciar un carrito
-router.delete('/:cid', addLogger, deleteAllProductsInCart);
+router.delete('/:cid', deleteAllProductsInCart);
 
 // Ruta para agregar un array de productos
-router.put('/:cid', addLogger, addProductsToCart);
+router.put('/:cid', addProductsToCart);
 
 // Ruta para modificar cantidad del producto
-router.put('/:cid/product/:pid', addLogger, modifyProductQuantity);
+router.put('/:cid/product/:pid', modifyProductQuantity);
 
 //Ruta para tickets (finalizar compra):
-router.get('/:cid/purchase',passportCall('jwt'), addLogger, purchase);
+router.get('/:cid/purchase', passportCall('jwt'), purchase);
 
 
 export default router;

@@ -1,69 +1,57 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <h2 class="mb-3 text-center">
-                <i class="fas fa-user-circle"></i> Bienvenido a nuestra tienda, {{user.first_name}} {{user.last_name}}!
-            </h2>
-            <h4>
-                <i class="fas fa-info-circle"></i> Aquí están tus datos de usuario:
-            </h4>
+            <h3 class="mb-3 text-center">
+                👤 Bienvenido a nuestra tienda, <strong>{{user.first_name}} {{user.last_name}} !</strong>
+            </h3>
+            <h6>
+                ℹ️ Aquí están tus datos de usuario:
+            </h6>
             <ul class="list-group mb-4">
                 <li class="list-group-item">
-                    <i class="fas fa-id-badge"></i> ID de usuario: {{user._id}}
+                    🎫 ID de usuario: {{user._id}}
                 </li>
                 <li class="list-group-item">
-                    <i class="fas fa-envelope"></i> Correo electrónico: {{user.email}}
+                    📧 Correo electrónico: {{user.email}}
                 </li>
                 <li class="list-group-item">
-                    <i class="fas fa-birthday-cake"></i> Edad: {{user.age}}
+                    🎂 Edad: {{user.age}}
                 </li>
                 <li class="list-group-item">
-                    <i class="fas fa-user-tag"></i> Rol: <span id="user-role">{{user.role}}</span>
+                    🏷️ Rol: <span id="user-role">{{user.role}}</span>
                 </li>
                 <li class="list-group-item">
-                    <i class="fas fa-shopping-cart"></i> ID del carrito: <span id="cart-id">{{cart}}</span>
+                    🛒 ID del carrito: <span id="cart-id">{{cart}}</span>
                 </li>
             </ul>
             <div class="d-flex justify-content-around my-3">
                 <a href="/profile" class="btn btn-outline-secondary">
-                    <i class="fas fa-id-card"></i> Ver perfil
+                    📇 Ver perfil
                 </a>
                 <a href="/chat" class="btn btn-outline-secondary">
-                    <i class="fas fa-comments"></i> Abrir chat
+                    💬 Abrir chat
                 </a>
                 <a href="/carts/{{cart}}" class="btn btn-outline-secondary">
-                    <i class="fas fa-cart-arrow-down"></i> Ver carrito
+                    🛒 Ver carrito
                 </a>
                 {{#if userPremiumOrAdmin}}
                 <a href="/realtimeproducts" class="btn btn-outline-secondary">
-                    <i class="fas fa-clock"></i> Product Manager en tiempo real
+                    ⏱️ Product Manager en tiempo real
                 </a>
                 {{/if}}
                 <a href="/api/sessions/logout" class="btn btn-outline-danger">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    🚪 Cerrar sesión
                 </a>
             </div>
         </div>
     </div>
 </div>
 
-<div class='container mt-4'></div>
-    <form id="searchForm">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Buscar productos" id="queryInput">
-            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
-        </div>
-        <div class="input-group mb-3">
-            <label class="input-group-text" for="sortSelect">Ordenar por</label>
-            <select class="form-select" id="sortSelect">
-                <option selected>Elige...</option>
-                <option value="priceAsc">Precio: Menor a Mayor</option>
-                <option value="priceDesc">Precio: Mayor a Menor</option>
-                <!-- Agrega más opciones de ordenamiento si lo necesitas -->
-            </select>
-        </div>
-    </form>
-</div>
+
+<h3 class="mb-3 text-center">
+    Encuentra tu producto:
+</h3>
+
 
 <div class='container productsList mt-4'>
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -72,17 +60,18 @@
                 <div class='card h-100' id='card-container'>
                     <div class='card-header'>
                         <small class='card-category'>
-                            <i class="fas fa-tags"></i> Categoría: {{this.category}}
+                            🏷️ Categoría: {{this.category}}
                         </small>
-                        <small class='card-id'> Product ID: {{this._id}}</small>
+                        <br>
+                        <small class='card-id'> PID: {{this._id}}</small>
                     </div>
                     <div class='card-body d-flex flex-column'>
                         <img src="{{this.thumbnail}}" class="card-img-top img-fluid" alt="{{this.title}}" style="object-fit: contain; height: 200px;">
                         <h5 class='card-title font-bold mt-2'>
-                            <i class="fas fa-box-open"></i> {{this.title}}
+                            {{this.title}}
                         </h5>
                         <div class='card-description text-truncate' id='description-{{this._id}}'>
-                            <i class="fas fa-info"></i> Descripción: {{this.description}}
+                            {{this.description}}
                         </div>
                         <button class='btn btn-link' onclick="document.getElementById('description-{{this._id}}').classList.toggle('text-truncate');">Leer más</button>
                         <h4 class='card-price'>
@@ -90,7 +79,7 @@
                         </h4>
                         <div class='info-container'>
                             <p class='code'>
-                                <i class="fas fa-barcode"></i> Product Code: {{this.code}}
+                                <i class="fas fa-barcode"></i> Code: {{this.code}}
                             </p>
                             <p class='stock'>
                                 <i class="fas fa-warehouse"></i> Stock: {{this.stock}}
@@ -134,10 +123,11 @@
     </nav>
 </div>
 <script src="/static/js/products.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <style>
 body {
-    background: linear-gradient(to bottom left, #800080 0%, black 30%, #000080 100%);
+    background: linear-gradient(45deg,#06c -52%,#000 81%,#a044e3 95%);
     color: white;
 }
 .container {
@@ -153,6 +143,10 @@ body {
     border-radius: 10px;
     overflow: hidden;
     transition: transform .2s;
+}
+
+.card-img-top{
+    background-color: white;
 }
 
 .card:hover {
@@ -176,8 +170,6 @@ body {
 .card-description, .code, .stock {
     font-size: 0.9rem;
 }
-
-
 
 .info-container {
     display: flex;
@@ -221,6 +213,17 @@ body {
     background-color: #dc3545;
     color: white;
 }
+
+.list-group {
+    background-color: rgba(255, 252, 252, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .2s;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
 </style>
 
 

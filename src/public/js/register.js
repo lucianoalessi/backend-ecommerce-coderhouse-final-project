@@ -6,19 +6,35 @@ form.addEventListener('submit', e => {
     const obj = {};
     data.forEach((value, key) => obj[key] = value); //transformamos el array de data a objeto con un forEach.
     
-    
-    
     fetch('api/sessions/register', {            //realizamos un post a la url indicada, enviandole el objeto por body. 
         method: 'POST',
         body: JSON.stringify(obj),
         headers: {
             'Content-Type':'application/json'
         }
-    }).then(result => result.json()).then(json => console.log(json)) //convertimos a json y lo mostramos por consola. 
-    //mensaje
-    alert('Te has registrado exitosamente!');
-    // Borra los datos de los campos del formulario
-    form.reset();
+    }).then(result => {
+        if (!result.ok) {
+            throw new Error('Error en el registro');
+        }
+        return result.json();
+    }).then(json => {
+        console.log(json); //convertimos a json y lo mostramos por consola. 
+        //mensaje
+        Swal.fire({
+            icon: 'success',
+            title: '¡Registrado exitosamente!',
+            text: 'Te has registrado exitosamente!'
+        });
+        // Borra los datos de los campos del formulario
+        form.reset();
+    }).catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Hubo un error en el registro!'
+        });
+        console.error('Error:', error);
+    });
 })
 
 

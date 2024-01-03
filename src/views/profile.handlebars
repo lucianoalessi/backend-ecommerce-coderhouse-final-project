@@ -1,44 +1,63 @@
 <div class="container mt-4">
-    <h1 class="mb-3 text-light"><i class="fas fa-user-circle"></i> Mi Perfil</h1>
     <div class="card mb-3 bg-transparent text-light">
+        <div class="card-header">
+            <h1 class="mb-3 text-light">👤 Mi Perfil</h1>
+        </div>
         <div class="card-body">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-user"></i> <strong>Nombre:</strong> {{user.first_name}} {{user.last_name}}</li>
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-at"></i> <strong>Correo Electrónico:</strong> {{user.email}}</li>
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-id-card"></i> <strong>ID de Usuario:</strong> {{user._id}}</li>
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-birthday-cake"></i> <strong>Edad:</strong> {{user.age}}</li>
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-user-tag"></i> <strong>Tipo de Usuario:</strong> {{user.role}}</li>
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-shopping-cart"></i> <strong>ID de Carrito:</strong> {{cartId}}</li>
-                <li class="list-group-item bg-transparent text-light"><i class="fas fa-file-alt"></i> <strong>Documentos:</strong> 
-                    <ul>
-                        {{#each user.documents}}
-                            <li>{{this.name}}</li>
-                        {{/each}}
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-transparent text-light">👥 <strong>Nombre:</strong> {{user.first_name}} {{user.last_name}}</li>
+                        <li class="list-group-item bg-transparent text-light">📧 <strong>Correo Electrónico:</strong> {{user.email}}</li>
+                        <li class="list-group-item bg-transparent text-light">🆔 <strong>ID de Usuario:</strong> {{user._id}}</li>
+                        <li class="list-group-item bg-transparent text-light">🎂 <strong>Edad:</strong> {{user.age}}</li>
+                        <li class="list-group-item bg-transparent text-light">🏷️ <strong>Tipo de Usuario:</strong> {{user.role}}</li>
+                        <li class="list-group-item bg-transparent text-light">🛒 <strong>ID de Carrito:</strong> {{cartId}}</li>
                     </ul>
-                </li>
-            </ul>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-transparent text-light">
+                        <div class="card-header">
+                            📄 <strong>Documentos:</strong>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                {{#each user.documents}}
+                                    <li>{{this.name}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <div class="container mt-4">
-    <h2 class="text-light">Actualización a Usuario Premium</h2>
-    <p class="text-light">Para proceder con la actualización a usuario premium, es necesario que cargue los siguientes documentos:</p>
-    <ol class="list-group">
-        <li class="list-group-item bg-transparent text-light"><strong>1- Identificación</strong> - Denominación del archivo: <strong>identification</strong></li>
-        <li class="list-group-item bg-transparent text-light"><strong>2- Comprobante de domicilio</strong> - Denominación del archivo: <strong>address_proof</strong></li>
-        <li class="list-group-item bg-transparent text-light"><strong>3- Comprobante de estado de cuenta</strong> - Denominación del archivo: <strong>account_statement</strong></li>
-    </ol>
-    <div class="d-flex justify-content-around my-3">
-        <a href="/api/users/{{user._id}}/documents" class="btn btn-outline-info"><i class="fas fa-upload"></i> Cargar Documentos</a>
-    </div>
-    <div class="d-flex justify-content-around my-3">
-        <a href="/api/users/premium/{{user._id}}" class="btn btn-outline-success"><i class="fas fa-star"></i> Actualizar a Premium</a>
+    <div class="card bg-transparent text-light">
+        <div class="card-header">
+            <h2 class="text-light">⭐ Actualización a Usuario Premium</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-light">Para proceder con la actualización a usuario premium, es necesario que cargue los siguientes documentos:</p>
+            <ol class="list-group">
+                <li class="list-group-item bg-transparent text-light"><strong>1- Identificación</strong> - Denominación del archivo: <strong>identification</strong></li>
+                <li class="list-group-item bg-transparent text-light"><strong>2- Comprobante de domicilio</strong> - Denominación del archivo: <strong>address_proof</strong></li>
+                <li class="list-group-item bg-transparent text-light"><strong>3- Comprobante de estado de cuenta</strong> - Denominación del archivo: <strong>account_statement</strong></li>
+            </ol>
+            <div class="d-flex justify-content-around my-3">
+                <a href="/api/users/{{user._id}}/documents" class="btn btn-outline-info">📤 Cargar Documentos</a>
+            </div>
+            <div class="d-flex justify-content-around my-3">
+                <a href="/api/users/premium/{{user._id}}" class="btn btn-outline-success">⭐ Actualizar a Premium</a>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
 body {
-    background: linear-gradient(to bottom left, #800080 0%, black 30%, #000080 100%);
+    background: linear-gradient(45deg,#06c -52%,#000 81%,#a044e3 95%);
     color: white;
     font-family: 'Roboto', sans-serif;
 }
@@ -49,17 +68,19 @@ body {
     padding: 20px;
 }
 
-.card {
-    background-color: rgba(255, 255, 255, 0.1);
+.card-body {
+    background-color: rgba(255, 252, 252, 0.1);
     color: white;
     border: none;
     border-radius: 10px;
     overflow: hidden;
     transition: transform .2s;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
 .card:hover {
     transform: scale(1.02);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
 .btn {
@@ -67,7 +88,11 @@ body {
     border-radius: 50px;
     padding: 15px 30px;
     font-size: 18px;
-    transition: background-color .2s;
+    transition: background-color .2s, transform .2s;
+}
+
+.btn:hover {
+    transform: scale(1.1);
 }
 
 .btn-outline-info {

@@ -1,4 +1,4 @@
-body {
+/* body {
     font-family: Arial, sans-serif;
     background-color: #ededed;
 }
@@ -44,14 +44,7 @@ h4 {
     color: #fff;
 }
 
-.card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 100%; /* Ajusta este valor según tus necesidades */
-    margin: auto;
-}
-
-.card:hover {
+/* .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
@@ -97,7 +90,7 @@ h4 {
 .pagination .page-item.active .page-link {
     background-color: #3483fa;
     border-color: #3483fa;
-}
+} */ */
 
 
 

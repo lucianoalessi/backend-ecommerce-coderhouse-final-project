@@ -9,7 +9,7 @@ addToCartButtons.forEach((button) => {
       // Encuentra el elemento padre más cercano con la clase 'card' al botón actual.
       const card = button.closest('.card');
       // Encuentra el elemento con la clase 'card-id' dentro de la tarjeta y obtiene su contenido de texto. 
-      const productID = card.querySelector('.card-id').textContent.replace('Product ID: ', '').trim();
+      const productID = card.querySelector('.card-id').textContent.replace('PID: ', '').trim();
       //obtenemos el id del carrito
       const cartID = document.getElementById('cart-id').textContent.trim();
     
@@ -26,9 +26,27 @@ addToCartButtons.forEach((button) => {
         });
         const data = await response.json();
         console.log(data);
-      } else {
-        // Si el producto no está en stock, muestra una alerta
-        alert('El producto no está en stock');
+
+        // Muestra una notificación de Toastify
+        Toastify({
+          text: "Producto agregado al carrito",
+          duration: 1000,
+          close: true,
+          gravity: "top", // `top` or `bottom`
+          position: 'right', // `left`, `center` or `right`
+          backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+        }).showToast();
+
+      } else {  
+        // Si el producto no está en stock, muestra una notificación de Toastify
+        Toastify({
+          text: "El producto no está en stock",
+          duration: 1000,
+          close: true,
+          gravity: "top", // `top` or `bottom`
+          position: 'right', // `left`, `center` or `right`
+          backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+        }).showToast();
       }
     } catch (error) {
       console.error('Error:', error);

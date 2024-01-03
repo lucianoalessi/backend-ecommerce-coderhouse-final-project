@@ -51,7 +51,7 @@ const initializePassport = async () => {
                 // Comprobamos si el usuario ya existe en la base de datos:
                 let exist = await userService.getUserByEmail(username);
                 if(exist){
-                    req.logger.warn('Passport - El usuario ya existe');
+                    req.logger.warning('Passport - El usuario ya existe');
                     return done(null, false, { message: 'User already exists' });
                 }
                 // Si el usuario no existe, creamos un nuevo usuario en la base de datos:
