@@ -218,32 +218,6 @@ export const modifyProductQuantity = async (req, res) => {
 	}
 };
 
-// //modificar cantidad de un producto
-// export const modifyQuantity = async (req, res) => {
-// 	const { cid, pid } = req.params;
-// 	const { quantity } = req.body;
-// 	try {
-// 		//Busca el carrito
-// 		const getCartByID = await cartService.getCartById(cid);
-// 		if (!getCartByID) {
-// 			req.logger.error(`Carrito ${cid} no encontrado.`);
-// 			return res.status(404).send({ error: 'Cart not found' });
-// 		}
-// 		//Busca el producto en el carrito
-// 		const exist = getCartByID.products.find((prod) => prod.productID.toJSON() === pid);
-// 		if (!exist) {
-// 			req.logger.error(`Producto ${pid} no encontrado en el carrito ${cid}.`);
-// 			return res.status(404).send({ error: 'Not found prod in cart' });
-// 		}
-// 		const modStock = await cartService.modifyQuantity(cid, pid, +quantity);
-// 		req.logger.info(`Cantidad modificada para el producto ${pid} en el carrito ${cid}.`);
-// 		res.status(200).send({ status: 'success', deletedToCart: modStock });
-// 	} catch (error) {
-// 		req.logger.error(`Error al modificar la cantidad de un producto: ${error.message}`);
-// 		res.status(400).send({ error: error.message });
-// 	}
-// }
-
 //finalizar proceso de compra:
 export const purchase = async (req,res) => {
 

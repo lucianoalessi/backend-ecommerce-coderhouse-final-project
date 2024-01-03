@@ -30,7 +30,7 @@ const empty = async (event) => {
 emptyButton.addEventListener('click', empty);
 
 
-//para eliminar un producto
+//Para eliminar un producto en el carrito
 document.querySelectorAll('.delete-product').forEach(button => {
     button.addEventListener('click', async (event) => {
         const productId = event.target.dataset.productId;
@@ -53,9 +53,7 @@ document.querySelectorAll('.delete-product').forEach(button => {
     });
 });
 
-
-// //para editar cantidad
-
+//Editar cantidad en el carrito
 document.addEventListener('DOMContentLoaded', (event) => {
     const quantityInputs = document.querySelectorAll('#quantityInput');
     quantityInputs.forEach(input => {
@@ -85,36 +83,3 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 });
-// $('form').on('submit', function(e) {
-//     e.preventDefault();
-//     var url = $(this).attr('action');
-//     var newQuantity = $(this).find('input').val();
-//     $.ajax({
-//         url: url,
-//         type: 'PUT',
-//         data: { newQuantity: newQuantity },
-//         success: function(result) {
-//             // Actualizar la página para reflejar la nueva cantidad
-//             location.reload();
-//         }
-//     });
-// });
-
-
-
-// document.querySelectorAll('.edit-quantity-form').forEach(form => {
-//     form.addEventListener('submit', async (event) => {
-//         event.preventDefault();
-//         const formData = new FormData(form);
-//         const newQuantity = formData.get('newQuantity');
-//         const response = await fetch(form.action, {
-//             method: 'PUT',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ newQuantity })
-//         });
-//         const updatedCart = await response.json();
-//         document.getElementById('total-price').textContent = updatedCart.totalPrice;
-//     });
-// });

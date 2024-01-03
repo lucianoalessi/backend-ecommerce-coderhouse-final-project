@@ -13,8 +13,8 @@ const transport = nodemailer.createTransport({
 
 export const mailingController = async(req,res) =>{
     let result = await transport.sendMail({
-        from:'coder test <congig.EMAIL_USER>',
-        to: 'lucianoalessi9@hotmail.com',
+        from:'coder test <config.EMAIL_USER>',
+        to: req.user.email,
         subject: 'Correo de prueba',
         html:`
         <div>

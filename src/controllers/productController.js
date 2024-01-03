@@ -35,6 +35,7 @@ export const getProductById = async (req, res) => {
     try{
         //obtenemos el producto por ID
         const {pid} = req.params
+
         //Verificamos que sea un id de mongo valido
         // if (pid.length !== 24) {
         //     throw new Error('El ID del producto no es válido');
@@ -79,9 +80,6 @@ export const addProduct = async (req, res) => {
             code,
             thumbnail: `/static/products/${req.file.filename}`,
         }   
-
-        
-        console.log(newProduct)
 
         const userId = req.user._id;
         const userRole = req.user.role

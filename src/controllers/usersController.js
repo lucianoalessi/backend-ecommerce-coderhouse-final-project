@@ -6,7 +6,6 @@ import config from "../config/config.js";
 
 // Controlador para manejar la lógica de usuarios premium
 export const premiumController = async(req,res) =>{
-    console.log('holaaaaaaa')
 
     // Extraemos el uid del usuario desde los parámetros de la petición
     const {uid} = req.params;
@@ -71,7 +70,6 @@ export const uploadDocuments = async (req, res) => {
         const user = await userService.getUserById(req.params.uid);
         // Si el usuario no existe, enviamos un error
         if (!user) {
-            // req.logger.error('Usuario no encontrado');
             return res.status(404).send('User not found');
         }
 
@@ -80,7 +78,6 @@ export const uploadDocuments = async (req, res) => {
         }
 
         let documents = req.files
-        console.log('=====>',documents)
         // Añadimos los documentos subidos al usuario
         documents.forEach(doc => {
             user.documents.push({
@@ -91,12 +88,10 @@ export const uploadDocuments = async (req, res) => {
   
         // Guardamos el usuario actualizado en la base de datos
         await userService.updateUserById(req.params.uid, user);
-        // req.logger.info('Documentos subidos con éxito');
 
     } catch (error) {
         // // Si hay un error, lo imprimimos en la consola
         console.log(error)
-        // req.logger.error(`Error al subir documentos: ${error}`);
     }
 }
 
@@ -109,7 +104,7 @@ export const getUsers = async (req,res) => {
     res.status(200).send({ status: 'success', users: users })
 }
 
-// DELETE /api/users
+// DELETE users sin conexion mayor a 2 dias
 export const deleteUsers = async (req, res) => {
     try {
         // Creamos una constante que representa la fecha y hora de hace exactamente dos días a partir de ahora
@@ -143,7 +138,6 @@ export const deleteUsers = async (req, res) => {
                 req.logger.warning(`No se pudo enviar correo a un usuario debido a que no tiene una dirección de correo electrónico definida.`);
             }
 
-            console.log(user.cart[0]._id)
             await cartService.deleteCart(user.cart[0]._id);
             req.logger.info(`Carrito eliminado para el usuario: ${user._id}`);
         }
@@ -157,6 +151,7 @@ export const deleteUsers = async (req, res) => {
         res.status(500).json({ message: 'Hubo un error al eliminar los usuarios' });  
     }
 }
+
 // DELETE users by ID
 export const deleteUser = async (req, res) => {
     try {
@@ -187,7 +182,6 @@ export const deleteUser = async (req, res) => {
             req.logger.warning(`No se pudo enviar correo a un usuario debido a que no tiene una dirección de correo electrónico definida.`);
         }
 
-        console.log(userToDelete.cart[0]._id)
         await cartService.deleteCart(userToDelete.cart[0]._id);
         req.logger.info(`Carrito eliminado para el usuario: ${userToDelete._id}`);
 
@@ -199,13 +193,3 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({ message: 'Hubo un error al eliminar los usuarios' });  
     }
 }
-
-// // Ruta de la vista del administrador (sólo un ejemplo, necesitarás un motor de plantillas o usar un framework en el lado del cliente)
-// router.get('/admin', async (req, res) => {
-//     if (req.user.role !== 'admin') {
-//         return res.status(403).send('Acceso denegado');
-//     }
-
-//     const users = await userModel.find();
-//     res.render('admin', { users });
-// });

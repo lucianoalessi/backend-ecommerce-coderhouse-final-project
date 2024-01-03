@@ -9,7 +9,7 @@
             id="searchInput" 
             type="text" 
             placeholder="Buscar por correo o ID..."
-            style="flex: 1; margin-right: 15px;"
+            style="flex-grow: 1; margin-right: 15px;"
         >
         <button 
             class="btn btn-danger" 
@@ -27,7 +27,7 @@
                 <th scope="col">Correo</th>
                 <th scope="col">User ID</th>
                 <th scope="col">Rol</th>
-                <th scope="col">Ultima Conexion</th>
+                <th scope="col">Última Conexión</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -60,7 +60,6 @@
         </tbody>
     </table>
 </div>
-
 <script>
     document.getElementById('searchInput').addEventListener('keyup', function() {
         let filter = this.value.toUpperCase();
@@ -131,3 +130,4 @@
         });
     });
 </script>
+

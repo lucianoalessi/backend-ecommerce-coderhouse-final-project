@@ -23,6 +23,8 @@ const upload = multer({storage});
 export default upload;
 
 
+
+
 // const storage = multer.diskStorage({
 //   //destination hace referencia a la carpeta donde se guardara el archivo.
 //   destination: function (req, file, cb) {

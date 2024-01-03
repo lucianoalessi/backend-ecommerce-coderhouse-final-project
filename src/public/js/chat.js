@@ -4,7 +4,6 @@ const messageInput = document.getElementById('message-input');
 const form = document.getElementById('form')
 const sendButton = document.getElementById('send-button');
 
-
 let user;
 
 Swal.fire({
@@ -24,7 +23,6 @@ Swal.fire({
 
 
 //obtenemos los datos del formulario (el mensaje).
-
 form.onsubmit=(e)=>{
     e.preventDefault()
     const message = messageInput.value.trim();  //valor del mensaje, eliminando los espacios. 
@@ -36,7 +34,6 @@ form.onsubmit=(e)=>{
 }
 
 // recibimos la lista de mensajes del servidor
-
 socketCliente.on('messageLogs', data => {
     if (!user) return;
     const messagesLog = document.getElementById('messages-log');

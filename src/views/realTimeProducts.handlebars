@@ -1,27 +1,27 @@
-<h2 class="text-center my-4">Administracion de productos en tiempo real</h2>
+<h2 class="text-center my-4" style="color: white;">📦 Administracion de productos en tiempo real 🕓</h2>
 <div class="container">
     <div class="jumbotron">
-        <h3 class="display-4">Bienvenido, {{user.first_name}} {{user.last_name}}!</h3>
-        <h4 class="my-4">Datos de usuario:</h4>
+        <h3 class="display-4">👋 Bienvenido, {{user.first_name}} {{user.last_name}}!</h3>
+        <h4 class="my-4">📝 Datos de usuario:</h4>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">User ID: <span id="user-id">{{user._id}}</span></li>
-            <li class="list-group-item">Email: <span id="user-email">{{user.email}}</span></li>
-            <li class="list-group-item">Edad: {{user.age}}</li>
-            <li class="list-group-item">Rol: <span id="user-role">{{user.role}}</span></li>
-            <li class="list-group-item">Cart ID: <span id="cart-id">{{cart}}</span></li>
+            <li class="list-group-item">🎫 User ID: <span id="user-id">{{user._id}}</span></li>
+            <li class="list-group-item">📧 Email: <span id="user-email">{{user.email}}</span></li>
+            <li class="list-group-item">🎂 Edad: {{user.age}}</li>
+            <li class="list-group-item">🏷️ Rol: <span id="user-role">{{user.role}}</span></li>
+            <li class="list-group-item">🛒 Cart ID: <span id="cart-id">{{cart}}</span></li>
         </ul>
         {{#if userAdmin}}
-            <a href="/usersadminmanager" class="btn btn-outline-secondary">
-                <i class="fas fa-clock"></i> Users Manager
+            <a href="/usersadminmanager" class="btn btn-outline-secondary mt-4">
+                👥⚙️ Users Manager
             </a>
         {{/if}}
         <form action="/api/sessions/logout" method="get" class="mt-4">
-            <button class="btn btn-danger btn-block">Salir</button>
+            <button class="btn btn-danger btn-block">🚪 Salir</button>
         </form>
     </div>
 
-    <div class="row">
-        <div class="col-md-4">
+    <div class="container d-flex justify-content-center">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
                     <h3 class="card-title">Agrega un producto:</h3>
@@ -33,9 +33,7 @@
                             <input class="form-control" type="number" name="price" id="price" placeholder="Ingrese precio del producto" required>
                             <input class="form-control" type="number" name="stock" id="stock" placeholder="Ingrese su stock" required>
                             <input class="form-control" type="text" name="code" id="code" placeholder="Ingrese codigo del producto" required>
-                            {{!-- <input class="form-control" type="text" name="thumbnail" id="thumbnail" placeholder="Ingrese su imagen url" required> --}}
                             <input class="form-control" type="file" name="product" id="productImage">
-
                         </div>
                         <button class="btn btn-primary btn-block" type="submit" name="add-btn" id="add-btn">Registrar</button>
                     </form>
@@ -43,7 +41,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
                     <h3 class="card-title">Actualize un producto:</h3>
@@ -55,11 +53,10 @@
                             <input class="form-control" type="text" name="description" id="description" placeholder="Ingrese description">
                             <input class="form-control" type="text" name="category" id="category" placeholder="Ingrese categoria">
                             <input class="form-control" type="number" name="price" id="price" placeholder="Ingrese precio del producto">
-                            <input class="form-control" type="number" name="stock" id="stock" placeholder="Ingrese su stock">                  
+                            <input class="form-control" type="number" name="stock" id="stock" placeholder="Ingrese su stock">
                             <input class="form-control" type="text" name="code" id="code" placeholder="Ingrese codigo del producto">
                             <input class="form-control" type="text" name="thumbnail" id="thumbnail" placeholder="Ingrese su imagen url">
                             <input class="form-control" type="file" name="product" id="productImage">
-
                         </div>
                         <button class="btn btn-primary btn-block" type="submit" name="add-btn" id="add-btn">Update</button>
                     </form>
@@ -67,7 +64,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
                     <h3 class="card-title">Eliminar un producto:</h3>
@@ -82,7 +79,7 @@
         </div>
     </div>
 
-    <h2 class="text-center my-4">Productos:</h2>
+    <h2 class="text-center my-4" style="color: white;">Productos:</h2>
     <div id="products-list-container" class="row">
         <!-- Los productos se insertarán aquí -->
     </div>
@@ -91,83 +88,49 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/static/js/realTimeProducts.js"></script>
 
+<style>
+body {
+    background: linear-gradient(45deg, #06c -52%, #000 81%, #a044e3 95%);
+    font-family: Arial, sans-serif;
+}
 
+.container {
+    max-width: 960px;
+    margin: auto;
+    padding: 20px;
+}
 
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
 
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
 
+.card-body {
+    padding: 20px;
+}
 
-{{!-- <h2>Real Time Products:</h2>
-<div>
-    <h3>Bienvenido, {{user.first_name}} {{user.last_name}}!</h3>
-	<h4>Datos de usuario:</h4>
-    <p id="user-id">User ID: {{user._id}}</p>
-    <p id="user-email">Email: {{user.email}}</p>
-    <p>Edad: {{user.age}}</p>
-	<p>Rol: {{user.role}}</p>
-	<p>Cart ID:</p>
-	<p id="cart-id">{{cart}}</p>
+.btn {
+    border-radius: 12px;
+    font-size: 18px;
+    padding: 10px 20px;
+}
 
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
 
-	
-	<form action="/api/sessions/logout" method="get">
-		<button>Salir</button>
-	</form>
-	
-</div>
-<div class="container">
-    
-    <div class="product-form-container">
-        
-        <h3>Agrega un producto:<h3></h3>
-        <form id="formProduct">
-            <div div class="input">
-                <input class="controls" type="text" name="title" id="title" placeholder="Ingrese Nombre del Producto" required>
-                <input class="controls" type="text" name="description" id="description" placeholder="Ingrese description" required>
-                <input class="controls" type="number" name="stock" id="stock" placeholder="Ingrese su stock" required>
-                <input class="controls" type="text" name="thumbnail" id="thumbnail" placeholder="Ingrese su imagen url" required>
-                <input class="controls" type="text" name="category" id="category" placeholder="Ingrese categoria" required>
-                <input class="controls" type="number" name="price" id="price" placeholder="Ingrese precio del producto" required>
-                <input class="controls" type="text" name="code" id="code" placeholder="Ingrese codigo del producto" required>
-            </div>
-            <button class="botons" type="submit" name="add-btn" id="add-btn" >Registrar </button>
-        </form>
-    </div> 
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
 
-        <div class="update-form">
-        
-        <h3>Actualize un producto:<h3></h3>
-        <form id="updateForm">
-            <div div class="input">
-                <input class="controls" type="text" name="productID" id="productID" placeholder="Ingrese ID" >
-                <br>
-                <h4>Datos a actualizar:<h4>
-                <input class="controls" type="text" name="title" id="title" placeholder="Ingrese Nombre del Producto" >
-                <input class="controls" type="text" name="description" id="description" placeholder="Ingrese description" >
-                <input class="controls" type="number" name="stock" id="stock" placeholder="Ingrese su stock" >
-                <input class="controls" type="text" name="thumbnail" id="thumbnail" placeholder="Ingrese su imagen url" >
-                <input class="controls" type="text" name="category" id="category" placeholder="Ingrese categoria" >
-                <input class="controls" type="number" name="price" id="price" placeholder="Ingrese precio del producto" >
-                <input class="controls" type="text" name="code" id="code" placeholder="Ingrese codigo del producto" >
-            </div>
-            <button class="botons" type="submit" name="add-btn" id="add-btn" >Update </button>
-        </form>
-    </div> 
+.form-control {
+    margin-bottom: 10px;
+}
+</style>
 
-    <div class="delete-product-container">
-        <h3> Eliminar un producto:</h3>
-        <form id="deleteProduct">
-            <input class="controls" type="text" name="productID-delete" id="productID-delete" placeholder="Ingrese ID" >
-        </form>
-        <button class="botons" type="button" id="delete-btn">Eliminar</button>
-    </div>
-</div>
-
-
-<h2>Productos:</h2>
-<div id="products-list-container">
-      
-</div>
-       
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/realTimeProducts.js"></script> --}}

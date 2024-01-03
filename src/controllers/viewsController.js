@@ -76,7 +76,6 @@ export const cartView =  async (req, res) => {
             totalPrice += productDetail.price * productDetail.quantity
         }
 
-        console.log(totalPrice)
         res.render("cart", { cart, cartDetail, totalPrice });
     } catch (error) {
         console.error(error);
@@ -143,7 +142,6 @@ export const profileView = async (req, res) => {
 // Vista para cargar documentos:
 export const uploadDocumentView = async (req, res) => {
     const userId = req.user._id
-    console.log(userId)
     res.render('multer' , {userId});
 }
 

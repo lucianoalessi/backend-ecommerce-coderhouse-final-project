@@ -118,20 +118,11 @@ app.use('/', viewsRouter); //router handlebars para io con '/'.
 
 
 
-
-
-
-//creamos una instancia de productService y messageService con mongoDB.
-//const productService = new productService(__dirname +'/files/products.json');  //CON FILE SYSTEM.
-
-
 // Configurar el evento de conexión de Socket.IO
 
 socketServer.on('connection', async (socket) => {
 
     console.log("nuevo cliente conectado")
-
-    
 
     //websockets para Productos:
 

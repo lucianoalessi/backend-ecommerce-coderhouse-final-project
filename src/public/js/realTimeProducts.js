@@ -22,21 +22,24 @@ const updateProductList = (products) => {
   // Itera a través de la lista de productos y crea una tarjeta HTML para cada uno
   products.forEach((product) => {
     productsList += `
-    <div class="col-md-4 mb-4"> <!-- Cada producto ocupará 4 columnas en dispositivos medianos y grandes -->
+      <div class="col-md-4 mb-4"> <!-- Cada producto ocupará 4 columnas en dispositivos medianos y grandes -->
       <div class="card h-100 shadow-sm"> <!-- Añade sombra a la tarjeta -->
-        <div class="card-body">
-          <h4 class="card-title">${product.title}</h4>
-          <h6 class="card-subtitle mb-2 text-muted">Id: ${product._id}</h6>
-          <p class="card-text">${product.description}</p>
-          <h5 class="card-text">Precio: ${product.price} USD</h5>
-          <h5 class="card-text">Stock: ${product.stock}</h5>
-          <h6 class="card-text">Owner: ${product.owner}</h6>
-        </div>
-        <div class="card-footer">
-          <a href="#" class="btn btn-primary">Buy Now</a>
-        </div>
+          <div class="card-body">
+              <img src="${product.thumbnail}" class="card-img-top img-fluid" alt="${product.title}" style="object-fit: contain; height: 100px;margin-bottom: 20px;">
+              <h6 class="card-title">${product.title}</h6>
+              <p class="card-text">${product.description}</p>
+              <div class="row">
+                <h6 class="card-text">Precio: ${product.price} USD</h6>
+                <h6 class="card-text">Stock: ${product.stock}</h6>
+              </div>
+          </div>
+          <div class="card-footer">
+            <h7 class="card-subtitle mb-2 text-muted">Product ID: ${product._id}</h7>
+            <br>
+            <h7 class="card-text">Owner: ${product.owner}</h7>
+          </div>
       </div>
-    </div>`; // Cierra la columna del producto
+  </div>`; // Cierra la columna del producto
   });
 
   productsList += '</div>'; // Cierra la fila
