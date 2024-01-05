@@ -22,21 +22,24 @@
         </div>
     </div>
 </nav>
+
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <h3 class="mb-3 text-center">
-                Bienvenido a LA-Store!</strong>
+               <strong> Bienvenido a LA-Store!</strong>
             </h3>
         </div>
     </div>
 </div>
 
+<h3 class="mb-3 text-center m-5">Encuentra tu producto:</h3>
+
 <div class="container-fluid">
     <div class="row">
 
-        <div class="col-md-2">
-            <div class="card p-4 mb-4 h-100" id="productForm">
+         <div class="col-md-2">
+            <div class="filter p-4 mb-4 h-100" id="productForm">
                 <h4 class="mb-3 text-center">Filtros:</h4>
                 <form action="/home" method="get">
                     <div class="mb-3">
@@ -61,8 +64,9 @@
         </div>
 
 
+        <div class="col-md-10">
+
             <div class='container productsList'>
-                <h3 class="mb-3 text-center m-5">Encuentra tu producto:</h3>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
                     {{#each products.docs}}
                         <div class='col'>
@@ -120,9 +124,29 @@
         </div>
     </div>
 </div>
+<footer class="footer mt-auto py-3 bg-dark text-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <p>Disclaimer: This is a demo website. The products listed here are not for sale. The chat is not real. This website is for demonstration purposes only.</p>
+                <p>© 2023 Coder Backend - Developed by Luciano Alessi</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Contacto:</h5>
+                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
+                <a class="text-light">📧 lucianoalessi9@hotmail.com</a><br>
+                <p class="text-light">📍  Quilmes, Buenos Aires.</p>
+            </div>            
+        </div>
+    </div>
+</footer>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/static/js/index.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
 
 
 <style>
@@ -172,6 +196,16 @@ body {
     font-size: 0.9rem;
 }
 
+.filter {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .2s;
+
+}
+
 .info-container {
     display: flex;
     justify-content: space-between;
@@ -180,6 +214,16 @@ body {
 
 .nav-link{
     border-radius: 25px;
+}
+
+.navbar-toggler-icon {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  content: "";
+  background: no-repeat center center;
+  background-size: 100% 100%;
 }
 .btn {
     border: none;
