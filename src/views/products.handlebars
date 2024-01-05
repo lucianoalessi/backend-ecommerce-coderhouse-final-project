@@ -65,20 +65,32 @@
         </div>
 
 
-            <div class="col-md-10">
-                <div class="p-4 mb-4">
-                    <div class="jumbotron">
-                        <h4 class="my-4" style="color: #000;">📝 Datos de usuario:</h4>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">🎫 User ID: <span id="user-id">{{user._id}}</span></li>
-                            <li class="list-group-item">📧 Email: <span id="user-email">{{user.email}}</span></li>
-                            <li class="list-group-item">🎂 Age: <span id="user-email">{{user.age}}</span></li>
-                            <li class="list-group-item">🏷️ Rol: <span id="user-role">{{user.role}}</span></li>
-                            <li class="list-group-item">🛒 Cart ID: <span id="cart-id">{{cart}}</span></li>
+        <div class="col-md-10">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="data p-4 mb-4 h-100">
+                        <h6>
+                            ℹ️ Aquí están tus datos de usuario:
+                        </h6>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item">
+                                🎫 ID de usuario: {{user._id}}
+                            </li>
+                            <li class="list-group-item">
+                                📧 Correo electrónico: {{user.email}}
+                            </li>
+                            <li class="list-group-item">
+                                🎂 Edad: {{user.age}}
+                            </li>
+                            <li class="list-group-item">
+                                🏷️ Tipo de cuenta: <span id="user-role">{{user.role}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                🛒 ID del carrito: <span id="cart-id">{{cart}}</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
-                
             </div>
 
 
