@@ -38,7 +38,7 @@ import swaggerUiExpress from "swagger-ui-express";
 const app = express()
 
 //Iniciando el servidor Express para escuchar en el puerto 8080.
-const port = config.PORT || 3000;
+const port = config.PORT || 8080;
 const httpServer = app.listen( port , () => {console.log('Server ON in port:', config.PORT)})
 
 //Creamos un servidor Socket viviendo dentro de nuestro servidor principal:
@@ -66,7 +66,8 @@ app.use(express.urlencoded({extended:true})); // Configurando Express para parse
 app.use(express.Router()); // Creando una instancia de un enrutador Express.
 
 //Conexion a mongo Atlas:
-mongoose.connect(config.MONGO_URL)
+//mongoose.connect(config.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL)
 
 
 //Session para login (configuracion)
