@@ -1,4 +1,4 @@
-# Proyecto-final-backEnd-coderHouse - Pre entrega 3
+# Proyecto-final-backEnd-coderHouse - Entrega Final
 
 Backend de un sistema de comercio electrónico diseñado para gestionar el Stock de productos y carros de compra en un negocio en línea. Por ahora Proporciona API endpoints para gestionar productos y carritos de compras.
 
