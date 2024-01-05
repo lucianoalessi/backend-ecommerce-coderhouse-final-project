@@ -18,8 +18,8 @@ import {
 	usersAdminManager
 } from "../controllers/viewsController.js";
 //Importamos middlewares:
-import { applyPolicy,  privateAccess, redirectAdmin } from "../middlewares/authMiddleware.js";
-import { passportCall } from "../../utils.js";
+import { applyPolicy,  privateAccess, redirectAdmin ,sessionExist ,publicAccess } from "../middlewares/authMiddleware.js";
+import { passportCall , passportCallForHome} from "../../utils.js";
 
 
 
@@ -30,7 +30,7 @@ const router = Router();
 //RUTAS para las vistas:
 
 //Ruta para la vista de todos los productos (ruta para plantilla handlebars):
-router.get('/home', getProducts );
+router.get('/home',passportCallForHome('jwt'), sessionExist , applyPolicy(['PUBLIC']), getProducts );
 
 //Vista de productos con su paginacion (pagination):
 router.get("/products",passportCall('jwt'), redirectAdmin, applyPolicy(['USER' , 'PREMIUM']), pagination );
@@ -54,10 +54,10 @@ router.get("/chat",passportCall('jwt'),applyPolicy(['USER' , 'PREMIUM']), chatSt
 router.get('/', redirection);
 
 //Vista para logearse:
-router.get('/login', loginView);
+router.get('/login',passportCallForHome('jwt'), sessionExist , loginView);
 
 //Vista para registrarse:
-router.get('/register', registerView);
+router.get('/register',passportCallForHome('jwt'), sessionExist , registerView);
 
 //Vista para restablecer password:
 router.get('/resetpassword', resetPasswordView);

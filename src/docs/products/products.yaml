@@ -16,10 +16,15 @@ paths:
                   $ref: '#components/schemas/Product'
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión en la base de datos.
+        "400":
+          description: Error al obtener productos.
+
     post:
       summary: Agregar un nuevo producto
       description: Este endpoint te permite agregar un nuevo producto a la base de datos.
       operationId: addProduct
+      security:
+        - cookieAuth: []
       tags:
         - Products
       requestBody:
@@ -66,7 +71,7 @@ paths:
                   description: La categoría del producto.
                   example: "Electrónica"
       responses:
-        '200':
+        '201':
           description: Producto agregado exitosamente.
           content:
             application/json:
@@ -75,7 +80,20 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: "Éxito: Producto agregado"
+                    example: "Sucess: Producto agregado"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No auth token"
+                  details:
+                    type: string
+                    example: "Error: No auth token"
         '400':
           description: Ocurrió un error al agregar el producto.
           content:
@@ -102,8 +120,8 @@ paths:
         required: true
         description: ID del producto que se desea solicitar.
         schema:
-          type: string
-          example: "PROD123"
+          $type: string
+          example: "6591e2a4a766a82405ff22a4"
       responses:
         "200":
           description: Producto encontrado
@@ -111,9 +129,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
+        "400":
+          description: Error al obtener el producto.
+        "404":
+          description: Producto no encontrado.
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
     put:
       summary: Actualizar un producto a partir de su id
       description: Este endpoint te permite actualizar un producto existente en la base de datos.
+      security:
+        - cookieAuth: []
       tags:
         - Products
       parameters:
@@ -122,50 +148,69 @@ paths:
         required: true
         description: ID del producto que se desea actualizar.
         schema:
-          type: string
-          example: "PROD123"
+          $type: string
+          example: "6591e2a4a766a82405ff22a4"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Product'
+              $ref: '#/components/requestBodies/updateProduct'
+      responses:
+        "200":
+          description: El producto actualizado con éxito
+          content:
+            application/json:
+              schema:
+                  $ref: "#components/schemas/Product"
+        "400":
+          description: El id o alguna propiedad especificada no son válidos
+        "401":
+          description: No se pudo autenticar el usuario
+        "403":
+          description: El usuario no tiene los permisos necesarios para acceder a este endpoint
+        "404":
+          description: El producto no fue encontrado en la db
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
     delete:
       summary: Elimina un producto
+      description: Esta ruta permite eliminar un producto por su ID.
+      security:
+        - cookieAuth: []
       tags:
         - Products
-      description: Esta ruta permite eliminar un producto por su ID.
-      operationId: deleteProduct
       parameters:
-        - in: path
-          name: pid
-          schema:
-            type: string
-            example: "PROD123"
-          required: true
-          description: ID del producto a eliminar.
+      - name: pid
+        in: path
+        required: true
+        description: ID del producto a eliminar.
+        schema:
+          $type: string
+          example: "6591e2a4a766a82405ff22a4"
       responses:
-        '200':
-          description: Producto eliminado exitosamente
+        "200":
+          description: El producto fue eliminado con éxito
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'Éxito: Producto eliminado'
-        '400':
-          description: Error al eliminar el producto
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'Error al eliminar el producto'
-components: 
+                  $ref: "#components/schemas/Product"
+        "400":
+          description: El id especificado no es válido
+        "401":
+          description: No se pudo autenticar el usuario
+        "403":
+          description: El usuario no tiene los permisos necesarios para acceder a este endpoint
+        "404":
+          description: El producto no fue encontrado en la db
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
+components:
+  securitySchemes:
+    cookieAuth:     # Tu esquema de seguridad
+      type: apiKey
+      in: cookie
+      name: coderCookie
   schemas:
     Product:
       type: object
@@ -184,7 +229,7 @@ components:
           description: Precio del producto
         thumbnail:
           type: string
-          description: Imagen del producto
+          description: Url a la imagen del producto
         code:
           type: string
           description: Codigo del producto
@@ -201,14 +246,14 @@ components:
           type: string
           description: Creador del producto
       example: 
-        _id: "64ff36e4a5029e949c5ba588"
-        title: "Monitor"
-        description: "Monitor asus 24 pulgadas"
-        price: 100
-        thumbnail: "no hay"
-        code: "asd123"
+        _id: "6591e2a4a766a82405ff22a4"
+        title: "Notebook Gamer ROG Strix G15"
+        description: "Notebook Asus, diseñada para gamers"
+        price: 1500
+        thumbnail: "/static/products/1704059556284-ASUS-ROG.webp"
+        code: "LGP123"
         stock: 102
-        category: "PC"
+        category: "electronica"
         status: true
         owner: "admin"
   requestBodies:
@@ -226,7 +271,7 @@ components:
           description: Precio del producto
         thumbnail:
           type: string
-          description: Imagen del producto
+          description: Url de la imagen del producto
         code:
           type: string
           description: Codigo del producto
@@ -243,15 +288,14 @@ components:
           type: string
           description: Creador del producto
       example: 
-        title: "Monitor"
-        description: "Monitor asus 24 pulgadas"
+        title: "Samsung Galaxy S23 256gb"
+        description: "smarthphone Samsung"
         price: 100
-        thumbnail: "no hay"
-        code: "asd123"
+        thumbnail: "/static/products/default.png"
+        code: "sam23"
         stock: 102
-        category: "PC"
-        status: true
-        owner: "admin"
+        category: "Smartphone"
+
 
 
 

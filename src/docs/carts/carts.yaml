@@ -57,38 +57,10 @@ paths:
           description: Carrito no encontrado.
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD.
-    # put:
-    #   summary: Modifica los productos del carrito
-    #   tags:
-    #     - Carts
-    #   parameters:
-    #   - name: cid
-    #     in: path
-    #     required: true
-    #     description: ID del carrito a modificar
-    #     schema:
-    #       $type: String
-    #   requestBody:
-    #     required: true
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: '#components/requestBodies/updateCart'
-    #   responses:
-    #     "200":
-    #       description: Carrito actualizado con éxito
-    #       content:
-    #         application/json:
-    #           schema:
-    #             $ref: '#components/schemas/Cart'
-    #     "400":
-    #       description: El params o el body no tienen el formato adecuado.
-    #     "404":
-    #       description: Carrito no encontrado.
-    #     "500":
-    #       description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
     delete:
       summary: Borra todos los productos de un carrito a partir del id
+      security:
+        - cookieAuth: []
       tags:
         - Carts
       parameters:
@@ -116,7 +88,7 @@ paths:
       summary: Agrega un producto al carrito
       description: Este endpoint requiere token JWT para autorización y roles de usuario o premium. En caso de ser premium, el usuario no debe ser dueño del producto.
       security:
-        - bearerAuth: []
+        - cookieAuth: []
       tags:
         - Carts
       parameters:
@@ -147,6 +119,8 @@ paths:
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
     put:
       summary: Modificar la cantidad de un producto en el carrito
+      security:
+        - cookieAuth: []
       tags: 
         - Carts
       description: Esta ruta permite modificar la cantidad de un producto específico en un carrito específico.
@@ -201,6 +175,8 @@ paths:
                     type: string
     delete:
       summary: Elimina un producto del carrito
+      security:
+        - cookieAuth: []
       tags:
         - Carts
       parameters:
@@ -230,11 +206,11 @@ paths:
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
   /api/carts/{cid}/purchase/:
-    post:
+    get:
       summary: Genera la orden de compra
       description: Este endpoint requiere token JWT para autorización y roles de usuario o premium.
       security:
-        - bearerAuth: []
+        - cookieAuth: []
       tags:
         - Carts
       parameters:
@@ -244,31 +220,69 @@ paths:
         description: ID del carrito a comprar
         schema:
           $type: String
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#components/requestBodies/purchase'
       responses:
         "200":
-          description: Orden generada con éxito
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Order'
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    type: object
+                    properties:
+                      ticket:
+                        type: object
+                        properties:
+                          amount:
+                            type: integer
+                            example: 1000
+                          purchaser:
+                            type: string
+                            example: "norber@bobinajes.com"
+                          _id:
+                            type: string
+                            example: "6596a7568b3b4c9f65e2b66c"
+                          code:
+                            type: string
+                            example: "05cf54bb-50e9-4765-a1e6-3d91a7a962d8"
+                          purchase_datetime:
+                            type: string
+                            format: date-time
+                            example: "2024-01-04T12:40:54.285Z"
+                          __v:
+                            type: integer
+                            example: 0
+                      productosProcesados:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            productID:
+                              type: string
+                              example: "6591e0e491ba05b8a488cd68"
+                            quantity:
+                              type: integer
+                              example: 1
+                            _id:
+                              type: string
+                              example: "6596a65530935ddeff3fda40"
+                      productosNoProcesados:
+                        type: array
+                        items: {}
         "400":
-          description: Alguno de los ID no tiene el formato de id de Mongo, o el email no es válido.
-        "404":
-          description: Carrito no encontrado o falta de stock en todos los productos.
+          description: Error.
         "500":
           description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexión con la BD
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT 
+    cookieAuth:     # Tu esquema de seguridad
+      type: apiKey
+      in: cookie
+      name: coderCookie
   schemas:
     Cart:
       type: object
@@ -288,7 +302,6 @@ components:
                 "productID": "64f650b5fe5c0b9e6ec4c428",
                 "quantity": 11
             }]
-
     CartProducts:
       type: array
       items:
@@ -300,104 +313,48 @@ components:
           quantity:
             type: integer
             description: Unidades del producto en el carrito.
-
-    Order:
+    Ticket:
       type: object
       properties:
-        ticket:
-          $ref: '#/components/schemas/Ticket'
-        cart:
-          $ref: '#/components/schemas/Cart'
+        _id:
+          type: ObjectId
+          description: ID autogenerado de mongo
+        code:
+          type: string
+          description: Código de la orden
+        purchase_datetime:
+          type: string
+          description: Fecha de realización de la orden
+        amount:
+          type: number
+          description: Monto de la orden
+        purchaser:
+          type: string
+          description: email del comprador
       example:
-        ticket: {
-            code: 'ORDER17013722750762162',
-            amount: 54.959999999999994,
-            purchaser: 'analia.a.acosta@gmail.com',
-            products: [{
-                "product": {
-                    "_id": "64f650b5fe5c0b9e6ec4c428",
-                    "title": "Product 3",
-                    "description": "Description for Product 3",
-                    "code": "P003",
-                    "price": 9.99,
-                    "stock": 87,
-                    "category": "Home & Kitchen",
-                    "thumbnail": [
-                        "product3_1.jpg",
-                        "product3_2.jpg"
-                    ],
-                    "status": true,
-                },
-                "quantity": 11
-            }],
-            status: 'Pending',
-            _id: new ObjectId("6568e173b6116d550105e0bc"),
-            purchase_datetime: 2023-11-30T19:24:35.078Z,
-          }
-        cart: {
-          _id: new ObjectId("654024a6d24c0072b01fb159"),
-          products: [{
-                "product": {
-                    "_id": "64f650a1fe5c0b9e6ec4c426",
-                    "title": "Product 2",
-                    "description": "Description for Product 2",
-                    "code": "P002",
-                    "price": 29.99,
-                    "stock": 0,
-                    "category": "Clothing",
-                    "thumbnail": [
-                        "product2_1.jpg",
-                        "product2_2.jpg"
-                    ],
-                    "status": true,
-                },
-                "quantity": 2
-            }]
-          }
-
-        Ticket:
-          type: object
-          properties:
-            _id:
-              type: ObjectId
-              description: ID autogenerado de mongo
-            code:
-              type: string
-              description: Código de la orden
-            purchase_datetime:
-              type: string
-              description: Fecha de realización de la orden
-            amount:
-              type: number
-              description: Monto de la orden
-            purchaser:
-              type: string
-              description: email del comprador
-          example:
-            code: 'ORDER17013722750762162'
-            amount: 54.959999999999994
-            purchaser: 'lucianoalessi@gmail.com'
-            _id: new ObjectId("6568e173b6116d550105e0bc")
-            purchase_datetime: 2023-11-30T19:24:35.078Z
-
-  requestBodies:
-    updateCart:
-      type: object
-      properties:
-        products:
-          $ref: '#/components/schemas/CartProducts'
-      example:
-        products: [
-            {
-                "productID": "64f650b5fe5c0b9e6ec4c428",
-                "quantity": 2
-            },
-            {
-                "productID": "64f6508cfe5c0b9e6ec4c424",
-                "quantity": 1
-            }
-        ]
-    
+        code: 'ORDER17013722750762162'
+        amount: 54.959999999999994
+        purchaser: 'lucianoalessi@gmail.com'
+        _id: new ObjectId("6568e173b6116d550105e0bc")
+        purchase_datetime: 2023-11-30T19:24:35.078Z
+    requestBodies:
+      updateCart:
+        type: object
+        properties:
+          products:
+            $ref: '#/components/schemas/CartProducts'
+        example:
+          products: [
+              {
+                  "productID": "64f650b5fe5c0b9e6ec4c428",
+                  "quantity": 2
+              },
+              {
+                  "productID": "64f6508cfe5c0b9e6ec4c424",
+                  "quantity": 1
+              }
+          ]
+      
 
 
 

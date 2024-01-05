@@ -1,3 +1,25 @@
+<nav class="navbar navbar-expand-lg" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: none; border-radius: 10px; overflow: hidden; transition: transform .2s;">
+    <div class="container-fluid">
+        <img src="/static/images/logo.png" id="logo" style="height: 50px; width: 50px;">
+        <a class="navbar-brand" href="/home" style="color: white;">Nuestra tienda</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255, 255, 255, 0.2);">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+            <div class="d-flex align-items-center">
+                <a href="/profile" class="btn btn-outline-secondary me-2" style="color: white;">
+                    📇 Tu perfil
+                </a>
+                <a href="/api/sessions/logout" class="btn btn-outline-danger" style="color: white;">
+                    🚪 Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-12 text-center">

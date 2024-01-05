@@ -156,6 +156,8 @@ socketServer.on('connection', async (socket) => {
         // socket.emit('productAdded'); //para el manejo de alertas
 
         const updateProductsList = await productService.getProducts();
+        socket.emit('updatedProducts', updateProductsList ); //le enviamos al cliente la lista de productos actualizada con el producto que anteriormente agrego. 
+        socket.emit('productAdded'); //para el manejo de alertas
     })
 
     //#UPDATE PRODUCT:

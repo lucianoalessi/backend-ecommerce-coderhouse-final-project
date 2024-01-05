@@ -54,3 +54,7 @@ addToCartButtons.forEach((button) => {
   });
 });
 
+document.getElementById('resetButton').addEventListener('click', function() {
+  document.getElementById('productForm').reset();
+  location.reload();
+});

@@ -59,6 +59,19 @@ export const passportCall = (strategy) => {
     }
 }
 
+//middleware para la pagina de inicio (si existe la sesion iniciada que te redireccione a la pagina de productos)
+export const passportCallForHome = (strategy) => {
+    return async(req, res, next) => {
+        passport.authenticate(strategy, function(err, user, info) {
+            if (!user) {
+                return next();
+            }
+            req.user = user;
+            next();
+        }) (req, res, next);
+    }
+}
+
 //En desuso. Se esta utilizando applyPolicy desde authMiddleware.js
 export const authorization = (role) => {
     return async(req, res, next)=> {

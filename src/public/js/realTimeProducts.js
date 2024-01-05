@@ -23,14 +23,15 @@ const updateProductList = (products) => {
   products.forEach((product) => {
     productsList += `
       <div class="col-md-4 mb-4"> <!-- Cada producto ocupará 4 columnas en dispositivos medianos y grandes -->
-      <div class="card h-100 shadow-sm"> <!-- Añade sombra a la tarjeta -->
+        <div class="card h-100 shadow-sm"> <!-- Añade sombra a la tarjeta -->
           <div class="card-body">
               <img src="${product.thumbnail}" class="card-img-top img-fluid" alt="${product.title}" style="object-fit: contain; height: 100px;margin-bottom: 20px;">
-              <h6 class="card-title">${product.title}</h6>
+              <h6 class="card-title"><strong>${product.title}</strong></h6>
               <p class="card-text">${product.description}</p>
               <div class="row">
-                <h6 class="card-text">Precio: ${product.price} USD</h6>
+                <h6 class="card-text">Precio: <strong>${product.price} USD</strong></h6>
                 <h6 class="card-text">Stock: ${product.stock}</h6>
+                <h6 class="card-text">Categoria: ${product.category}</h6>
               </div>
           </div>
           <div class="card-footer">
@@ -38,8 +39,8 @@ const updateProductList = (products) => {
             <br>
             <h7 class="card-text">Owner: ${product.owner}</h7>
           </div>
-      </div>
-  </div>`; // Cierra la columna del producto
+        </div>
+      </div>`; // Cierra la columna del producto
   });
 
   productsList += '</div>'; // Cierra la fila

@@ -39,16 +39,16 @@ router.get('/:cid' , getCartById);
 router.post('/:cid/product/:pid' , passportCall('jwt'), addProductToCart);
 
 // Ruta para eliminar un producto de un carrito
-router.delete('/:cid/product/:pid', deleteProdInCart);
+router.delete('/:cid/product/:pid', passportCall('jwt'), deleteProdInCart);
 
 // Ruta para vaciar un carrito
-router.delete('/:cid', deleteAllProductsInCart);
+router.delete('/:cid', passportCall('jwt'), deleteAllProductsInCart);
 
 // Ruta para agregar un array de productos
-router.put('/:cid', addProductsToCart);
+router.put('/:cid', passportCall('jwt'), addProductsToCart);
 
 // Ruta para modificar cantidad del producto
-router.put('/:cid/product/:pid', modifyProductQuantity);
+router.put('/:cid/product/:pid', passportCall('jwt'), modifyProductQuantity);
 
 //Ruta para tickets (finalizar compra):
 router.get('/:cid/purchase', passportCall('jwt'), purchase);

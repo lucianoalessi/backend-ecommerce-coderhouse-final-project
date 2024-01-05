@@ -1,4 +1,270 @@
-<div class="contenedorPrincipal">
+<nav class="navbar navbar-expand-lg" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: none; border-radius: 10px; overflow: hidden; transition: transform .2s;">
+    <div class="container-fluid">
+        <img src="/static/images/logo.png" id="logo" style="height: 50px; width: 50px;">
+        <a class="navbar-brand" href="#" style="color: white;">Nuestra Tienda</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255, 255, 255, 0.2);">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link btn-outline-secondary" href="/login" style="color: white;">🛒 Ver carrito</a>
+                </li>
+            </ul>
+            <div class="d-flex">
+                <a href="/login" class="btn btn-outline-secondary me-2" style="color: white;">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesion
+                </a>
+                <a href="/register" class="btn btn-outline-danger" style="color: white;">
+                    <i class="fas fa-user-plus"></i> Registrate
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <h3 class="mb-3 text-center">
+                Bienvenido a LA-Store!</strong>
+            </h3>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-2">
+            <div class="card p-4 mb-4 h-100" id="productForm">
+                <h4 class="mb-3 text-center">Filtros:</h4>
+                <form action="/home" method="get">
+                    <div class="mb-3">
+                        <label for="limit" class="form-label">Límite de productos:</label>
+                        <input type="number" id="limit" name="limit" class="form-control" placeholder="9">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sort" class="form-label">Ordenar por:</label>
+                        <select name="sort" id="sort" class="form-select">
+                            <option value="des">Mayor Precio</option>
+                            <option value="asc">Menor Precio</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="category" class="form-label">Categoría:</label>
+                        <input type="text" id="category" name="category" class="form-control" placeholder="Smartphones">
+                    </div>
+                    <input type="submit" value="Buscar" class="btn btn-outline-success">
+                    <a href="/home" class="btn btn-outline-danger mt-2" >Eliminar filtros</a>
+                </form>
+            </div>
+        </div>
+
+
+            <div class='container productsList'>
+                <h3 class="mb-3 text-center m-5">Encuentra tu producto:</h3>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                    {{#each products.docs}}
+                        <div class='col'>
+                            <div class='card h-100' id='card-container'>
+                                <div class='card-header'>
+                                    <small class='card-category'>🏷️ Categoría: {{this.category}}</small><br>
+                                </div>
+                                <div class='card-body d-flex flex-column'>
+                                    <img src="{{this.thumbnail}}" class="card-img-top img-fluid" alt="{{this.title}}" style="object-fit: contain; height: 200px;">
+                                    <h5 class='card-title font-bold mt-2'>{{this.title}}</h5>
+                                    <div class='card-description text-truncate' id='description-{{this._id}}'>{{this.description}}</div>
+                                    <button class='btn btn-link' onclick="document.getElementById('description-{{this._id}}').classList.toggle('text-truncate');">Leer más</button>
+                                    <h4 class='card-price'><i class="fas fa-dollar-sign"></i> {{this.price}}</h4>
+                                    <div class='info-container'>
+                                        <p class='code'><i class="fas fa-barcode"></i> Code: {{this.code}}</p>
+                                        <p class='stock'><i class="fas fa-warehouse"></i> Stock: {{this.stock}}</p>
+                                    </div>
+                                    <a id='addToCart' href="/login" class='btn btn-outline-success mt-auto'><i class="fas fa-cart-plus"></i> Agregar al carrito</a>
+                                </div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class='container pagination my-4'>
+                <nav aria-label="Navegación de página">
+                    <ul class="pagination justify-content-center">
+                        {{#if products.hasPrevPage}}
+                            <li class="page-item">
+                                <a class="page-link" href="{{products.prevLink}}" aria-label="Anterior">
+                                    <span aria-hidden="true">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        {{/if}}
+                        <li class="page-item active">
+                            <a class="page-link" href="#">{{products.page}}</a>
+                        </li>
+                        {{#if products.hasNextPage}}
+                            <li class="page-item">
+                                <a class="page-link" href="{{products.nextLink}}" aria-label="Siguiente">
+                                    <span aria-hidden="true">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        {{/if}}
+                    </ul>
+                </nav>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/static/js/index.js"></script>
+
+
+<style>
+body {
+    background: linear-gradient(45deg,#06c -52%,#000 81%,#a044e3 95%);
+    color: white;
+    font-size: 20px;
+}
+.container {
+    max-width: 960px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .2s;
+}
+
+.card-img-top{
+    background-color: white;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-category, .card-id {
+    font-size: 0.8rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.card-description, .code, .stock {
+    font-size: 0.9rem;
+}
+
+.info-container {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.nav-link{
+    border-radius: 25px;
+}
+.btn {
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    transition: background-color .2s;
+}
+
+.btn-outline-success {
+    background-color: #0033ff;
+    color: white;
+}
+
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.list-group {
+    background-color: rgba(255, 252, 252, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .2s;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    transition: transform .2s;
+}
+
+.form-control:focus {
+    border-color: #0033ff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
+}
+
+.form-label {
+    color: white;
+}
+
+.form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    transition: transform .2s;
+}
+
+.form-select:focus {
+    border-color: #0033ff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
+}
+
+
+</style>
+
+
+
+{{!-- <div class="contenedorPrincipal">
     <h1>Lista de productos:</h1>
     <div class="productContainer">
         {{#each listaProductos}}
@@ -22,9 +288,5 @@
     {{/each}}
 
     </div>
-    
+</div> --}}
 
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="/static/js/index.js"></script>

@@ -11,13 +11,12 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 // Controller para obtener los productos y filtrar por query
 export const getProductsQuery = async (req, res) => {
 
-    const { limit, page, sort, query } = req.query;
-    req.logger.info(`Obteniendo productos con los siguientes parámetros: limit=${limit}, page=${page}, sort=${sort}, query=${query}`);
+    const { limit, page, sort, category  } = req.query;
+    req.logger.info(`Obteniendo productos con los siguientes parámetros: limit=${limit}, page=${page}, sort=${sort}, category =${category }`);
 
 	try {
         // Obtenemos los productos
-		const products  = await productService.getProductsQuery(limit, page, sort, query);
-        console.log(products)
+		const products  = await productService.getProductsQuery(limit, page, sort, category );
         // Registramos la información de los productos obtenidos
         req.logger.info(`Productos obtenidos: ${products.length}`);
         // Enviamos la respuesta al cliente
@@ -44,7 +43,7 @@ export const getProductById = async (req, res) => {
         const product = await productService.getProductById(pid)
 
         if (!product) {
-            throw new Error('Producto no encontrado');
+            throw new Error('404:Producto no encontrado');
         }
 
         req.logger.info(`Producto obtenido: ${product.title}`);
@@ -78,7 +77,7 @@ export const addProduct = async (req, res) => {
             price,
             stock,
             code,
-            thumbnail: `/static/products/${req.file.filename}`,
+            thumbnail: req.file ? `/static/products/${req.file.filename}` : '/static/products/default.png',
         }   
 
         const userId = req.user._id;
@@ -117,6 +116,31 @@ export const updateProduct = async (req, res) => {
     req.logger.info(`Actualizando producto con ID: ${productID} con los siguientes datos: ${JSON.stringify(updateData)}`)
     
     try{
+
+        // Obtenemos el producto y el usuario propietario
+        const product = await productService.getProductById(productID);
+
+        // Verificamos si el producto existe
+        if (!product) {
+            return res.status(404).send('El producto no existe');
+        }
+        
+        if(req.user.role == 'admin'){
+            await productService.updateProduct(productID, { $set: updateData });
+            // Obtenemos el producto actualizado Y Registramos la información
+            const productUpdated = await productService.getProductById(productID);
+            req.logger.info(`Producto actualizado: ${productUpdated.title}`);
+            // Enviamos la respuesta al cliente
+            return res.status(200).send({status:'Sucess: product updated', payload: productUpdated});
+        }
+
+        const user = await userService.getUserById(product.owner);
+        
+        // Verificamos si el usuario es el propietario del producto o si es admin
+        if (req.user.role != 'admin' && product.owner != user._id) {
+            return res.status(403).send('No tienes permiso para eliminar este producto');
+        }
+
         // Actualizamos el producto
         await productService.updateProduct(productID, { $set: updateData });
         // Obtenemos el producto actualizado Y Registramos la información

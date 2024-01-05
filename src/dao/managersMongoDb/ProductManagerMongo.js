@@ -9,7 +9,7 @@ export default class ProductManager{
     }
 
     //Get product con query, para poder ordenar y filtrar productos.
-	getProductsQuery = async (limit, page, sort, query) => {
+	getProductsQuery = async (limit, page, sort, category) => {
 		try {
             // Si no se proporciona un límite, se establece en 10 por defecto
             !limit && (limit = 9);
@@ -22,7 +22,7 @@ export default class ProductManager{
 
 			// Se crea un filtro a partir de la consulta proporcionada, si no hay consulta, el filtro es un objeto vacío.
             //Ejemplo {"category": "una categoria"}
-			const filter = query ? JSON.parse(query) : {};
+			const filter = category ? { category: category } : {};
 			const queryOptions = { limit: limit, page: page, lean: true };
 
 			if (sort === 1 || sort === -1) {
@@ -34,10 +34,10 @@ export default class ProductManager{
 			getProducts.isValid = !(page <= 0 || page > getProducts.totalPages); // verificamos si el número de página proporcionado es válido y dentro del rango de páginas disponibles. Si no lo es, entonces getProducts.isValid se establecerá en falso.
 			getProducts.prevLink =
 				getProducts.hasPrevPage &&
-				`http://localhost:8080/products?page=${getProducts.prevPage}&limit=${limit}`;
+				`?page=${getProducts.prevPage}&limit=${limit}`;
 			getProducts.nextLink =
 				getProducts.hasNextPage &&
-				`http://localhost:8080/products?page=${getProducts.nextPage}&limit=${limit}`;
+				`?page=${getProducts.nextPage}&limit=${limit}`;
 
 			getProducts.status = getProducts ? 'success' : 'error';
 

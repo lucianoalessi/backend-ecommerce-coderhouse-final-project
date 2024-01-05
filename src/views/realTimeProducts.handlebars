@@ -1,27 +1,52 @@
-<h2 class="text-center my-4" style="color: white;">📦 Administracion de productos en tiempo real 🕓</h2>
-<div class="container">
+<nav class="navbar navbar-expand-lg" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: none; border-radius: 10px; overflow: hidden; transition: transform .2s;">
+    <div class="container-fluid">
+        <img src="/static/images/logo.png" id="logo" style="height: 50px; width: 50px; margin-right:20px;">
+        <a class="navbar-brand" href="#" style="color: white;">{{user.role}} user</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255, 255, 255, 0.2);">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {{#if userAdmin}}
+                    <a href="/usersadminmanager" class="btn btn-outline-secondary" style="color: white;" >
+                        👥⚙️ Users Manager
+                    </a>
+                 {{/if}}
+                <a href="/home" class="btn btn-outline-secondary" style="color: white;">
+                    🏠 Home
+                </a>
+            </ul>
+            <div class="d-flex align-items-center">
+                <p class="mb-0 me-2">Hola, {{user.first_name}}!</p>
+                <a href="/profile" class="btn btn-outline-secondary me-2" style="color: white;">
+                    📇 Tu perfil
+                </a>
+                <a href="/api/sessions/logout" class="btn btn-outline-danger" style="color: white;">
+                    🚪 Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
     <div class="jumbotron">
         <h3 class="display-4">👋 Bienvenido, {{user.first_name}} {{user.last_name}}!</h3>
         <h4 class="my-4">📝 Datos de usuario:</h4>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">🎫 User ID: <span id="user-id">{{user._id}}</span></li>
             <li class="list-group-item">📧 Email: <span id="user-email">{{user.email}}</span></li>
-            <li class="list-group-item">🎂 Edad: {{user.age}}</li>
             <li class="list-group-item">🏷️ Rol: <span id="user-role">{{user.role}}</span></li>
             <li class="list-group-item">🛒 Cart ID: <span id="cart-id">{{cart}}</span></li>
         </ul>
-        {{#if userAdmin}}
-            <a href="/usersadminmanager" class="btn btn-outline-secondary mt-4">
-                👥⚙️ Users Manager
-            </a>
-        {{/if}}
-        <form action="/api/sessions/logout" method="get" class="mt-4">
-            <button class="btn btn-danger btn-block">🚪 Salir</button>
-        </form>
     </div>
+</div>
 
-    <div class="container d-flex justify-content-center">
-        <div class="col-md-6">
+<h2 class="text-center my-4 m-5" style="color: white;">📦 Administracion de productos en tiempo real 🕓</h2>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
                     <h3 class="card-title">Agrega un producto:</h3>
@@ -41,7 +66,7 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
                     <h3 class="card-title">Actualize un producto:</h3>
@@ -64,7 +89,7 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
                     <h3 class="card-title">Eliminar un producto:</h3>
@@ -77,13 +102,20 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <h2 class="text-center my-4" style="color: white;">Productos:</h2>
-    <div id="products-list-container" class="row">
+    </div>
+</div>
+
+
+
+<h2 class="text-center my-4" style="color: white;">Productos:</h2>
+
+<div class="container">
+    <div class="row" id="products-list-container">
         <!-- Los productos se insertarán aquí -->
     </div>
 </div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/static/js/realTimeProducts.js"></script>
@@ -94,11 +126,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.container {
-    max-width: 960px;
-    margin: auto;
-    padding: 20px;
-}
+
 
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -113,20 +141,45 @@ body {
     padding: 20px;
 }
 
+.nav-link{
+    border-radius: 25px;
+}
 .btn {
-    border-radius: 12px;
-    font-size: 18px;
+    border: none;
+    border-radius: 50px;
     padding: 10px 20px;
+    transition: background-color .2s;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+.btn-outline-success {
+    background-color: #0033ff;
+    color: white;
 }
 
-.btn-danger {
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
     background-color: #dc3545;
-    border-color: #dc3545;
+    color: white;
 }
 
 .form-control {

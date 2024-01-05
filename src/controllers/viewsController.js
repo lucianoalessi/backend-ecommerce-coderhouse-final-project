@@ -7,9 +7,10 @@ import { userService } from "../services/index.js";
 
 // Vista de productos home
 export const getProducts = async (req, res) => {
+    const { limit, page, sort, category } = req.query;
     try {
-        const listaProductos = await productService.getProducts();
-        res.render('home', { listaProductos, style: 'style.css' });
+        const products = await productService.getProductsQuery(limit, page, sort, category);
+        res.render('home', { products });
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: error.message });
@@ -18,14 +19,14 @@ export const getProducts = async (req, res) => {
 
 // Vista de productos con su paginacion (pagination):
 export const pagination = async (req, res) => {
-    const { limit, page, sort, query } = req.query;
+    const { limit, page, sort, category } = req.query;
     const user = req.user;
     const userPremiumOrAdmin = user.role === 'premium' || user.role === 'admin'
     const userObject = await userService.getUserById(user._id);
     const cart = userObject.cart[0]._id;
     
     try {
-        const products = await productService.getProductsQuery(limit, page, sort, query);
+        const products = await productService.getProductsQuery(limit, page, sort, category);
         res.render('products', { products, user, userPremiumOrAdmin, cart });
     } catch (error) {
         console.error(error);
@@ -99,7 +100,7 @@ export const chatStyle = async (req, res) => {
 // Redirect to '/':
 export const redirection = async (req, res) => {
     try {
-        res.status(200).redirect('/login');
+        res.status(200).redirect('/home');
     } catch (err) {
         console.error(err);
         res.status(400).send({ error: err.message });
