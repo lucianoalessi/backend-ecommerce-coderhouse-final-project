@@ -71,6 +71,7 @@ En la vista de useradminmanager se muestra un listado de usuarios existentes y p
 ## Tecnologías utilizadas
 - Node.js
 - Express.js
+- Socket.IO
 - MongoDB
 - Mongoose
 - Bcrypt
