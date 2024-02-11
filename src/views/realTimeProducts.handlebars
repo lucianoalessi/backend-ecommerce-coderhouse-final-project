@@ -1,33 +1,44 @@
-<nav class="navbar navbar-expand-lg" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: none; border-radius: 10px; overflow: hidden; transition: transform .2s;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <img src="/static/images/logo.png" id="logo" style="height: 50px; width: 50px; margin-right:20px;">
-        <a class="navbar-brand" href="#" style="color: white;">{{user.role}} user</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255, 255, 255, 0.2);">
+        <img src="/static/images/logo.png" id="logo" alt="Logo de la empresa" width="50" height="50" class="d-inline-block align-text-top logo-img">
+        <a class="navbar-brand" href="#">{{user.role}} user</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {{#if userAdmin}}
-                    <a href="/usersadminmanager" class="btn btn-outline-secondary" style="color: white;" >
-                        👥⚙️ Users Manager
+                    <li class="nav-item">
+                        <a href="/usersadminmanager" class="btn btn-outline-secondary text-white">
+                            👥⚙️ Users Manager
+                        </a>
+                    </li>
+                {{/if}}
+                <li class="nav-item">
+                    <a href="/home" class="btn btn-outline-secondary text-white">
+                        🏠 Home
                     </a>
-                 {{/if}}
-                <a href="/home" class="btn btn-outline-secondary" style="color: white;">
-                    🏠 Home
-                </a>
+                </li>
             </ul>
-            <div class="d-flex align-items-center">
-                <p class="mb-0 me-2">Hola, {{user.first_name}}!</p>
-                <a href="/profile" class="btn btn-outline-secondary me-2" style="color: white;">
-                    📇 Tu perfil
-                </a>
-                <a href="/api/sessions/logout" class="btn btn-outline-danger" style="color: white;">
-                    🚪 Cerrar sesión
-                </a>
-            </div>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                   <p class="mb-0 me-2">Hola, {{user.first_name}}!</p>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="btn btn-outline-secondary text-white me-2">
+                        📇 Tu perfil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/api/sessions/logout" class="btn btn-outline-danger text-white">
+                        🚪 Cerrar sesión
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
+
 
 <div class="container mt-5">
     <div class="jumbotron">
@@ -125,8 +136,8 @@
             </div>
             <div class="col-md-6">
                 <h5>Contacto:</h5>
-                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
-                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
+                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
                 <a class="text-light">📧 lucianoalessi9@hotmail.com</a><br>
                 <p class="text-light">📍  Quilmes, Buenos Aires.</p>
             </div>            
@@ -137,31 +148,45 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/static/js/realTimeProducts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
 
 <style>
+/* Estilos generales del cuerpo del documento */
 body {
     background: linear-gradient(45deg, #06c -52%, #000 81%, #a044e3 95%);
     font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-
-
+/* TARJETAS */
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
 }
 
+/* Estilos al pasar el mouse */
 .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
+/* Estilos para el cuerpo de las tarjetas */
 .card-body {
     padding: 20px;
 }
 
+/* NAVBAR Estilos para los enlaces de navegación */
 .nav-link{
     border-radius: 25px;
 }
+
+/* Estilos para el logo */
+.logo-img {
+    margin-right: 20px;
+}
+
+/* BOTONES */
 .btn {
     border: none;
     border-radius: 50px;
@@ -169,17 +194,18 @@ body {
     transition: background-color .2s;
 }
 
+/* Estilos para los botones de éxito */
 .btn-outline-success {
     background-color: #0033ff;
     color: white;
 }
-
-
+/* Estilos para los botones de éxito al pasar el mouse */
 .btn-outline-success:hover {
     background-color: #28a745;
     color: white;
 }
 
+/* Estilos para los botones secundarios */
 .btn-outline-secondary {
     background-color: transparent;
     color: #6c757d;
@@ -189,7 +215,11 @@ body {
     background-color: #6c757d;
     color: white;
 }
+.btn-outline-secondary.text-white {
+    color: white;
+}
 
+/* Estilos para los botones de peligro */
 .btn-outline-danger {
     background-color: transparent;
     color: #dc3545;
@@ -200,8 +230,15 @@ body {
     color: white;
 }
 
+/* Estilos para los controles de formulario */
 .form-control {
     margin-bottom: 10px;
 }
+
+/* Pie de pagina */
+footer {
+    margin-top: auto;
+}
+
 </style>
 

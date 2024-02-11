@@ -1,21 +1,19 @@
-<nav class="navbar navbar-expand-lg" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: none; border-radius: 10px; overflow: hidden; transition: transform .2s;">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <img src="/static/images/logo.png" id="logo" style="height: 50px; width: 50px;">
-        <a class="navbar-brand" href="/home" style="color: white;">Nuestra tienda</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255, 255, 255, 0.2);">
+        <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
+        <a class="navbar-brand" href="/home">Nuestra tienda</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav d-flex justify-content-center align-items-center">
+                <li class="nav-item">
+                    <a href="/profile" class="btn btn-outline-secondary me-2"><i class="fas fa-sign-in-alt"></i> Tu perfil</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/api/sessions/logout" class="btn btn-outline-danger"><i class="fas fa-user-plus"></i> Cerrar sesión</a>
+                </li>
             </ul>
-            <div class="d-flex align-items-center">
-                <a href="/profile" class="btn btn-outline-secondary me-2" style="color: white;">
-                    📇 Tu perfil
-                </a>
-                <a href="/api/sessions/logout" class="btn btn-outline-danger" style="color: white;">
-                    🚪 Cerrar sesión
-                </a>
-            </div>
         </div>
     </div>
 </nav>
@@ -58,7 +56,7 @@
         <div class="col-12 text-center">
             <div class="total-container">
                 <h3 class="text-total">Total: {{totalPrice}} USD </h3>
-                <form action="/api/carts/{{cart._id}}/purchase" method="get">
+                <form action="/carts/{{cart._id}}/purchase" method="get">
                     <button class='btn btn-success btn-lg'>💰 Confirmar Compra</button>
                 </form>
             </div>
@@ -83,8 +81,8 @@
             </div>
             <div class="col-md-6">
                 <h5>Contacto:</h5>
-                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
-                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
+                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
                 <a class="text-light">📧 lucianoalessi9@hotmail.com</a><br>
                 <p class="text-light">📍  Quilmes, Buenos Aires.</p>
             </div>            
@@ -93,61 +91,109 @@
 </footer>
 
 <script src="/static/js/cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
+
 
 <style>
-body {
-    background: linear-gradient(45deg,#06c -52%,#000 81%,#a044e3 95%);
-    color: white;
-    font-family: 'Roboto', sans-serif;
-}
+    body {
+        color: white;
+        font-size: 20px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
 
-.card {
-    min-height: 200px;
-    margin: 20px auto;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
-    box-shadow: 0 4px 8px 0 rgba(255,255,255,0.2);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
+    body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -10;
+        height: 100%;
+        width: 100%;
+        padding: 24px 5px;
+        background: radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%);
+    }
 
-.card:hover {
-    transform: scale(1.00);
-    box-shadow: 0 8px 16px 0 rgba(255,255,255,0.2);
-}
+    .navbar {
+        padding: 1rem;
+    }
 
-.card-img-container {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
+    .nav-items {
+        float: right;
+        display: inline-block;
+    }
 
-.card-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
+    .navbar-collapse{
+        align-items: center;
+        justify-content: space-between;
+    }
 
-.card-body {
-    width: 600px;
-    padding: 20px;
-    overflow: auto;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+    .nav-link{
+        border-radius: 25px;
+    }
 
-.card-title {
-    font-size: 1.2em;
-    color: #28a745;
-    font-weight: bold;
-}
+    .navbar-toggler-icon {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        vertical-align: middle;
+        content: "";
+        background: no-repeat center center;
+        background-size: 100% 100%;
+    }
+
+    footer {
+        margin-top: auto;
+    }
+
+    .card {
+        min-height: 200px;
+        margin: 20px auto;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform .2s;
+        box-shadow: 0 4px 8px 0 rgba(255,255,255,0.2);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .card:hover {
+        transform: scale(1.00);
+        box-shadow: 0 8px 16px 0 rgba(255,255,255,0.2);
+    }
+
+    .card-img-container {
+        width: 200px;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .card-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .card-body {
+        width: 600px;
+        padding: 20px;
+        overflow: auto;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .card-title {
+        font-size: 1.2em;
+        color: #28a745;
+        font-weight: bold;
+    }
 
 
 .btn {
@@ -163,6 +209,36 @@ body {
     transform: scale(1.1);
 }
 
+.btn-outline-success {
+    background-color: #0033ff;
+    color: white;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
 .text-primary {
     color: #28a745;
 }
@@ -173,25 +249,6 @@ body {
     margin-top: 20px;
 }
 
-.total-container {
-    border: 2px solid #8000ff;
-    border-radius: 25px;
-    padding: 20px;
-    margin: 20px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #8000ff;
-    color: white;
-}
-
-.text-total {
-    color: rgb(255, 255, 255);
-    font-size: 1.5em;
-    margin: 0;
-    font-style: normal;
-}
-
 .btn-success {
     padding: 10px 30px;
     font-size: 1.2em;
@@ -199,28 +256,51 @@ body {
     color: white;
 }
 
-#quantityInput {
 
-    border-collapse: collapse;
-    -webkit-font-smoothing: antialiased;
-    display: block;
-    background: transparent;
-    color: rgba(0,0,0,.9);
-    font-family: inherit;
-    overflow: hidden;
-    resize: none;
-    border-radius: .375em;
-    height: 30px;
-    line-height: 22px;
-    margin: 0;
-    flex-grow: 1;
-    width: 74px;
-    align-items: center;
-    background-color: inherit;
-    font-size: 16px;
-    outline: none;
-    padding: 0;
-    text-align: center;
-}
+    .total-container {
+        border: 2px solid #8000ff;
+        border-radius: 25px;
+        padding: 20px;
+        margin: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #8000ff;
+        color: white;
+    }
+
+    .text-primary {
+        color: #28a745;
+    }
+    .text-total {
+        color: rgb(255, 255, 255);
+        font-size: 1.5em;
+        margin: 0;
+        font-style: normal;
+    }
+
+    #quantityInput {
+
+        border-collapse: collapse;
+        -webkit-font-smoothing: antialiased;
+        display: block;
+        background: transparent;
+        color: rgba(0,0,0,.9);
+        font-family: inherit;
+        overflow: hidden;
+        resize: none;
+        border-radius: .375em;
+        height: 30px;
+        line-height: 22px;
+        margin: 0;
+        flex-grow: 1;
+        width: 74px;
+        align-items: center;
+        background-color: inherit;
+        font-size: 16px;
+        outline: none;
+        padding: 0;
+        text-align: center;
+    }
 </style>
 

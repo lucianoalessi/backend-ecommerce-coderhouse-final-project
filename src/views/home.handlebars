@@ -1,43 +1,48 @@
-<nav class="navbar navbar-expand-lg" style="background-color: rgba(255, 255, 255, 0.1); color: white; border: none; border-radius: 10px; overflow: hidden; transition: transform .2s;">
+<!-- Barra de navegacion -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <img src="/static/images/logo.png" id="logo" style="height: 50px; width: 50px;">
-        <a class="navbar-brand" href="#" style="color: white;">Nuestra Tienda</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border-color: rgba(255, 255, 255, 0.2);">
+        <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
+        <a class="navbar-brand" href="#">Nuestra Tienda</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav d-flex justify-content-center align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link btn-outline-secondary" href="/login" style="color: white;">🛒 Ver carrito</a>
+                    <a class="nav-link btn-outline-secondary" href="/login">🛒 Ver carrito</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="btn btn-outline-secondary me-2"><i class="fas fa-sign-in-alt"></i> Iniciar Sesion</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/register" class="btn btn-success"><i class="fas fa-user-plus"></i> Registrate</a>
                 </li>
             </ul>
-            <div class="d-flex">
-                <a href="/login" class="btn btn-outline-secondary me-2" style="color: white;">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesion
-                </a>
-                <a href="/register" class="btn btn-outline-danger" style="color: white;">
-                    <i class="fas fa-user-plus"></i> Registrate
-                </a>
-            </div>
         </div>
     </div>
 </nav>
 
+
+{{!-- Titulos --}}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <h3 class="mb-3 text-center">
-               <strong> Bienvenido a LA-Store!</strong>
+            <strong> Bienvenido a LA-Store!</strong>
             </h3>
         </div>
     </div>
 </div>
 
+
+
 <h3 class="mb-3 text-center m-5">Encuentra tu producto:</h3>
 
+<!-- Contenedor principal -->
 <div class="container-fluid">
     <div class="row">
 
+        {{!-- Filtros --}}
          <div class="col-md-2">
             <div class="filter p-4 mb-4 h-100" id="productForm">
                 <h4 class="mb-3 text-center">Filtros:</h4>
@@ -63,9 +68,9 @@
             </div>
         </div>
 
-
+        <!-- Listado de productos -->
         <div class="col-md-10">
-
+            {{!-- lista o cuadricula de productos --}}
             <div class='container productsList'>
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
                     {{#each products.docs}}
@@ -92,6 +97,7 @@
                 </div>
             </div>
 
+            {{!-- Numero de paginas --}}
             <div class='container pagination my-4'>
                 <nav aria-label="Navegación de página">
                     <ul class="pagination justify-content-center">
@@ -124,6 +130,8 @@
         </div>
     </div>
 </div>
+
+<!--Pie de página -->
 <footer class="footer mt-auto py-3 bg-dark text-light">
     <div class="container">
         <div class="row">
@@ -133,8 +141,8 @@
             </div>
             <div class="col-md-6">
                 <h5>Contacto:</h5>
-                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
-                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
+                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
                 <a class="text-light">📧 lucianoalessi9@hotmail.com</a><br>
                 <p class="text-light">📍  Quilmes, Buenos Aires.</p>
             </div>            
@@ -142,101 +150,140 @@
     </div>
 </footer>
 
+<!-- Scripts -->
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
 
 
 
-
+<!-- Estilos -->
 <style>
-body {
-    background: linear-gradient(45deg,#06c -52%,#000 81%,#a044e3 95%);
-    color: white;
-    font-size: 20px;
-}
-.container {
-    max-width: 960px;
-    margin: auto;
-    padding: 20px;
-}
 
-.card {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
-}
 
-.card-img-top{
-    background-color: white;
-}
+    /* Estilos generales */
+    body {
+        color: white;
+        font-size: 20px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
 
-.card:hover {
-    transform: scale(1.02);
-}
+    body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -10;
+        height: 100%;
+        width: 100%;
+        padding: 24px 5px;
+        background: radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%);
+    }
+    /* Barra de navegación */
+    .navbar {
+        padding: 1rem;
+    }
 
-.card-header {
-    background-color: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
+    .nav-items {
+        float: right;
+        display: inline-block;
+    }
 
-.card-category, .card-id {
-    font-size: 0.8rem;
-}
+    .navbar-collapse{
+        align-items: center;
+        justify-content: space-between;
+    }
 
-.card-title {
-    font-size: 1.2rem;
-    font-weight: 500;
-}
+    .nav-link{
+        border-radius: 25px;
+    }
 
-.card-description, .code, .stock {
-    font-size: 0.9rem;
-}
+    .navbar-toggler-icon {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        vertical-align: middle;
+        content: "";
+        background: no-repeat center center;
+        background-size: 100% 100%;
+    }
 
-.filter {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
+    /* Estilos de las tarjetas de los productos */
+    .container {
+        max-width: 960px;
+        margin: auto;
+        padding: 20px;
+    }
 
-}
+    .card {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform .2s;
+    }
 
-.info-container {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-}
+    .card-img-top{
+        background-color: white;
+    }
 
-.nav-link{
-    border-radius: 25px;
-}
+    .card:hover {
+        transform: scale(1.02);
+    }
 
-.navbar-toggler-icon {
-  display: inline-block;
-  width: 1.5em;
-  height: 1.5em;
-  vertical-align: middle;
-  content: "";
-  background: no-repeat center center;
-  background-size: 100% 100%;
-}
-.btn {
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-category, .card-id {
+        font-size: 0.8rem;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .card-description, .code, .stock {
+        font-size: 0.9rem;
+    }
+
+    .filter {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform .2s;
+    }
+
+    .info-container {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+    }
+
+    /* Botones */
+   .btn {
     border: none;
     border-radius: 50px;
     padding: 10px 20px;
-    transition: background-color .2s;
+    transition: background-color .2s, transform .2s;
+    margin: 10px;
+}
+
+.btn:hover {
+    color: white;
+    transform: scale(1.1);
 }
 
 .btn-outline-success {
     background-color: #0033ff;
     color: white;
 }
-
 
 .btn-outline-success:hover {
     background-color: #28a745;
@@ -263,74 +310,77 @@ body {
     color: white;
 }
 
-.list-group {
-    background-color: rgba(255, 252, 252, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+.text-primary {
+    color: #28a745;
 }
 
-.form-control {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    transition: transform .2s;
+.btn-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
-.form-control:focus {
-    border-color: #0033ff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
-}
-
-.form-label {
+.btn-success {
+    padding: 10px 30px;
+    font-size: 1.2em;
+    background-color: #28a745;
     color: white;
 }
 
-.form-select {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    transition: transform .2s;
-}
+    /* Listas */
+    .list-group {
+        background-color: rgba(255, 252, 252, 0.1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform .2s;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
 
-.form-select:focus {
-    border-color: #0033ff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
-}
+    /* Estilos de los formularios */
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        transition: transform .2s;
+    }
 
+    .form-control:focus {
+        border-color: #0033ff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
+    }
+
+    .form-label {
+        color: white;
+    }
+
+    .form-select {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        transition: transform .2s;
+    }
+
+    .form-select:focus {
+        border-color: #0033ff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
+    }
+
+    /* Pie de pagina */
+    footer {
+        margin-top: auto;
+    }
+
+    /* Adaptable (Responsivo) */
+    @media screen and (max-width: 767px) {
+        .navbar-brand {
+            display: none;
+        }
+    }
 
 </style>
 
-
-
-{{!-- <div class="contenedorPrincipal">
-    <h1>Lista de productos:</h1>
-    <div class="productContainer">
-        {{#each listaProductos}}
-            <div class="card">
-                <div class="card-content">
-                    <h4>{{title}}</h4>
-                    <div>
-                        <h5>Id: {{id}}</h5>
-                    </div>
-                    <div>
-                        <p>{{description}}</p>
-                    </div>
-                    <div>
-                        <h5>Precio: {{price}} USD</h5>
-                    </div>
-                    <div>
-                        <a href="http://localhost:8080/login">Buy Now</a>
-                    </div>
-                </div>
-            </div>
-    {{/each}}
-
-    </div>
-</div> --}}
 
