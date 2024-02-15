@@ -1,86 +1,64 @@
-    {{!-- <div class="container">
-        <h1 class="text-center my-4">Resumen de la compra</h1>
-        {{#if payload.productosProcesados}}
-            <h2 class="text-success">Productos procesados correctamente</h2>
-            <ul class="list-group mb-4">
-                {{#each payload.productosProcesados}}
-                    <li class="list-group-item">{{this.name}} - {{this.quantity}}</li>
-                {{/each}}
-            </ul>
-            <h2>Total: <span class="text-primary">${{payload.ticket.amount}}</span></h2>
-        {{/if}}
-        {{#if payload.productosNoProcesados}}
-            <h2 class="text-danger">Productos no procesados por falta de stock</h2>
-            <ul class="list-group">
-                {{#each payload.productosNoProcesados}}
-                    <li class="list-group-item">{{this.name}} - {{this.quantity}}</li>
-                {{/each}}
-            </ul>
-        {{/if}}
-    </div>
- --}}
 
 <div class="container">
     <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">¡Compra realizada con éxito!</h4>
+        <h4 class="alert-heading"><i class="fas fa-check-circle"></i> ¡Compra realizada con éxito!</h4>
     </div>
 
     {{#if payload}}
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header">
-                Resumen de la compra
+                <i class="fas fa-receipt"></i> Resumen de la compra:
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Ticket ID: {{payload.ticketId}}</li>
-                <li class="list-group-item">Fecha y hora: {{payload.purchase_datetime}}</li>
-                <li class="list-group-item">Monto total: USD {{payload.amount}}</li>
-                <li class="list-group-item">Usuario: {{payload.purchaser}}</li>
+                <li class="list-group-item"><i class="fas fa-ticket-alt"></i> Ticket ID: {{payload.ticketId}}</li>
+                <li class="list-group-item"><i class="fas fa-clock"></i> Fecha y hora: {{payload.purchase_datetime}}</li>
+                <li class="list-group-item"><i class="fas fa-dollar-sign"></i> Monto total: USD {{payload.amount}}</li>
+                <li class="list-group-item"><i class="fas fa-user"></i> Usuario: {{payload.purchaser}}</li>
             </ul>
         </div>
 
         <div class="card mt-4">
             <div class="card-header">
-                Productos procesados correctamente
+                <i class="fas fa-check"></i> Productos procesados correctamente:
             </div>
             <ul class="list-group list-group-flush">
                 {{#each payload.productosProcesados}}
-                    <li class="list-group-item">ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
+                    <li class="list-group-item"><i class="fas fa-barcode"></i> ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
                 {{/each}}
             </ul>
         </div>
 
         <div class="card mt-4">
             <div class="card-header">
-                Productos no procesados
+                <i class="fas fa-times"></i> Productos no procesados:
             </div>
             <ul class="list-group list-group-flush">
                 {{#each payload.productosNoProcesados}}
-                    <li class="list-group-item">ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
+                    <li class="list-group-item"><i class="fas fa-barcode"></i> ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
                 {{/each}}
             </ul>
         </div>
 
-        {{!-- <button type="button" class="btn btn-primary mt-4">Imprimir resumen</button> --}}
-
-        <form action="/carts/{{cartId}}" method="get" class='d-inline-block ml-2'>
-            <button class='btn btn-primary btn-lg'>🛒 Volver al carrito</button>
-        </form>
-        <form action="/products" method="get" class='d-inline-block ml-2'>
-            <button class='btn btn-primary btn-lg'>🔙💸🛍️ Continuar Comprando</button>
-        </form>
-
+        <div class="d-flex justify-content-between mt-4">
+            <form action="/carts/{{cartId}}" method="get">
+                <button class='btn btn-primary btn-lg'><i class="fas fa-shopping-cart"></i> Volver al carrito</button>
+            </form>
+            <form action="/products" method="get">
+                <button class='btn btn-primary btn-lg'><i class="fas fa-arrow-left"></i> Continuar Comprando</button>
+            </form>
+        </div>
 
     {{else}}
         <div class="alert alert-danger" role="alert">
-            {{message}}
+            <i class="fas fa-exclamation-triangle"></i> {{message}}
         </div>
         <div class="card mt-4">
             <div class="card-header">
-                Productos no procesados
+                <i class="fas fa-times"></i> Productos no procesados
             </div>
             <ul class="list-group list-group-flush">
                 {{#each productosNoProcesados}}
-                    <li class="list-group-item">ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
+                    <li class="list-group-item"><i class="fas fa-barcode"></i> ID del producto: {{this.productID}}, Cantidad: {{this.quantity}}</li>
                 {{/each}}
             </ul>
         </div>
@@ -90,5 +68,32 @@
 
 
 <style>
+
+    .container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.alert {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.alert:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.btn {
+    width: 100%;
+}
 
 </style>

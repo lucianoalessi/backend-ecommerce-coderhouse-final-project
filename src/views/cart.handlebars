@@ -1,50 +1,57 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+<!-- 1 - Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
-        <a class="navbar-brand" href="/home">Nuestra tienda</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav d-flex justify-content-center align-items-center">
+        <a class="navbar-brand d-flex align-items-center ms-2" href="#">
+            <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="me-2">
+        </a>
+        <div class="collapse navbar-collapse align-items-center" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+            <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a href="/profile" class="btn btn-outline-secondary me-2"><i class="fas fa-sign-in-alt"></i> Tu perfil</a>
+                    <a class="nav-link" href="/profile"><i class="fas fa-id-card  m-2"></i> Tu perfil</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/api/sessions/logout" class="btn btn-outline-danger"><i class="fas fa-user-plus"></i> Cerrar sesión</a>
+                    <a class="nav-link" href="/api/sessions/logout"><i class="fas fa-door-open  m-2"></i> Cerrar sesión</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-12 text-center">
-            <h2 class="text-primary">🛒 Carrito de Compras</h2>
-            <p>Cart ID: <span id='cart-id'>{{cart._id}}</span></p>
-        </div>
-    </div>
 
+<!-- 2 - Título -->
+<header class="container mt-3 text-center">
+    <h2 class="text-primary"><i class="bi bi-cart-fill"></i> Carrito de Compras</h2>
+    <p>Cart ID: <span id='cart-id'>{{cart._id}}</span></p>
+</header>
+
+<header class="container mt-3 text-center">
+    <h4 class="text-primary">Productos en el Carrito:</h4>
+</header>
+
+
+<!-- 3- tarjetas de productos -->
+<div class="container py-5">
     <div class="row mt-4">
         <div class="col-12">
-            <h4 class="text-primary">🧺 Productos en el Carrito:</h4>
             {{#each cartDetail}}
                 <div class='card mb-3 shadow-sm'>
-                    <div class='row no-gutters align-items-center'>
-                        <div class='col-md-4 card-img-container'>
-                            <img src="{{this.thumbnail}}" class="card-img" alt="{{this.title}}">
-                        </div>
-                        <div class='col-md-8'>
-                            <div class='card-body'>
-                                <h5 class='card-title'>{{this.title}}</h5>
-                                <p>ID del Producto: <span class='text-info' id="product-id">{{this._id}}</span></p>
-                                <p>Precio Unitario: <span class='text-info'>{{this.price}} USD</span></p>
-                                <p>
-                                    Modifica cantidad: <input type="number" id="quantityInput" name="newQuantity" min="1" value="{{this.quantity}}" data-productId="{{this._id}}" data-cartId="{{../cart._id}}" class="form-control" style="display: inline-block;">
-                                </p>
-                                <button class='btn btn-danger delete-product mt-2' data-product-id='{{this._id}}'>🗑️ Eliminar</button>
-                            </div>
+                    <div class='col-md-4 card-img-container'>
+                        <img src="{{this.thumbnail}}" class="card-img" alt="{{this.title}}">
+                    </div>
+                    <div class='col-md-8'>
+                        <div class='card-body'>
+                            <h5 class='card-title'>{{this.title}}</h5>
+                            <p>ID del Producto: <span class='text-info' id="product-id">{{this._id}}</span></p>
+                            <p>Precio Unitario: <span class='text-info'>{{this.price}} USD</span></p>
+                            <p>
+                                Modifica cantidad: <input type="number" id="quantityInput" name="newQuantity" min="1" value="{{this.quantity}}" data-productId="{{this._id}}" data-cartId="{{../cart._id}}" class="form-control" style="display: inline-block;">
+                            </p>
+                            <button class='btn btn-danger delete-product mt-2' data-product-id='{{this._id}}'><i class="bi bi-trash-fill"></i> Eliminar</button>
                         </div>
                     </div>
                 </div>
@@ -57,7 +64,7 @@
             <div class="total-container">
                 <h3 class="text-total">Total: {{totalPrice}} USD </h3>
                 <form action="/carts/{{cart._id}}/purchase" method="get">
-                    <button class='btn btn-success btn-lg'>💰 Confirmar Compra</button>
+                    <button class='btn btn-success btn-lg'><i class="bi bi-cash-stack"></i> Confirmar Compra</button>
                 </form>
             </div>
         </div>
@@ -67,11 +74,12 @@
         <div class="col-12 text-center">
             <button id="empty-cart" class='btn btn-danger btn-lg'><i class="bi bi-cart-x-fill"></i> Vaciar Carrito</button>
             <form action="/products" method="get" class='d-inline-block ml-2'>
-                <button class='btn btn-primary btn-lg'>🔙 Continuar Comprando</button>
+                <button class='btn btn-primary btn-lg'><i class="bi bi-arrow-return-left"></i> Continuar Comprando</button>
             </form>
         </div>
     </div>
 </div>
+
 <footer class="footer mt-auto py-3 bg-dark text-light">
     <div class="container">
         <div class="row">
@@ -95,26 +103,20 @@
 
 
 <style>
+
+        
+    /* Estilos generales */
     body {
+        background: linear-gradient(45deg, #06c -52%, #000 81%, #a044e3 95%);
         color: white;
-        font-size: 20px;
+        font-size: 16px;
         position: relative;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
     }
 
-    body::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -10;
-        height: 100%;
-        width: 100%;
-        padding: 24px 5px;
-        background: radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%);
-    }
-
+    /* Barra de navegación */
     .navbar {
         padding: 1rem;
     }
@@ -143,120 +145,36 @@
         background-size: 100% 100%;
     }
 
-    footer {
-        margin-top: auto;
-    }
+
+    /*Estilos para cartas de productos*/
 
     .card {
-        min-height: 200px;
-        margin: 20px auto;
-        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 15px;
         overflow: hidden;
-        transition: transform .2s;
-        box-shadow: 0 4px 8px 0 rgba(255,255,255,0.2);
         display: flex;
         flex-direction: row;
-        align-items: center;
     }
 
-    .card:hover {
-        transform: scale(1.00);
-        box-shadow: 0 8px 16px 0 rgba(255,255,255,0.2);
-    }
 
     .card-img-container {
-        width: 200px;
-        height: 200px;
+        width: 250px;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 20px;
+        background-color: white;
     }
 
     .card-img {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 50%;
+        max-height: 50%;
         object-fit: contain;
     }
 
-    .card-body {
-        width: 600px;
-        padding: 20px;
-        overflow: auto;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .card-title {
-        font-size: 1.2em;
-        color: #28a745;
-        font-weight: bold;
-    }
-
-
-.btn {
-    border: none;
-    border-radius: 50px;
-    padding: 10px 20px;
-    transition: background-color .2s, transform .2s;
-    margin: 10px;
-}
-
-.btn:hover {
-    color: white;
-    transform: scale(1.1);
-}
-
-.btn-outline-success {
-    background-color: #0033ff;
-    color: white;
-}
-
-.btn-outline-success:hover {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-outline-secondary {
-    background-color: transparent;
-    color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-outline-danger {
-    background-color: transparent;
-    color: #dc3545;
-}
-
-.btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-}
-
-.text-primary {
-    color: #28a745;
-}
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.btn-success {
-    padding: 10px 30px;
-    font-size: 1.2em;
-    background-color: #28a745;
-    color: white;
-}
-
-
+    /*Estilos para el monto total*/
     .total-container {
         border: 2px solid #8000ff;
         border-radius: 25px;
@@ -285,7 +203,7 @@
         -webkit-font-smoothing: antialiased;
         display: block;
         background: transparent;
-        color: rgba(0,0,0,.9);
+        color: rgba(255, 255, 255, 0.9);
         font-family: inherit;
         overflow: hidden;
         resize: none;
@@ -302,5 +220,65 @@
         padding: 0;
         text-align: center;
     }
-</style>
 
+
+    /*Estilo para botones*/
+    
+    /* botones en general*/
+    .btn {
+        border: none;
+        border-radius: 50px;
+        transition: background-color .2s, transform .2s;
+    }
+    .btn:hover {
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* botones en Success*/
+    .btn-outline-success {
+        background-color: #0033ff;
+        color: white;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+    /* botones en Secondary*/
+    .btn-outline-secondary {
+        background-color: transparent;
+        color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    /* botones en danger*/
+    .btn-outline-danger {
+        background-color: transparent;
+        color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+
+    /* Pie de pagina */
+    footer {
+        margin-top: auto;
+    }
+
+    /* Adaptable (Responsivo) */
+    @media screen and (max-width: 767px) {
+        .navbar-brand {
+            display: none;
+        }
+    }
+
+</style>

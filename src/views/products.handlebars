@@ -1,45 +1,397 @@
-<!-- Barra de navegacion -->
-<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+<!-- 1 - Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
-        <a class="navbar-brand" href="#">Nuestra Tienda</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <a class="navbar-brand d-flex align-items-center ms-2" href="#">
+            <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="me-2">
+        </a>
+        <div class="collapse navbar-collapse align-items-center" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/chat">💬 Abrir chat</a>
+                    <a class="nav-link active" aria-current="page" href="/chat"><i class="fas fa-comments  m-2"></i> Abrir chat</a>
                 </li>
                 {{#if userPremiumOrAdmin}}
                 <li class="nav-item">
-                    <a class="nav-link" href="/realtimeproducts">⭐ Product Manager</a>
+                    <a class="nav-link" href="/realtimeproducts"><i class="fas fa-tasks  m-2"></i> Product Manager</a>
                 </li>
                 {{/if}}
+                <li class="nav-item">
+                    <a class="nav-link" href="/carts/{{cart}}"><i class="fas fa-shopping-cart  m-2"></i> Tu carrito</a>
+                </li>
             </ul>
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <span class="navbar-text">Hola, {{user.first_name}}!</span>
+                    <span class="navbar-text nav-link  m-2 ">Hola, {{user.first_name}}!</span>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile"><i class="fas fa-id-card  m-2"></i> Tu perfil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/carts/{{cart}}">🛒 Tu carrito</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/profile">📇 Tu perfil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link btn-outline-danger" href="/api/sessions/logout">🚪 Cerrar sesión</a>
+                    <a class="nav-link" href="/api/sessions/logout"><i class="fas fa-door-open  m-2"></i> Cerrar sesión</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<h3 class="mb-3 text-center m-5">
-    👤 Bienvenido a nuestra tienda, <strong>{{user.first_name}} {{user.last_name}} !</strong>
-</h3>
 
-<div class="container-fluid">
+<!-- 2 - Título -->
+<header class="container mt-3 text-center">
+    <h2>👤 Bienvenido a nuestra tienda, <strong>{{user.first_name}} {{user.last_name}} !</strong></h2>
+</header>
+
+<!-- Datos del usuario -->
+<section class="container">
+    <h6>
+        ℹ️ Aquí están tus datos de usuario:
+    </h6>
+    <ul class="list-group mb-4">
+        <li class="list-group-item">
+            🎫 User ID: {{user._id}}
+        </li>
+        <li class="list-group-item">
+            📧 E-Mail: {{user.email}}
+        </li>
+        <li class="list-group-item">
+            🎂 Age: {{user.age}}
+        </li>
+        <li class="list-group-item">
+            🏷️ User Role: <span id="user-role">{{user.role}}</span>
+        </li>
+        <li class="list-group-item">
+            🛒 Cart ID: <span id="cart-id">{{cart}}</span>
+        </li>
+    </ul>
+    {{!-- <ul class="list-group mb-4">
+        <li class="list-group-item">
+            🎫 ID de usuario: {{user._id}}
+        </li>
+        <li class="list-group-item">
+            📧 Correo electrónico: {{user.email}}
+        </li>
+        <li class="list-group-item">
+            🎂 Edad: {{user.age}}
+        </li>
+        <li class="list-group-item">
+            🏷️ Tipo de cuenta: <span id="user-role">{{user.role}}</span>
+        </li>
+        <li class="list-group-item">
+            🛒 ID del carrito: <span id="cart-id">{{cart}}</span>
+        </li>
+    </ul> --}}
+</section>
+
+
+<!-- 3 - Cuadrilla de productos y filtros -->
+<section class="container mt-3">
+    <div class="row">
+        <!-- 4 - Sección para aplicar filtros -->
+        <div class="col-md-3">
+            <div class="filter p-4 mb-4 h-100" id="productForm">
+                <h4 class="mb-3 text-center">Filtros:</h4>
+                <form action="/home" method="get">
+                    <div class="mb-3">
+                        <label for="limit" class="form-label">Límite de productos:</label>
+                        <input type="number" id="limit" name="limit" class="form-control" placeholder="9">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sort" class="form-label">Ordenar por:</label>
+                        <select name="sort" id="sort" class="form-select">
+                            <option value="des">Mayor Precio</option>
+                            <option value="asc">Menor Precio</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="category" class="form-label">Categoría:</label>
+                        <input type="text" id="category" name="category" class="form-control" placeholder="Smartphones">
+                    </div>
+                    <input type="submit" value="Buscar" class="btn btn-outline-success">
+                    <a href="/home" class="btn btn-outline-danger mt-2" >Eliminar filtros</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cuadrilla de productos -->
+        <div class="col-md-9">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                {{#each products.docs}}
+                        <div class='col'>
+                            <div class='card h-100' id='card-container'>
+                                <div class='card-header'>
+                                    <small class='card-category'>🏷️ Categoría: {{this.category}}</small><br>
+                                    <small class='card-id'> PID: {{this._id}}</small>
+                                </div>
+                                <div class='card-body d-flex flex-column'>
+                                    <img src="{{this.thumbnail}}" class="card-img-top img-fluid" alt="{{this.title}}" style="object-fit: contain; height: 200px;">
+                                    <h5 class='card-title font-bold mt-2'>{{this.title}}</h5>
+                                    <div class='card-description text-truncate' id='description-{{this._id}}'>{{this.description}}</div>
+                                    <button class='btn btn-link' onclick="document.getElementById('description-{{this._id}}').classList.toggle('text-truncate');">Leer más</button>
+                                    <h4 class='card-price'><i class="fas fa-dollar-sign"></i> {{this.price}}</h4>
+                                    <div class='info-container'>
+                                        <p class='code'><i class="fas fa-barcode"></i> Code: {{this.code}}</p>
+                                        <p class='stock'><i class="fas fa-warehouse"></i> Stock: {{this.stock}}</p>
+                                    </div>
+                                    <button id='addToCart' class='btn btn-outline-success mt-auto'><i class="fas fa-cart-plus"></i> Agregar al carrito</button>
+                                </div>
+                            </div>
+                        </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- 5 - Número de página -->
+<section class="container mt-3">
+    <nav aria-label="Navegación de página">
+        <ul class="pagination justify-content-center">
+            {{#if products.hasPrevPage}}
+                <li class="page-item">
+                    <a class="page-link" href="{{products.prevLink}}" aria-label="Anterior">
+                        <span aria-hidden="true">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                    </a>
+                </li>
+            {{/if}}
+            <li class="page-item active">
+                <a class="page-link" href="#">{{products.page}}</a>
+            </li>
+            {{#if products.hasNextPage}}
+                <li class="page-item">
+                    <a class="page-link" href="{{products.nextLink}}" aria-label="Siguiente">
+                        <span aria-hidden="true">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </a>
+                </li>
+            {{/if}}
+        </ul>
+    </nav>
+</section>
+
+<!-- 6 - Pie de página -->
+<footer class="footer mt-auto py-3 bg-dark text-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <p>Disclaimer: This is a demo website. The products listed here are not for sale. The chat is not real. This website is for demonstration purposes only.</p>
+                <p>© 2023 Coder Backend - Developed by Luciano Alessi</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Contacto:</h5>
+                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
+                <a class="text-light">📧 lucianoalessi9@hotmail.com</a><br>
+                <p class="text-light">📍  Quilmes, Buenos Aires.</p>
+            </div>            
+        </div>
+    </div>
+</footer>
+
+
+<script src="/static/js/products.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
+
+
+
+<style>
+
+        /* Estilos generales */
+    body {
+        background: linear-gradient(45deg, #06c -52%, #000 81%, #a044e3 95%);
+        color: white;
+        font-size: 16px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+
+
+    /* Barra de navegación */
+    .navbar {
+        padding: 1rem;
+    }
+
+    .nav-items {
+        float: right;
+        display: inline-block;
+    }
+
+    .navbar-collapse{
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .nav-link{
+        border-radius: 25px;
+    }
+
+    .navbar-toggler-icon {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        vertical-align: middle;
+        content: "";
+        background: no-repeat center center;
+        background-size: 100% 100%;
+    }
+
+    /* Estilos del contenedor de las tarjetas de los productos */
+
+    .container {
+        max-width: auto;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /*Estilos para cartas de productos*/
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-img-top{
+        background-color: white;
+    }
+
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-category, .card-id {
+        font-size: 0.8rem;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .card-description, .code, .stock {
+        font-size: 0.9rem;
+    }
+
+    .info-container {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+    }
+
+    /*Estilo para filtros*/
+
+    .filter {
+
+    }
+
+    /* Estilos de los formularios */
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.247);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        transition: transform .2s;
+    }
+
+    .form-control:focus {
+        border-color: #0033ff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
+    }
+
+    .form-label {
+        color: white;
+    }
+
+    .form-select {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        transition: transform .2s;
+    }
+
+    .form-select:focus {
+        border-color: #0033ff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
+    }
+
+    /*Estilo para botones*/
+    
+    /* botones en general*/
+    .btn {
+        border: none;
+        border-radius: 50px;
+        transition: background-color .2s, transform .2s;
+    }
+    .btn:hover {
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* botones en Success*/
+    .btn-outline-success {
+        background-color: #0033ff;
+        color: white;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+    /* botones en Secondary*/
+    .btn-outline-secondary {
+        background-color: transparent;
+        color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    /* botones en danger*/
+    .btn-outline-danger {
+        background-color: transparent;
+        color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+
+    /* Pie de pagina */
+    footer {
+        margin-top: auto;
+    }
+
+    /* Adaptable (Responsivo) */
+    @media screen and (max-width: 767px) {
+        .navbar-brand {
+            display: none;
+        }
+    }
+
+
+</style>
+
+
+
+{{!-- <div class="container-fluid">
     <div class="row">
 
         <div class="col-md-2">
@@ -157,243 +509,4 @@
         </div>
     </div>
 </div>
-
-{{!-- Pie de pagina --}}
-<footer class="footer mt-auto py-3 bg-dark text-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 text-center">
-                <p>Disclaimer: This is a demo website. The products listed here are not for sale. The chat is not real. This website is for demonstration purposes only.</p>
-                <p>© 2023 Coder Backend - Developed by Luciano Alessi</p>
-            </div>
-            <div class="col-md-6">
-                <h5>Contacto:</h5>
-                <a href="https://www.linkedin.com/in/lucianoalessi/" class="text-light"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
-                <a href="https://github.com/lucianoalessi" class="text-light"><i class="fab fa-github"></i> GitHub</a><br>
-                <a class="text-light">📧 lucianoalessi9@hotmail.com</a><br>
-                <p class="text-light">📍  Quilmes, Buenos Aires.</p>
-            </div>            
-        </div>
-    </div>
-</footer>
-
-
-<script src="/static/js/products.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
-
-
-
-<style>
-    body {
-        color: white;
-        font-size: 20px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    body::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -10;
-        height: 100%;
-        width: 100%;
-        padding: 24px 5px;
-        background: radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%);
-    }
-
-    .navbar {
-        padding: 1rem;
-    }
-
-    .nav-items {
-        float: right;
-        display: inline-block;
-    }
-
-    .navbar-collapse{
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .nav-link{
-        border-radius: 25px;
-    }
-
-    .navbar-toggler-icon {
-        display: inline-block;
-        width: 1.5em;
-        height: 1.5em;
-        vertical-align: middle;
-        content: "";
-        background: no-repeat center center;
-        background-size: 100% 100%;
-    }
-
-.container {
-    max-width: 960px;
-    margin: auto;
-    padding: 20px;
-}
-
-.card {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
-}
-
-.card-img-top{
-    background-color: white;
-}
-
-.card:hover {
-    transform: scale(1.03);
-}
-
-.card-header {
-    background-color: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card-category, .card-id {
-    font-size: 0.8rem;
-}
-
-.card-title {
-    font-size: 1.2rem;
-    font-weight: 500;
-}
-
-.card-description, .code, .stock {
-    font-size: 0.9rem;
-}
-
-.data {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.info-container {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-}
-
-.nav-link{
-    border-radius: 25px;
-}
-
-/* Bonones */
-
-.btn {
-    border: none;
-    border-radius: 50px;
-    padding: 10px 20px;
-    transition: background-color .2s, transform .2s;
-    margin: 10px;
-}
-
-.btn:hover {
-    color: white;
-    transform: scale(1.1);
-}
-
-.btn-outline-success {
-    background-color: #0033ff;
-    color: white;
-}
-
-.btn-outline-success:hover {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-outline-secondary {
-    background-color: transparent;
-    color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-outline-danger {
-    background-color: transparent;
-    color: #dc3545;
-}
-
-.btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-}
-
-.text-primary {
-    color: #28a745;
-}
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.btn-success {
-    padding: 10px 30px;
-    font-size: 1.2em;
-    background-color: #28a745;
-    color: white;
-}
-
-
-
-.list-group {
-    background-color: rgba(255, 252, 252, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform .2s;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-}
-
-.form-control {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    transition: transform .2s;
-}
-
-.form-control:focus {
-    border-color: #0033ff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
-}
-
-.form-label {
-    color: white;
-}
-
-.form-select {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    transition: transform .2s;
-}
-
-.form-select:focus {
-    border-color: #0033ff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
-}
-</style>
-
+ --}}

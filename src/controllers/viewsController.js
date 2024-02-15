@@ -156,7 +156,7 @@ export const purchaseView = async (req, res) => {
             res.status(200).render('purchase', { status: 'success', payload: purchaseData , cartId});
         } else {
             // Si no hay productos en purchaseComplete, renderizamos la vista 'error' con los productos en purchaseError
-            res.status(200).render('error', { status: 'success', message: 'No se procesaron productos, por falta de stock.', productosNoProcesados: purchaseError });
+            res.status(200).send('errorPurchase', { status: 'success', message: 'No se procesaron productos, por falta de stock.', productosNoProcesados: purchaseError });
         }
         
     } catch (error) {

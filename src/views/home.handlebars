@@ -1,49 +1,44 @@
-<!-- Barra de navegacion -->
-<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+<!-- 1 - Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
-        <a class="navbar-brand" href="#">Nuestra Tienda</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav d-flex justify-content-center align-items-center">
+        <a class="navbar-brand d-flex align-items-center ms-2" href="#">
+            <img src="/static/images/logo.png" id="logo" alt="Logo" width="50" height="50" class="me-2">
+        </a>
+        <div class="collapse navbar-collapse align-items-center" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+            <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link btn-outline-secondary" href="/login">🛒 Ver carrito</a>
+                    <a class="nav-link" href="/login"><i class="fas fa-shopping-cart m-2"></i> Ver carrito</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/login" class="btn btn-outline-secondary me-2"><i class="fas fa-sign-in-alt"></i> Iniciar Sesion</a>
+                    <a href="/login" class="nav-link"><i class="fas fa-sign-in-alt m-2"></i> Iniciar Sesión</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/register" class="btn btn-success"><i class="fas fa-user-plus"></i> Registrate</a>
+                    <a href="/register" class="nav-link"><i class="fas fa-user-plus m-2"></i> Regístrate</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
+<!-- 2 - Título -->
+<header class="container mt-3 text-center">
+    <h1>Bienvenido a LA-Store!</h1>
+</header>
 
-{{!-- Titulos --}}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <h3 class="mb-3 text-center">
-            <strong> Bienvenido a LA-Store!</strong>
-            </h3>
-        </div>
-    </div>
-</div>
+<header class="container mt-3 text-center">
+    <h3>Encuentra tu producto:</h3>
+</header>
 
-
-
-<h3 class="mb-3 text-center m-5">Encuentra tu producto:</h3>
-
-<!-- Contenedor principal -->
-<div class="container-fluid">
+<!-- 3 - Cuadrilla de productos y filtros -->
+<section class="container mt-3">
     <div class="row">
-
-        {{!-- Filtros --}}
-         <div class="col-md-2">
+        <!-- 4 - Sección para aplicar filtros -->
+        <div class="col-md-3">
             <div class="filter p-4 mb-4 h-100" id="productForm">
                 <h4 class="mb-3 text-center">Filtros:</h4>
                 <form action="/home" method="get">
@@ -68,12 +63,10 @@
             </div>
         </div>
 
-        <!-- Listado de productos -->
-        <div class="col-md-10">
-            {{!-- lista o cuadricula de productos --}}
-            <div class='container productsList'>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                    {{#each products.docs}}
+        <!-- Cuadrilla de productos -->
+        <div class="col-md-9">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                {{#each products.docs}}
                         <div class='col'>
                             <div class='card h-100' id='card-container'>
                                 <div class='card-header'>
@@ -93,45 +86,42 @@
                                 </div>
                             </div>
                         </div>
-                    {{/each}}
-                </div>
+                {{/each}}
             </div>
-
-            {{!-- Numero de paginas --}}
-            <div class='container pagination my-4'>
-                <nav aria-label="Navegación de página">
-                    <ul class="pagination justify-content-center">
-                        {{#if products.hasPrevPage}}
-                            <li class="page-item">
-                                <a class="page-link" href="{{products.prevLink}}" aria-label="Anterior">
-                                    <span aria-hidden="true">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        {{/if}}
-                        <li class="page-item active">
-                            <a class="page-link" href="#">{{products.page}}</a>
-                        </li>
-                        {{#if products.hasNextPage}}
-                            <li class="page-item">
-                                <a class="page-link" href="{{products.nextLink}}" aria-label="Siguiente">
-                                    <span aria-hidden="true">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        {{/if}}
-                    </ul>
-                </nav>
-            </div>
-
-
         </div>
     </div>
-</div>
+</section>
 
-<!--Pie de página -->
+<!-- 5 - Número de página -->
+<section class="container mt-3">
+    <nav aria-label="Navegación de página">
+        <ul class="pagination justify-content-center">
+            {{#if products.hasPrevPage}}
+                <li class="page-item">
+                    <a class="page-link" href="{{products.prevLink}}" aria-label="Anterior">
+                        <span aria-hidden="true">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                    </a>
+                </li>
+            {{/if}}
+            <li class="page-item active">
+                <a class="page-link" href="#">{{products.page}}</a>
+            </li>
+            {{#if products.hasNextPage}}
+                <li class="page-item">
+                    <a class="page-link" href="{{products.nextLink}}" aria-label="Siguiente">
+                        <span aria-hidden="true">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </a>
+                </li>
+            {{/if}}
+        </ul>
+    </nav>
+</section>
+
+<!-- 6 - Pie de página -->
 <footer class="footer mt-auto py-3 bg-dark text-light">
     <div class="container">
         <div class="row">
@@ -158,28 +148,20 @@
 
 <!-- Estilos -->
 <style>
-
-
+    
     /* Estilos generales */
     body {
+        background: linear-gradient(45deg, #06c -52%, #000 81%, #a044e3 95%);
         color: white;
-        font-size: 20px;
+        font-size: 16px;
         position: relative;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
     }
 
-    body::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -10;
-        height: 100%;
-        width: 100%;
-        padding: 24px 5px;
-        background: radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%);
-    }
+
+
     /* Barra de navegación */
     .navbar {
         padding: 1rem;
@@ -209,28 +191,26 @@
         background-size: 100% 100%;
     }
 
-    /* Estilos de las tarjetas de los productos */
+    /* Estilos del contenedor de las tarjetas de los productos */
+
     .container {
-        max-width: 960px;
+        max-width: auto;
         margin: auto;
         padding: 20px;
     }
+
+    /*Estilos para cartas de productos*/
 
     .card {
         background-color: rgba(255, 255, 255, 0.1);
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 15px;
         overflow: hidden;
-        transition: transform .2s;
     }
 
     .card-img-top{
         background-color: white;
-    }
-
-    .card:hover {
-        transform: scale(1.02);
     }
 
     .card-header {
@@ -251,96 +231,21 @@
         font-size: 0.9rem;
     }
 
-    .filter {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: transform .2s;
-    }
-
     .info-container {
         display: flex;
         justify-content: space-between;
         font-size: 0.8rem;
     }
 
-    /* Botones */
-   .btn {
-    border: none;
-    border-radius: 50px;
-    padding: 10px 20px;
-    transition: background-color .2s, transform .2s;
-    margin: 10px;
-}
+    /*Estilo para filtros*/
 
-.btn:hover {
-    color: white;
-    transform: scale(1.1);
-}
+    .filter {
 
-.btn-outline-success {
-    background-color: #0033ff;
-    color: white;
-}
-
-.btn-outline-success:hover {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-outline-secondary {
-    background-color: transparent;
-    color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-outline-danger {
-    background-color: transparent;
-    color: #dc3545;
-}
-
-.btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: white;
-}
-
-.text-primary {
-    color: #28a745;
-}
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.btn-success {
-    padding: 10px 30px;
-    font-size: 1.2em;
-    background-color: #28a745;
-    color: white;
-}
-
-    /* Listas */
-    .list-group {
-        background-color: rgba(255, 252, 252, 0.1);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: transform .2s;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     }
 
     /* Estilos de los formularios */
     .form-control {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.247);
         color: white;
         border: none;
         border-radius: 10px;
@@ -369,6 +274,53 @@
         box-shadow: 0 0 0 0.2rem rgba(0, 51, 255, 0.25);
     }
 
+    /*Estilo para botones*/
+    
+    /* botones en general*/
+    .btn {
+        border: none;
+        border-radius: 50px;
+        transition: background-color .2s, transform .2s;
+    }
+    .btn:hover {
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* botones en Success*/
+    .btn-outline-success {
+        background-color: #0033ff;
+        color: white;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+    /* botones en Secondary*/
+    .btn-outline-secondary {
+        background-color: transparent;
+        color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    /* botones en danger*/
+    .btn-outline-danger {
+        background-color: transparent;
+        color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+
     /* Pie de pagina */
     footer {
         margin-top: auto;
@@ -382,5 +334,3 @@
     }
 
 </style>
-
-
